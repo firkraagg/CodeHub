@@ -1,27 +1,19 @@
 html, body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background-color: #181b1b !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    text-align: justify;
+    transition: background-color 0.5s, color 0.5s;
 }
 
-h1:focus {
-    outline: none;
+.dark-mode {
+    background-color: #181b1b !important; /* Dark background */
+    color: white; /* Change text color to white in dark mode */
 }
 
-a, .btn-link {
-    color: #0071c1;
-}
-
-.btn-primary {
-    color: #fff;
-    background-color: #1b6ec2;
-    border-color: #1861ac;
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-.content {
-    padding-top: 1.1rem;
+.light-mode {
+    background-color: white !important; /* Light background */
+    color: black; /* Change text color to black in light mode */
 }
 
 .valid.modified:not([type=checkbox]) {

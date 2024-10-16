@@ -1,13 +1,66 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿@* <div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">CodeLab</a>
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
             <span class="navbar-toggler-icon"></span>
         </button>
     </div>
-</div>
+</div> *@
 
-<div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
+<nav class="navbar navbar-expand-lg bg-body-tertiary" data-bs-theme="dark">
+    <div class=" container-fluid">
+        <div class="form-check form-switch text-light">
+            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" checked="@isDarkModeEnabled" @onchange="@checkBoxChanged">
+            <label class="form-check-label" for="flexSwitchCheckDefault" >Tmavý režim</label>
+        </div>
+        <a class="navbar-brand" href="#" style="margin-left: 20vw;">
+            <img alt="logo" src="images/logo.png" width="35" height="35">
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="#">Domov</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Úlohy</a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#">Pridať úlohu</a></li>
+                        <li><a class="dropdown-item" href="#">Pridať skúšku</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" aria-current="page" href="#">Skúšky</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Účet
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#">Moje úlohy</a></li>
+                        <li><a class="dropdown-item" href="#">Štatistiky</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#">Odhlásiť sa</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" aria-current="page" href="#">Prihlásiť sa</a>
+                </li>
+                <li class="nav-item">
+                    <span class="nav-link" style="pointer-events: none;">alebo</span>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" aria-current="page" href="#">Registrovať</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+@* <div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
     <nav class="flex-column">
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
@@ -23,12 +76,24 @@
             <NavLink class="nav-link" href="weather">
                 <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Weather
             </NavLink>
-        </div>
+        </div>  
     </nav>
-</div>
+</div> *@
 
 @code {
     private bool collapseNavMenu = true;
+
+    private bool isDarkModeEnabled = false;
+
+    private string currentTheme => isDarkModeEnabled ? "dark-mode" : "light-mode";
+
+    private void checkBoxChanged(ChangeEventArgs e)
+    {
+        if (e.Value != null)
+        {
+            isDarkModeEnabled = (bool)e.Value;
+        }
+    }
 
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
 
