@@ -2,40 +2,236 @@
 
 <PageTitle>Home</PageTitle>
 
-<div class="custom_table d-flex justify-content-center">
-    <table class="table table-striped table-dark w-50 mt-5">
-        <thead>
-        <tr>
-            <th scope="col">#</th>
-            <th scope="col">Stav</th>
-            <th scope="col">Názov</th>
-            <th scope="col">Prijatie</th>
-            <th scope="col">Náročnosť</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <th scope="row">1</th>
-            <td>Mark</td>
-            <td>Otto</td>
-            <td>Otto</td>
-            <td>Otto</td>
-        </tr>
-        <tr>
-            <th scope="row">2</th>
-            <td>Jacob</td>
-            <td>Thornton</td>
-            <td>Otto</td>
-            <td>Otto</td>
-        </tr>
-        <tr>
-            <th scope="row">3</th>
-            <td>Larry the Bird</td>
-            <td>Otto</td>
-            <td>Otto</td>
-            <td>Otto</td>
-        </tr>
-        </tbody>
-    </table>
+<div>
+    <div class="d-flex justify-content-center mt-5 gap-1">
+        <div class="d-flex flex-column align-items-start w-50">
+        <div class="sorting_buttons d-flex justify-content-start mt-5 gap-1 mb-1">
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle bg-dark" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Zoznam
+                </button>
+                <ul class="dropdown-menu dropdown-menu-dark">
+                    <li><a class="dropdown-item" href="#">50 najobľúbenejších otázok </a></li>
+                    <li><a class="dropdown-item" href="#">50 najľahších otázok</a></li>
+                    <li><a class="dropdown-item" href="#">50 najťažších otázok</a></li>
+                </ul>
+            </div>
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle bg-dark" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Obťažnosť
+                </button>
+                <ul class="dropdown-menu dropdown-menu-dark">
+                    <li><a class="dropdown-item" href="#" style="color:green;">Ľahká</a></li>
+                    <li><a class="dropdown-item" href="#" style="color:darkorange;">Stredná</a></li>
+                    <li><a class="dropdown-item" href="#" style="color:red;">Ťažká</a></li>
+                </ul>
+            </div>
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle bg-dark" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Značky
+                </button>
+                <ul class="dropdown-menu dropdown-menu-dark">
+                    <li><a class="dropdown-item" href="#">Array</a></li>
+                    <li><a class="dropdown-item" href="#">String</a></li>
+                    <li><a class="dropdown-item" href="#">Sorting</a></li>
+                    <li><a class="dropdown-item" href="#">Hash Table</a></li>
+                </ul>
+            </div>
+        </div>
+            <div class="custom_table w-100">
+                <table class="table table-striped table-dark">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Stav</th>
+                            <th scope="col">Názov</th>
+                            <th scope="col">Prijatie</th>
+                            <th scope="col">Náročnosť</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="row">1</th>
+                            <td></td>
+                            <td>Maximum Swap</td>
+                            <td>49.8%</td>
+                            <td>Easy</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">2</th>
+                            <td></td>
+                            <td>Add Two Numbers</td>
+                            <td>44.3%</td>
+                            <td>Medium</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">3</th>
+                            <td></td>
+                            <td>Longest Substring Without Repeating Characters</td>
+                            <td>35.6%</td>
+                            <td>Medium</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">4</th>
+                            <td></td>
+                            <td>Longest Palindromic Substring</td>
+                            <td>34.6%</td>
+                            <td>Medium</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">5</th>
+                            <td></td>
+                            <td>Zigzag Conversion</td>
+                            <td>49.5%</td>
+                            <td>Medium</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">6</th>
+                            <td></td>
+                            <td>Reverse Integer</td>
+                            <td>29.3%</td>
+                            <td>Hard</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">7</th>
+                            <td></td>
+                            <td>String to Integer (atoi)</td>
+                            <td>18.0%</td>
+                            <td>Medium</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">8</th>
+                            <td></td>
+                            <td>Container With Most Water</td>
+                            <td>56.4%</td>
+                            <td>Medium</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">9</th>
+                            <td></td>
+                            <td>Integer to Roman</td>
+                            <td>66.6%</td>
+                            <td>Medium</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">10</th>
+                            <td></td>
+                            <td>3Sum</td>
+                            <td>35.5%</td>
+                            <td>Medium</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">11</th>
+                            <td></td>
+                            <td>3Sum Closest</td>
+                            <td>46.1%</td>
+                            <td>Medium</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">12</th>
+                            <td></td>
+                            <td>Letter Combinations of a Phone Number</td>
+                            <td>62.0%</td>
+                            <td>Medium</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">13</th>
+                            <td></td>
+                            <td>4Sum</td>
+                            <td>36.9%</td>
+                            <td>Hard</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">14</th>
+                            <td></td>
+                            <td>Remove Nth Node From End of List</td>
+                            <td>47.0%</td>
+                            <td>Medium</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">15</th>
+                            <td></td>
+                            <td>Generate Parentheses</td>
+                            <td>75.7%</td>
+                            <td>Easy</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">16</th>
+                            <td></td>
+                            <td>Swap Nodes in Pairs</td>
+                            <td>65.5%</td>
+                            <td>Medium</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">17</th>
+                            <td></td>
+                            <td>Divide Two Integers</td>
+                            <td>17.8%</td>
+                            <td>Hard</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">18</th>
+                            <td></td>
+                            <td>Next Permutation</td>
+                            <td>41.3%</td>
+                            <td>Medium</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">19</th>
+                            <td></td>
+                            <td>Search in Rotated Sorted Array</td>
+                            <td>41.7%</td>
+                            <td>Medium</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">20</th>
+                            <td></td>
+                            <td>Find First and Last Position of Element in Sorted Array</td>
+                            <td>45.4%</td>
+                            <td>Medium</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">21</th>
+                            <td></td>
+                            <td>Valid Sudoku</td>
+                            <td>60.8%</td>
+                            <td>Medium</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">22</th>
+                            <td></td>
+                            <td>Count and Say</td>
+                            <td>56.7%</td>
+                            <td>Hard</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">23</th>
+                            <td></td>
+                            <td>Combination Sum</td>
+                            <td>72.9%</td>
+                            <td>Medium</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">24</th>
+                            <td></td>
+                            <td>Combination Sum II</td>
+                            <td>56.6%</td>
+                            <td>Medium</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="navigation mb-2">
+        <nav aria-label="Page navigation example" class="d-flex justify-content-around ">
+            <ul class="pagination bg-dark">
+                <li class="page-item"><a class="page-link bg-dark border-1 link-primary" href="#">Predchádzajúce</a></li>
+                <li class="page-item"><a class="page-link bg-dark border-1 link-primary" href="#">1</a></li>
+                <li class="page-item"><a class="page-link bg-dark border-1 link-primary" href="#">2</a></li>
+                <li class="page-item"><a class="page-link bg-dark border-1 link-primary" href="#">3</a></li>
+                <li class="page-item"><a class="page-link bg-dark border-1 link-primary" href="#">Nasledujúce</a></li>
+            </ul>
+        </nav>
+    </div>
 </div>
-
