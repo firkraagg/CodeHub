@@ -16,6 +16,17 @@ html, body {
     color: #6c757d;
 }
 
+.custom-table {
+    width:50%;
+}
+
+.sorting_buttons {
+    display: flex;
+    justify-content: start;
+    flex-wrap: wrap;
+    margin-bottom: 0.5rem;
+}
+
 .user-auth {
     display: flex;
     justify-content: center;
@@ -27,8 +38,16 @@ html, body {
     margin-bottom: 1rem;
 }
 
-/*Pod tymto nie sub moje pravidla*/
+.navbar .navbar-brand {
+    margin-left: 20vw;
+}
 
+.navbar-brand .logo-image {
+    width: 2.5vw;
+    height: auto;
+}
+
+/*Pod tymto uz nie su moje pravidla*/
 .valid.modified:not([type=checkbox]) {
     outline: 1px solid #26b050;
 }
