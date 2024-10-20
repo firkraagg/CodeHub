@@ -1,5 +1,5 @@
 ﻿@inherits LayoutComponentBase
-<div class="page">
+<div class="page d-flex flex-column min-vh-100">
     <div class="sidebar">
         <NavMenu />
     </div>
@@ -9,10 +9,8 @@
             @Body
         </article>
 
-        <nav class="blockquote-footer bg-body-tertiary position-relative bottom-0 w-100 m-0 h-25" data-bs-theme="dark">
-            <div class="text-center mt-2">
-                <p class="m-0 py-1">&copy; Daniel Zuzčák. All Rights Reserved.</p>
-            </div>
-        </nav>
     </main>
+    <div class="custom-footer">
+        <Footer />
+    </div>
 </div>
