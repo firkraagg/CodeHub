@@ -2,13 +2,32 @@ html, body {
     background-color: #181b1b !important;
     margin: 0 !important;
     padding: 0 !important;
-    /*text-align: justify;*/
-    transition: background-color 0.5s, color 0.5s;
 }
 
 .blockquote-footer {
     left: 0;
 }
+
+.row .col, .row .col-12, .row .form-select, textarea.form-control {
+    color: white !important;
+}
+
+.row .mb-3 textarea.form-control::placeholder {
+    color: #6c757d;
+}
+
+.user-auth {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.form-floating {
+    margin-bottom: 1rem;
+}
+
+/*Pod tymto nie sub moje pravidla*/
 
 .valid.modified:not([type=checkbox]) {
     outline: 1px solid #26b050;
@@ -47,9 +66,9 @@ html, body {
     color: white;
 }
 
-    .blazor-error-boundary::after {
-        content: "An error has occurred."
-    }
+.blazor-error-boundary::after {
+    content: "An error has occurred."
+}
 
 .loading-progress {
     position: relative;
@@ -59,19 +78,17 @@ html, body {
     margin: 20vh auto 1rem auto;
 }
 
-    .loading-progress circle {
-        fill: none;
-        stroke: #e0e0e0;
-        stroke-width: 0.6rem;
-        transform-origin: 50% 50%;
-        transform: rotate(-90deg);
-    }
-
-        .loading-progress circle:last-child {
-            stroke: #1b6ec2;
-            stroke-dasharray: calc(3.141 * var(--blazor-load-percentage, 0%) * 0.8), 500%;
-            transition: stroke-dasharray 0.05s ease-in-out;
-        }
+.loading-progress circle {
+    fill: none;
+    stroke: #e0e0e0;
+    stroke-width: 0.6rem;
+    transform-origin: 50% 50%;
+    transform: rotate(-90deg);
+}
+.loading-progress circle:last-child {
+   stroke: #1b6ec2;
+   stroke-dasharray: calc(3.141 * var(--blazor-load-percentage, 0%) * 0.8), 500%;
+   transition: stroke-dasharray 0.05s ease-in-out;}
 
 .loading-progress-text {
     position: absolute;
@@ -80,9 +97,9 @@ html, body {
     inset: calc(20vh + 3.25rem) 0 auto 0.2rem;
 }
 
-    .loading-progress-text:after {
-        content: var(--blazor-load-percentage-text, "Loading");
-    }
+.loading-progress-text:after {
+    content: var(--blazor-load-percentage-text, "Loading");
+}
 
 code {
     color: #c02d76;

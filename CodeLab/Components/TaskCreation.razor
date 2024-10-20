@@ -1,0 +1,103 @@
+﻿<div class="container text-center fw-bold mt-3">
+    <div class="row">
+        <div class="col-12 col-md-6 text-start my-2">
+            Výber programovacieho jazyka
+        </div>
+        <div class="col mb-3">
+            <select class="form-select bg-dark" aria-label="Default select example">
+                <option selected disabled hidden>Vyber programovací jazyk</option>
+                <option value="1">Java</option>
+                <option value="2">C#</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 col-md-6 text-start my-2">
+            Výber obťažnosti
+        </div>
+        <div class="col-12 col-md-6 mb-3">
+            <select class="form-select bg-dark" aria-label="Default select example">
+                <option selected disabled hidden>Vyber obťažnosť</option>
+                <option value="1">Ľahká</option>
+                <option value="2">Stredná</option>
+                <option value="2">Ťažká</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 col-md-6 text-start my-2">
+            Popis úlohy
+        </div>
+        <div class="mb-3 col-12 col-md-6">
+            <textarea class="form-control bg-dark" id="TaskDescription" rows="9" placeholder="Príklad: Napíšte funkciu, ktorá berie ako vstup dve celé čísla a vracia ich súčet."></textarea>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 col-md-6 text-start my-2">
+            Požadovaný vstup
+        </div>
+        <div class="mb-3 col-12 col-md-6">
+            <textarea class="form-control bg-dark" id="Input" rows="3" placeholder="a=3
+b=5"></textarea>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 col-md-6 text-start my-2">
+            Požadovaný výstup
+        </div>
+        <div class="mb-3 col-12 col-md-6">
+            <textarea class="form-control bg-dark" id="RequiredOutput" rows="3" placeholder="8"></textarea>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 col-md-6 text-start my-2">
+            Obmedzenia
+        </div>
+        <div class="mb-3 col-12 col-md-6">
+            <textarea class="form-control bg-dark" id="exampleFormControlTextarea1" rows="6" placeholder="- Celé čísla a a b môžu mať akúkoľvek hodnotu v rozsahu 32-bitových celých čísel so znamienkom
+- Obidve celé čísla musia byť kladné"></textarea>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 col-md-6 text-start my-2">
+            Tagy úlohy
+        </div>
+        <div class="mb-3 col-12 col-md-6">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="algoritmus" id="tag1">
+                <label class="form-check-label" for="tag1">
+                    Algoritmus
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="matematika" id="tag2">
+                <label class="form-check-label" for="tag2">
+                    Matematika
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="základy" id="tag3">
+                <label class="form-check-label" for="tag3">
+                    Základy
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="pokročilé" id="tag4">
+                <label class="form-check-label" for="tag4">
+                    Pokročilé
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col my-3">
+            <button class="btn btn-success me-2">Vytvoriť</button>
+            <button class="btn btn-danger">Zrušiť</button>
+        </div>
+    </div>
+</div>
+
+
+@code {
+
+}
