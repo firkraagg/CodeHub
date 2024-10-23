@@ -1,6 +1,53 @@
 html, body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background-color: #181b1b !important;
+    margin: 0 !important;
+    padding: 0 !important;
 }
+
+.blockquote-footer {
+    left: 0;
+}
+
+.row .col, .row .col-12, .row .form-select, textarea.form-control {
+    color: white !important;
+}
+
+.row .mb-3 textarea.form-control::placeholder {
+    color: #6c757d;
+}
+
+.custom-table {
+    width: 50%;
+}
+
+.sorting_buttons {
+    display: flex;
+    justify-content: start;
+    flex-wrap: wrap;
+    margin-bottom: 0.5rem;
+}
+
+.user-auth {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.form-floating {
+    margin-bottom: 1rem;
+}
+
+.navbar .navbar-brand {
+    margin-left: 20vw;
+}
+
+.navbar-brand .logo-image {
+    width: 2.5vw;
+    height: auto;
+}
+
+/*Pod tymto nie su moje pravidla*/
 
 a, .btn-link {
     color: #006bb7;
