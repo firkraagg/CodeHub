@@ -1,4 +1,8 @@
 using CodeHub.Components;
+using CodeHub.Data;
+using CodeHub.Services;
+using Microsoft.EntityFrameworkCore;
+using MudBlazor.Services;
 
 namespace CodeHub
 {
@@ -7,10 +11,13 @@ namespace CodeHub
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new NullReferenceException("No connection string in config!");
 
             // Add services to the container.
             builder.Services.AddRazorComponents()
                 .AddInteractiveServerComponents();
+            builder.Services.AddDbContextFactory<DatabaseContext>((DbContextOptionsBuilder options) => options.UseSqlServer(connectionString));
+            builder.Services.AddTransient<UserService>();
 
             var app = builder.Build();
 

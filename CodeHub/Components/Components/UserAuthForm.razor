@@ -1,29 +1,31 @@
-﻿<div class="user-auth">
+﻿@using CodeHub.Services
+
+<div class="user-auth">
     <div class="card p-lg-5 p-md-4 p-3 col-lg-4 col-md-6 col-12" data-bs-theme="dark">
         <div class="text-center mb-5">
             <img src="images/logo.png" alt="Logo" style="width: 80px;">
             <h3 class="mb-3">@Title</h3>
         </div>
-        <form>
+        <EditForm Model="@user" OnValidSubmit="HandleRegistrationAsync" FormName="@FormName">
             @if (showNickname)
-            {
+            { 
                 <div class="form-floating">
-                    <input type="email" class="form-control" id="floatingInput" placeholder="Prezývka">
-                    <label for="floatingInput">Prezývka</label>
+                    <InputText id="UsernameInput" type="text" @bind-Value="@user.Username" class="form-control" placeholder="Prezývka" />
+                    <label for="UsernameInput">Prezývka</label>
                 </div>
             }
             <div class="form-floating">
-                <input type="email" class="form-control" id="floatingInput" placeholder="meno@example.com">
-                <label for="floatingInput">E-mailová adresa</label>
+                <InputText id="EmailInput" type="email" @bind-Value="@user.Email" class="form-control" placeholder="meno@example.com"/>
+                <label for="EmailInput">E-mailová adresa</label>
             </div>
             <div class="form-floating">
-                <input type="password" class="form-control" id="floatingPassword" placeholder="Heslo">
-                <label for="floatingPassword">Heslo</label>
+                <InputText id="PasswordInput" type="password" @bind-Value="@user.Password" class="form-control" placeholder="Heslo" />
+                <label for="PasswordInput">Heslo</label>
             </div>
             @if (ShowConfirmPassword)
             {
                 <div class="form-floating mt-3">
-                    <input type="email" class="form-control" id="floatingInput" placeholder="Potvrďte heslo">
+                    <input type="password" class="form-control" id="floatingInput" placeholder="Potvrďte heslo">
                     <label for="floatingInput">Potvrďte heslo</label>
                 </div>
             }
@@ -41,6 +43,6 @@
                 </div>
             }
             <button type="submit" class="btn btn-primary">@ButtonLabel</button>
-        </form>
+        </EditForm>
     </div>
 </div>

@@ -47,6 +47,13 @@ html, body {
     height: auto;
 }
 
+/*.fixed-bottom-alert {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    z-index: 1050;
+}*/
+
 /*Pod tymto nie su moje pravidla*/
 
 a, .btn-link {
