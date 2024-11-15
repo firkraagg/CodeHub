@@ -6,7 +6,15 @@
             <img src="images/logo.png" alt="Logo" style="width: 80px;">
             <h3 class="mb-3">@Title</h3>
         </div>
-        <EditForm Model="@user" OnValidSubmit="HandleRegistrationAsync" FormName="@FormName">
+
+        @if (showAlert)
+        {
+            <div class="alert alert-danger" role="alert">
+                @alertMessage
+            </div>
+        }
+
+        <EditForm Model="@user" OnValidSubmit="HandleFormSubmitAsync" FormName="@FormName">
             @if (showNickname)
             { 
                 <div class="form-floating">

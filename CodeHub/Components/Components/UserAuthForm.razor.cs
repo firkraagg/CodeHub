@@ -20,12 +20,40 @@ public partial class UserAuthForm
 
     [SupplyParameterFromForm] private User user { get; set; } = new User();
 
-    public async Task HandleRegistrationAsync(EditContext editContext)
-    {
-        var newUser = (User)editContext.Model;
-        newUser.CreatedAt = DateTime.Now;
-        userService.AddUser(newUser);
+    private bool showAlert = false;
+    private string alertMessage;
 
-        NavigationManager.NavigateTo("/");
+    public async Task HandleFormSubmitAsync(EditContext editContext)
+    {
+        if (FormName == "RegisterForm")
+        {
+            var newUser = (User)editContext.Model;
+            newUser.CreatedAt = DateTime.Now;
+            newUser.Password = BCrypt.Net.BCrypt.EnhancedHashPassword(newUser.Password);
+            userService.AddUser(newUser);
+            NavigationManager.NavigateTo("/");
+        }
+        else if (FormName == "LoginForm")
+        {
+            var storedUser = userService.FindByEmail(user.Email);
+            if (storedUser == null)
+            {
+                alertMessage = "Používateľ s touto e-mailovou adresou neexistuje. Skontrolujte zadaný e-mail alebo sa zaregistrujte.";
+                showAlert = true;
+            }
+            else
+            {
+                bool isPasswordValid = BCrypt.Net.BCrypt.EnhancedVerify(user.Password, storedUser.Password);
+                if (isPasswordValid)
+                {
+                    NavigationManager.NavigateTo("/");
+                }
+                else
+                {
+                    alertMessage = "Zadané heslo je nesprávne. Skúste to znova.";
+                    showAlert = true;
+                }
+            }
+        }
     }
 }

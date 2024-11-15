@@ -20,5 +20,13 @@ namespace CodeHub.Services
                 context.SaveChanges();
             }
         }
+
+        public User? FindByEmail(string email)
+        {
+            using (var context = _dbContextFactory.CreateDbContext())
+            {
+                return context.Users.FirstOrDefault(u => u.Email == email);
+            }
+        }
     }
 }
