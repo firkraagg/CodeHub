@@ -21,6 +21,14 @@ namespace CodeHub.Services
             }
         }
 
+        public User? FindByUsername(string username)
+        {
+            using (var context = _dbContextFactory.CreateDbContext())
+            {
+                return context.Users.FirstOrDefault(u => u.Username == username);
+            }
+        }
+
         public User? FindByEmail(string email)
         {
             using (var context = _dbContextFactory.CreateDbContext())
