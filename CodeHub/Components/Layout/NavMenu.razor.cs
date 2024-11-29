@@ -12,4 +12,8 @@ public partial class NavMenu
     {
         collapseNavMenu = !collapseNavMenu;
     }
+    private async Task Logout()
+    {
+        await UserService.LogoutUserAsync();
+    }
 }

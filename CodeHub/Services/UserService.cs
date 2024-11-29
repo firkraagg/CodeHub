@@ -31,6 +31,15 @@ namespace CodeHub.Services
             }
         }
 
+        public async Task DeleteUserAsync(User user)
+        {
+            using (var context = _dbContextFactory.CreateDbContext())
+            {
+                context.Users.Remove(user);
+                await context.SaveChangesAsync();
+            }
+        }
+
         public async Task<User?> FindByUsernameAsync(string username)
         {
             using (var context = _dbContextFactory.CreateDbContext())
@@ -47,6 +56,14 @@ namespace CodeHub.Services
             }
         }
 
+        public async Task<List<User>> GetAllUsersAsync()
+        {
+            using (var context = _dbContextFactory.CreateDbContext())
+            {
+                return await context.Users.ToListAsync();
+            }
+        }
+
         public async Task<User?> CreateUserFromRegistrationModelAsync(RegistrationModel rm)
         {
             using (var context = _dbContextFactory.CreateDbContext())
@@ -56,7 +73,8 @@ namespace CodeHub.Services
                     Username = rm.Username,
                     Email = rm.Email,
                     PasswordHash = BCrypt.Net.BCrypt.EnhancedHashPassword(rm.Password),
-                    CreatedAt = DateTime.Now
+                    CreatedAt = DateTime.Now,
+                    Role = "Študent"
                 };
 
                 await AddUserAsync(user);
@@ -76,13 +94,23 @@ namespace CodeHub.Services
             return storedUser;
         }
 
+        public async Task LogoutUserAsync()
+        {
+            var session = _httpContextAccessor.HttpContext?.Session;
+            if (session != null)
+            { 
+                session.Remove("authToken");
+            }
+        }
+
         public string CreateToken(User user)
         {
             List<Claim> claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, user.Username),
                 new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Role, user.Role)
             };
             
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:Token").Value!));

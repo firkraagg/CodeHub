@@ -22,7 +22,7 @@
         <EditForm Model="@lm" OnValidSubmit="HandleFormSubmitAsync" FormName="Login">
             <DataAnnotationsValidator />
             <div class="form-floating">
-                <InputText id="EmailInput" type="email" @bind-Value="@lm.Email" class="form-control" placeholder="meno@example.com" />
+                <InputText id="EmailInput" type="text" @bind-Value="@lm.Email" class="form-control" placeholder="meno@example.com" />
                 <label for="EmailInput">E-mailová adresa</label>
                 <ValidationMessage For="@(() => lm.Email)" />
             </div>

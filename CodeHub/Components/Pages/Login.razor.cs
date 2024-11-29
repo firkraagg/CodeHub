@@ -34,6 +34,7 @@ public partial class Login
 
     public async Task HandleFormSubmitAsync(EditContext editContext)
     {
+        _alertColor = "alert-danger";
         var storedUser = await userService.FindByEmailAsync(lm.Email);
         if (storedUser == null)
         {
