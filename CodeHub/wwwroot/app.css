@@ -20,6 +20,23 @@ html, body {
     width: 50%;
 }
 
+.table-gradient tbody tr:nth-child(even) td {
+    background: rgb(33,33,33);
+    background: linear-gradient(0deg, rgba(33,33,33,1) 4%, rgba(47,47,47,0.9920343137254902) 30%);
+    color: white;
+}
+
+.table-gradient tbody tr:nth-child(odd) td {
+    background: rgb(19,19,19);
+    background: linear-gradient(0deg, rgba(19,19,19,1) 4%, rgba(36,36,36,0.9920343137254902) 30%);
+    color: white;
+}
+
+.background-custom {
+    background: rgb(15,15,15);
+    background: linear-gradient(90deg, rgba(15,15,15,1) 0%, rgba(17,23,25,1) 25%, rgba(19,22,23,1) 50%, rgba(17,23,25,1) 75%, rgba(15,15,15,1) 100%);
+}
+
 .sorting_buttons {
     display: flex;
     justify-content: start;

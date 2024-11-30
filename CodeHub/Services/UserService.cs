@@ -36,6 +36,15 @@ namespace CodeHub.Services
             }
         }
 
+        public async Task EditUserAsync(User user)
+        {
+            using (var context = _dbContextFactory.CreateDbContext())
+            {
+                context.Users.Update(user);
+                await context.SaveChangesAsync();
+            }
+        }
+
         public async Task DeleteUserAsync(User user)
         {
             using (var context = _dbContextFactory.CreateDbContext())

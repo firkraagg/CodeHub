@@ -64,9 +64,11 @@
                     </ul>
                 </NotAuthorized>
                 <Authorized>
-                    <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="#" @onclick="Logout">Odhlásiť sa</a>
-                    </li>
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" aria-current="page" href="#" @onclick="Logout">Odhlásiť sa</a>
+                        </li>
+                    </ul>
                 </Authorized>
             </AuthorizeView>
         </div>
