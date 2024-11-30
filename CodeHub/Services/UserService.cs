@@ -20,6 +20,11 @@ namespace CodeHub.Services
             _dbContextFactory = dbContextFactory;
             _configuration = configuration;
             _httpContextAccessor = httpContextAccessor;
+
+            if (_httpContextAccessor.HttpContext?.Response.HasStarted == false)
+            {
+                _httpContextAccessor.HttpContext.Session.SetString("initialized", "true");
+            }
         }
 
         public async Task AddUserAsync(User user)
