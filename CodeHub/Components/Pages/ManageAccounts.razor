@@ -1,0 +1,122 @@
+﻿@page "/manage-accounts"
+
+@using CodeHub.Services
+@inject UserService UserService
+
+<PageTitle>Manage Accounts</PageTitle>
+
+<AuthorizeView Roles="Admin">
+    <Authorized>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="table-responsive">
+                        <table class="table table-gradient">
+                            <thead class="table-dark">
+                            <tr>
+                                <th scope="col">ID</th>
+                                <th scope="col">Prezývka</th>
+                                <th scope="col">Dátum vytvorenia</th>
+                                <th scope="col">Rola</th>
+                                <th scope="col">E-mail</th>
+                                <th colspan="2" scope="col">Akcie</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @if (_users != null)
+                            {
+                                foreach (var user in _users.Skip(_skipUsersCount).Take(_showUsersCount).ToList())
+                                {
+                                    <tr>
+                                        <td>@user.Id</td>
+                                        <td>@user.Username</td>
+                                        <td>@user.CreatedAt</td>
+                                        <td>@user.Role</td>
+                                        <td>@user.Email</td>
+                                        <td><button type="button" class="btn btn-danger container-fluid" @onclick="@(async () => await DeleteUser(user))"><i class="fa-solid fa-trash-can"></i></button></td>
+                                        <td><button type="button" class="btn btn-primary container-fluid" @onclick="@(() => SetActualUser(user))"><i class="fa-solid fa-pen-to-square"></i></button></td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="4">Žiadne údaje.</td>
+                                </tr>
+                            }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="background-custom text-white p-3 h-100">
+                        <h3>Informácie o používateľovi</h3>
+                        <div class="row">
+                            <div class="col-6 col-md-6 text-start my-2">
+                                Prezývka:
+                            </div>
+                            <div class="mb-3 col-12 col-md-12">
+                                <textarea class="form-control bg-dark" id="UsernameDescription" @bind="_actualUser.Username"></textarea>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-12 col-md-6 text-start my-2">
+                                Rola:
+                            </div>
+                            <div class="col-12 col-md-12">
+                                <select class="form-select bg-dark text-white" aria-label="Default select example">
+                                    <option selected disabled hidden>Vybrať</option>
+                                    <option value="1">Admin</option>
+                                    <option value="2">Učiteľ</option>
+                                    <option value="3">Študent</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6 col-md-6 text-start my-2">
+                                E-mail:
+                            </div>
+                            <div class="mb-3 col-12 col-md-12">
+                                <textarea class="form-control bg-dark" id="EmailDescription" @bind="_actualUser.Email"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex align-items-center mb-3">
+                <div class="dropdown me-3">
+                    <button class="btn btn-secondary dropdown-toggle bg-dark" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Zobraziť počet: @_showUsersCount
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-dark">
+                        <li><a class="dropdown-item" @onclick="() => UpdateShowUsersCount(10)">10</a></li>
+                        <li><a class="dropdown-item" @onclick="() => UpdateShowUsersCount(15)">15</a></li>
+                        <li><a class="dropdown-item" @onclick="() => UpdateShowUsersCount(20)">20</a></li>
+                    </ul>
+                </div>
+                <div class="navigation">
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination mb-0 d-flex justify-content-center">
+                            <li class="page-item">
+                                <a class="page-link bg-dark" aria-label="Previous" @onclick="() => UpdateSkipUsersCount(-_showUsersCount)">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link bg-dark" aria-label="Next" @onclick="() => UpdateSkipUsersCount(_showUsersCount)">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        <div align="center" style="color: ghostwhite">
+            <h1>Prístup zamietnutý</h1>
+            <p>Nemáte oprávnenie na zobrazenie tejto stránky.</p>
+        </div>
+    </NotAuthorized>
+</AuthorizeView>
