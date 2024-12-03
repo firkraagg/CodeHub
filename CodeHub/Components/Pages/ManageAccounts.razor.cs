@@ -5,9 +5,10 @@ namespace CodeHub.Components.Pages;
 public partial class ManageAccounts
 {
     private List<User> _users = new List<User>();
-    private int _showUsersCount = 20;
+    private int _showUsersCount = 10;
     private int _skipUsersCount = 0;
-    private User _actualUser = new User();
+    private User _editingUser = new User();
+
     protected override async Task OnInitializedAsync()
     {
         _users = await UserService.GetAllUsersAsync();
@@ -20,10 +21,17 @@ public partial class ManageAccounts
         StateHasChanged();
     }
 
-    public async Task EditUser(User user)
+    public async Task EditUser()
     {
-        
-        //await UserService.EditUserAsync(user);
+        var user = _users.FirstOrDefault(u => u.Id == _editingUser.Id);
+        if (user != null)
+        {
+            user.Username = _editingUser.Username;
+            user.Role = _editingUser.Role;
+            user.Email = _editingUser.Email;
+            await UserService.EditUserAsync(user);
+        }
+
         StateHasChanged();
     }
 
@@ -44,7 +52,16 @@ public partial class ManageAccounts
 
     public void SetActualUser(User user)
     {
-        _actualUser = user;
+        _editingUser = new User()
+        {
+            Id = user.Id,
+            Username = user.Username,
+            PasswordHash = user.PasswordHash,
+            Email = user.Email,
+            Role = user.Role,
+            CreatedAt = user.CreatedAt
+        };
+
         StateHasChanged();
     }
 }

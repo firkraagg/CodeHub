@@ -111,10 +111,8 @@ namespace CodeHub.Services
         public async Task LogoutUserAsync()
         {
             var session = _httpContextAccessor.HttpContext?.Session;
-            if (session != null)
-            { 
-                session.Remove("authToken");
-            }
+            session?.Remove("authToken");
+            session?.Clear();
         }
 
         public string CreateToken(User user)
