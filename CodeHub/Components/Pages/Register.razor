@@ -1,0 +1,47 @@
+﻿@page "/register"
+
+<PageTitle>Register</PageTitle>
+
+<div class="user-auth mb-5">
+    <div class="card p-lg-5 p-md-4 p-3 col-lg-4 col-md-6 col-12" data-bs-theme="dark">
+        <div class="text-center mb-5">
+            <img src="images/logo.png" alt="Logo" style="width: 80px;">
+            <h3 class="mb-3">Registrácia</h3>
+        </div>
+
+        @if (_showAlert)
+        {
+            <div class="alert @_alertColor" role="alert">
+                @_alertMessage
+            </div>
+        }
+
+        <EditForm Model="@rm" OnValidSubmit="HandleFormSubmitAsync" FormName="Register">
+            <DataAnnotationsValidator />
+            <div class="form-floating">
+                <InputText id="UsernameInput" type="text" @bind-Value="@rm.Username" class="form-control" placeholder="Prezývka" />
+                <label for="UsernameInput">Prezývka</label>
+                <ValidationMessage For="@(() => rm.Username)" />
+            </div>
+            <div class="form-floating">
+                <InputText id="EmailInput" type="email" @bind-Value="@rm.Email" class="form-control" placeholder="meno@example.com" />
+                <label for="EmailInput">E-mailová adresa</label>
+                <ValidationMessage For="@(() => rm.Email)" />
+            </div>
+            <div class="form-floating">
+                <InputText id="PasswordInput" type="password" @bind-Value="@rm.Password" class="form-control" placeholder="Heslo" />
+                <label for="PasswordInput">Heslo</label>
+                <ValidationMessage For="@(() => rm.Password)" />
+            </div>
+            <div class="form-floating mt-3">
+                <InputText id="ConfirmPasswordInput" type="password" @bind-Value="@rm.ConfirmPassword" class="form-control" placeholder="Potvrďte heslo" />
+                <label for="floatingInput">Potvrďte heslo</label>
+                <ValidationMessage For="@(() => rm.ConfirmPassword)"/>
+            </div>
+            <div id="passwordHelpBlock" class="form-text pb-4">
+                Vaše heslo musí mať aspoň 8 znakov a nie viac ako 24 znakov, musí obsahovať písmená, číslice a špeciálne znaky.
+            </div>
+            <button type="submit" class="btn btn-primary">Zaregistrovať sa</button>
+        </EditForm>
+    </div>
+</div>
