@@ -18,20 +18,22 @@ namespace CodeHub.Components.Pages
 
         public async Task HandleFormSubmitAsync(EditContext editContext)
         {
-            _alertColor = "alert-danger";
 
             if (await userService.FindByUsernameAsync(rm.Username) != null)
             {
+                _alertColor = "alert-danger";
                 _alertMessage = "Používate¾ s týmto používate¾ským menom už existuje. Zvo¾te iné používate¾ské meno.";
                 _showAlert = true;
             }
             else if (await userService.FindByEmailAsync(rm.Email) != null)
             {
+                _alertColor = "alert-danger";
                 _alertMessage = "Používate¾ s touto e-mailovou adresou už existuje. Skontrolujte zadaný e-mail alebo sa prihláste.";
                 _showAlert = true;
             }
             else
             {
+                _alertColor = "alert-success";
                 var newUser = (RegistrationModel)editContext.Model;
                 await userService.CreateUserFromRegistrationModelAsync(newUser);
                 NavigationManager.NavigateTo("/login?message=registered");

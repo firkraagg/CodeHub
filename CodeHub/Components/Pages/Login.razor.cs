@@ -34,15 +34,16 @@ public partial class Login
 
     public async Task HandleFormSubmitAsync(EditContext editContext)
     {
-        _alertColor = "alert-danger";
         var storedUser = await userService.FindByEmailAsync(lm.Email);
         if (storedUser == null)
         {
+            _alertColor = "alert-danger";
             _alertMessage = "Používateľ s touto e-mailovou adresou neexistuje. Skontrolujte zadaný e-mail alebo sa zaregistrujte.";
             _showAlert = true;
         }
         else
         {
+            _alertColor = "alert-success";  
             bool isPasswordValid = BCrypt.Net.BCrypt.EnhancedVerify(lm.Password, storedUser.PasswordHash);
             if (isPasswordValid)
             {
