@@ -17,6 +17,8 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="NetcodeHub.Packages.Components.Modal" Version="1.0.1" />
+    <PackageReference Include="NetcodeHub.Packages.Components.Toast" Version="1.0.5" />
   </ItemGroup>
 
 </Project>

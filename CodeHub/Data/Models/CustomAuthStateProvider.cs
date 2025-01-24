@@ -72,5 +72,20 @@ namespace CodeHub.Data.Models
         {
             NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
         }
+
+        public string? GetLoggedInUserId()
+        {
+            var session = _httpContextAccessor.HttpContext?.Session;
+            string token = session?.GetString("authToken");
+
+            if (!string.IsNullOrEmpty(token))
+            {
+                var claims = ParseClaimsFromJwt(token);
+                var userIdClaim = claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+                return userIdClaim?.Value;
+            }
+
+            return null;
+        }
     }
 }

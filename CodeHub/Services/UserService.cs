@@ -115,6 +115,14 @@ namespace CodeHub.Services
             session?.Clear();
         }
 
+        public async Task<User?> GetUserByIdAsync(string userId)
+        {
+            using (var context = _dbContextFactory.CreateDbContext())
+            {
+                return await context.Users.FirstOrDefaultAsync(u => u.Id.ToString() == userId);
+            }
+        }
+
         public string CreateToken(User user)
         {
             List<Claim> claims = new List<Claim>

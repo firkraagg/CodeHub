@@ -1,0 +1,61 @@
+﻿@page "/userprofile"
+@using CodeHub.Services
+@using CodeHub.Data.Models
+
+@inject UserService UserService
+
+<PageTitle>User Profile</PageTitle>
+
+<AuthorizeView Roles="Admin,Teacher,Student">
+    <Authorized>
+        <div class="container-fluid text-center p-0 m-0 min-vh-100 d-flex flex-column">
+            <div class="row text-white flex-grow-1 m-0">
+                <div class="col-3 custom-bg-profile-left p-0">
+                    <img class="circular--square mt-4 mb-4" src="images/woman.jpg" />
+                    @if (_user != null)
+                    {
+                        <h2 class="pb-4 text-uppercase">@_user.Username</h2>
+                    }
+                    else
+                    {
+                        <h2 class="pb-4 text-uppercase">Načítavanie...</h2>
+                    }
+                    <div class="d-grid gap-2">
+                        <button class="btn custom-bg-profile-left text-white p-2">Upraviť profil</button>
+                        <button class="btn custom-bg-profile-left text-white p-2">Moje úlohy</button>
+                        <button class="btn text-danger custom-bg-profile-left p-2" onclick="DeleteAccount()">Vymazať účet</button>
+                    </div>
+                </div>
+        
+                <div class="col-9 custom-bg-profile-right p-0">col-9</div>
+            </div>
+        </div>
+        
+        @if (_showModal)
+        {
+            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            ...
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary">Save changes</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </Authorized>
+    <NotAuthorized>
+        <div align="center" style="color: ghostwhite">
+            <h1>Prístup zamietnutý</h1>
+            <p>Nemáte oprávnenie na zobrazenie tejto stránky.</p>
+        </div>
+    </NotAuthorized>
+</AuthorizeView>

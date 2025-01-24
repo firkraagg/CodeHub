@@ -1,20 +1,20 @@
 ﻿@page "/manage-accounts"
 
 @using CodeHub.Services
+@using NetcodeHub.Packages.Components.Modal
 @inject UserService UserService
 
 <PageTitle>Manage Accounts</PageTitle>
 
 <AuthorizeView Roles="Admin">
     <Authorized>
-        <div class="container-fluid">
+        <div class="container-fluid px-4 pt-3">
             <div class="row">
-                <div class="col-md-8">
+                <div>
                     <div class="table-responsive">
                         <table class="table table-gradient">
                             <thead class="table-dark">
                             <tr>
-                                <th scope="col">ID</th>
                                 <th scope="col">Prezývka</th>
                                 <th scope="col">Dátum vytvorenia</th>
                                 <th scope="col">Rola</th>
@@ -28,12 +28,11 @@
                                 foreach (var user in _users.Skip(_skipUsersCount).Take(_showUsersCount).ToList())
                                 {
                                     <tr>
-                                        <td>@user.Id</td>
                                         <td>@user.Username</td>
                                         <td>@user.CreatedAt</td>
                                         <td>@user.Role</td>
                                         <td>@user.Email</td>
-                                        <td><button type="button" class="btn btn-danger container-fluid" @onclick="@(async () => await DeleteUser(user))"><i class="fa-solid fa-trash-can"></i></button></td>
+                                        <td><button type="button" class="btn btn-danger container-fluid" @onclick="@(() => ShowDeleteModal(user))"><i class="fa-solid fa-trash-can"></i></button></td>
                                         <td><button type="button" class="btn btn-primary container-fluid" @onclick="@(() => SetActualUser(user))"><i class="fa-solid fa-pen-to-square"></i></button></td>
                                     </tr>
                                 }
@@ -48,46 +47,8 @@
                         </table>
                     </div>
                 </div>
-                <div class="col-md-4 mb-3">
-                    <div class="background-custom text-white p-3 h-100">
-                        <h3>Informácie o používateľovi</h3>
-                        <div class="row">
-                            <div class="col-6 col-md-6 text-start my-2">
-                                Prezývka:
-                            </div>
-                            <div class="mb-3 col-12 col-md-12">
-                                <textarea class="form-control bg-dark" id="UsernameDescription" @bind="_editingUser.Username"></textarea>
-                            </div>
-                        </div>
-                        <div class="row mb-3">
-                            <div class="col-12 col-md-6 text-start my-2">
-                                Rola:
-                            </div>
-                            <div class="col-12 col-md-12">
-                                <select class="form-select bg-dark text-white" aria-label="Default select example" @bind="_editingUser.Role">
-                                    <option selected disabled hidden value="@_editingUser.Role">@_editingUser.Role</option>
-                                    <option value="Admin">Admin</option>
-                                    <option value="Učiteľ">Učiteľ</option>
-                                    <option value="Študent">Študent</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-6 col-md-6 text-start my-2">
-                                E-mail:
-                            </div>
-                            <div class="mb-3 col-12 col-md-12">
-                                <textarea class="form-control bg-dark" id="EmailDescription" @bind="_editingUser.Email"></textarea>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col my-3">
-                                <button class="btn btn-success me-2" onclick="@EditUser">Aktualizovať</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
+
             <div class="d-flex align-items-center mb-3">
                 <div class="dropdown me-3">
                     <button class="btn btn-secondary dropdown-toggle bg-dark" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -117,6 +78,80 @@
                 </div>
             </div>
         </div>
+
+        @if (_showModal)
+        {
+            <div class="modal d-block" style="background-color: rgba(0,0,0.1,0.7);" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content background-custom">
+                            <div class="modal-header text-white">
+                                <h5 class="modal-title">Upraviť používateľa</h5>
+                                <button type="button" class="btn-close btn-close-white" @onclick="CloseModal" aria-label="Zatvoriť"></button>
+                                </div>
+                        <div class="modal-body text-white">
+                            <div class="mb-3">
+                                <label for="UsernameDescription" class="form-label">Prezývka:</label>
+                                <input type="text" class="form-control bg-dark text-white" id="UsernameDescription" @bind="_editingUser.Username" />
+                                @if (!string.IsNullOrWhiteSpace(_usernameError))
+                                {
+                                    <div class="text-danger">@_usernameError</div>
+                                }
+                            </div>
+                            <div class="mb-3">
+                                <label for="RoleSelect" class="form-label">Rola:</label>
+                                <select class="form-select bg-dark text-white" id="RoleSelect" @bind="_editingUser.Role">
+                                    <option value="Admin">Admin</option>
+                                    <option value="Učiteľ">Učiteľ</option>
+                                    <option value="Študent">Študent</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="EmailDescription" class="form-label">E-mail:</label>
+                                <input type="email" class="form-control bg-dark text-white" id="EmailDescription" @bind="_editingUser.Email" />
+                                @if (!string.IsNullOrWhiteSpace(_emailError))
+                                {
+                                    <div class="text-danger">@_emailError</div>
+                                }
+                            </div>
+                        </div>
+                            <div class="modal-footer text-white">
+                            <button type="button" class="btn btn-secondary" @onclick="CloseModal">Zrušiť</button>
+                            <button type="button" class="btn btn-primary" @onclick="ValidateAndEditUser">Uložiť</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        
+        @if (_showDeleteModal)
+        {
+            <div class="modal d-block" style="background-color: rgba(0,0,0.1,0.7);" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content background-custom">
+                        <div class="modal-header text-white">
+                            <h5 class="modal-title">Odstrániť používateľa</h5>
+                            <button type="button" class="btn-close btn-close-white" @onclick="CloseDeleteModal" aria-label="Zatvoriť"></button>
+                        </div>
+                        <div class="modal-body text-white">
+                            <div class="mb-3 mt-3 text-center text-danger">
+                                <label for="UsernameDescription" class="form-label">Naozaj chcete odstrániť tohto používateľa?</label>
+                            </div>
+                        </div>
+                        <div class="modal-footer text-white">
+                            <button type="button" class="btn btn-secondary" @onclick="CloseDeleteModal">Zrušiť</button>
+                            <button type="button" class="btn btn-danger" @onclick="@(async () => await DeleteUser(_editingUser))">Odstrániť</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        @if (_showSuccessAlert)
+        {
+            <div class="alert alert-success" role="alert">
+                Profil bol úspešne upravený!
+            </div>
+        }
     </Authorized>
     <NotAuthorized>
         <div align="center" style="color: ghostwhite">
