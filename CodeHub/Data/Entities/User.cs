@@ -20,6 +20,7 @@ namespace CodeHub.Data.Entities
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public string Role { get; set; } = "Študent";
+        public byte[] ProfileImage { get; set; } = null!;
     }
 
 }

@@ -88,7 +88,8 @@ namespace CodeHub.Services
                     Email = rm.Email,
                     PasswordHash = BCrypt.Net.BCrypt.EnhancedHashPassword(rm.Password),
                     CreatedAt = DateTime.Now,
-                    Role = "Študent"
+                    Role = "Študent",
+                    ProfileImage = GetDefaultProfileImage()
                 };
 
                 await AddUserAsync(user);
@@ -120,6 +121,19 @@ namespace CodeHub.Services
             using (var context = _dbContextFactory.CreateDbContext())
             {
                 return await context.Users.FirstOrDefaultAsync(u => u.Id.ToString() == userId);
+            }
+        }
+
+        private byte[] GetDefaultProfileImage()
+        {
+            string defaultImagePath = "wwwroot/images/profileImage.png";
+            if (File.Exists(defaultImagePath))
+            {
+                return File.ReadAllBytes(defaultImagePath);
+            }
+            else
+            {
+                throw new FileNotFoundException("Default profile image not found.");
             }
         }
 
