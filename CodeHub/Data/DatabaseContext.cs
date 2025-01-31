@@ -13,5 +13,13 @@ namespace CodeHub.Data
         }
         public DbSet<User> Users { get; set; }
         public DbSet<Problem> Problems { get; set; }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.Problems)
+                .WithOne(p => p.User)
+                .HasForeignKey(p => p.UserID)
+                .OnDelete(DeleteBehavior.Cascade);
+        }
     }
 }

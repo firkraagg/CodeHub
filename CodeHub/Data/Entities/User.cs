@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using CodeHub.Data.Models;
 
 namespace CodeHub.Data.Entities
 {
@@ -21,6 +22,8 @@ namespace CodeHub.Data.Entities
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public string Role { get; set; } = "Študent";
         public byte[] ProfileImage { get; set; } = null!;
+        public List<Problem> Problems { get; set; } = new();
+    }
     }
 
 }
