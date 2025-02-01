@@ -56,7 +56,7 @@ namespace CodeHub.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("CodeHub.Data.Models.Problem", b =>
@@ -112,7 +112,7 @@ namespace CodeHub.Migrations
 
                     b.HasIndex("UserID");
 
-                    b.ToTable("Problems");
+                    b.ToTable("Problems", (string)null);
                 });
 
             modelBuilder.Entity("CodeHub.Data.Models.Problem", b =>

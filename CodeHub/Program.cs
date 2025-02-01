@@ -19,6 +19,7 @@ namespace CodeHub
                 .AddInteractiveServerComponents();
             builder.Services.AddDbContextFactory<DatabaseContext>((DbContextOptionsBuilder options) => options.UseSqlServer(connectionString));
             builder.Services.AddTransient<UserService>();
+            builder.Services.AddTransient<ProblemService>();
             builder.Services.AddDistributedMemoryCache();
             builder.Services.AddSession(options =>
             {

@@ -12,7 +12,7 @@ namespace CodeHub.Data.Models
         public string Title { get; set; }
         [Required(ErrorMessage = "Musíte zadať popis úlohy"), MaxLength(200)]
         public string Description { get; set; }
-        [Range(1, 100)]
+        [Range(0, 100)]
         public double Acceptance { get; set; }
 
         [Required(ErrorMessage = "Vyberte obtiažnosť")]
