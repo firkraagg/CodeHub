@@ -24,6 +24,4 @@ namespace CodeHub.Data.Entities
         public byte[] ProfileImage { get; set; } = null!;
         public List<Problem> Problems { get; set; } = new();
     }
-    }
-
 }

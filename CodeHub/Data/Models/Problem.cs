@@ -8,8 +8,9 @@ namespace CodeHub.Data.Models
     {
         [Key]
         public int Id { get; set; }
+        [Required, MaxLength(50)]
         public string Title { get; set; }
-        [Required]
+        [Required, MaxLength(200)]
         public string Description { get; set; }
         [Range(1, 100)]
         public double Acceptance { get; set; }
@@ -17,9 +18,9 @@ namespace CodeHub.Data.Models
         public int Difficulty { get; set; }
         [Required]
         public char Language { get; set; }
-        [Required]
+        [Required, MaxLength(30)]
         public string RequiredInput { get; set; }
-        [Required]
+        [Required, MaxLength(30)]
         public string RequiredOutput { get; set; }
         public string Constraints { get; set; }
         [ForeignKey("User")]
