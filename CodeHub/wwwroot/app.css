@@ -78,7 +78,17 @@ html, body {
 
 .profile-button {
     background-color: #e50000;
-} 
+}
+
+.create-problem.form-control {
+    background-color: #212529 !important;
+    color: white !important;
+}
+
+.create-problem.form-control::placeholder {
+    color: gray !important;
+    opacity: 1 !important;
+}
 
 /*.fixed-bottom-alert {
     position: fixed;
