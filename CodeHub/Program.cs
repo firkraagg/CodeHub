@@ -20,6 +20,7 @@ namespace CodeHub
             builder.Services.AddDbContextFactory<DatabaseContext>((DbContextOptionsBuilder options) => options.UseSqlServer(connectionString));
             builder.Services.AddTransient<UserService>();
             builder.Services.AddTransient<ProblemService>();
+            builder.Services.AddTransient<ProgrammingLanguageService>();
             builder.Services.AddDistributedMemoryCache();
             builder.Services.AddSession(options =>
             {

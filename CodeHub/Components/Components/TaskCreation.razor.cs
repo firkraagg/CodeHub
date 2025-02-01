@@ -1,4 +1,5 @@
-﻿using CodeHub.Data.Entities;
+﻿using System.Reflection.Metadata;
+using CodeHub.Data.Entities;
 using CodeHub.Data.Models;
 using CodeHub.Services;
 using Microsoft.AspNetCore.Components;
@@ -10,12 +11,14 @@ namespace CodeHub.Components.Components;
 public partial class TaskCreation
 {
     private Problem _problem = new();
+    private List<ProgrammingLanguage> _languages = new();
     private User? _user;
     [Inject] private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = null!;
 
     protected override async Task OnInitializedAsync()
     {
         var userId = ((CustomAuthStateProvider)AuthenticationStateProvider).GetLoggedInUserId();
+        _languages = await ProgrammingLanguageService.GetProgrammingLanguagesAsync();
         if (!string.IsNullOrEmpty(userId))
         {
             _user = await UserService.GetUserByIdAsync(userId);

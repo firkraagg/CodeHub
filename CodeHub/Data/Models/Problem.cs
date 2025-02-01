@@ -8,25 +8,34 @@ namespace CodeHub.Data.Models
     {
         [Key]
         public int Id { get; set; }
+
         [Required(ErrorMessage = "Musíte zadať názov úlohy"), MaxLength(50)]
         public string Title { get; set; }
+
         [Required(ErrorMessage = "Musíte zadať popis úlohy"), MaxLength(200)]
         public string Description { get; set; }
+
         [Range(0, 100)]
         public double Acceptance { get; set; }
 
         [Required(ErrorMessage = "Vyberte obtiažnosť")]
         public int Difficulty { get; set; }
-        [Required(ErrorMessage = "Vyberte programovací jazyk")]
-        public string Language { get; set; }
+
         [Required(ErrorMessage = "Pole nebolo vyplnené"), MaxLength(30)]
         public string RequiredInput { get; set; }
+
         [Required(ErrorMessage = "Pole nebolo vyplnené"), MaxLength(30)]
         public string RequiredOutput { get; set; }
+
         public string Constraints { get; set; }
+
         public string Hints { get; set; }
 
-        [ForeignKey("User")]
+        [ForeignKey(nameof(ProgrammingLanguage))]
+        public int LanguageID { get; set; }
+        public virtual ProgrammingLanguage ProgrammingLanguage { get; set; }
+
+        [ForeignKey(nameof(User))]
         public int UserID { get; set; }
         public virtual User User { get; set; }
     }

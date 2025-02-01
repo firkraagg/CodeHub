@@ -4,6 +4,7 @@ using CodeHub.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CodeHub.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20250201151714_Added_programmingLanguage_table")]
+    partial class Added_programmingLanguage_table
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -37,7 +40,7 @@ namespace CodeHub.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ProgrammingLanguage", (string)null);
+                    b.ToTable("ProgrammingLanguage");
                 });
 
             modelBuilder.Entity("CodeHub.Data.Entities.User", b =>
@@ -74,7 +77,7 @@ namespace CodeHub.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("CodeHub.Data.Models.Problem", b =>
@@ -131,7 +134,7 @@ namespace CodeHub.Migrations
 
                     b.HasIndex("UserID");
 
-                    b.ToTable("Problems", (string)null);
+                    b.ToTable("Problems");
                 });
 
             modelBuilder.Entity("CodeHub.Data.Models.Problem", b =>

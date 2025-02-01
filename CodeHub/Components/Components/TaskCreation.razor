@@ -2,96 +2,108 @@
 @inject NavigationManager NavigationManager
 @inject UserService UserService
 @inject ProblemService ProblemService
+@inject ProgrammingLanguageService ProgrammingLanguageService
 
-<EditForm Model="@_problem" OnValidSubmit="HandleCreateProblemFormSubmitAsync" FormName="CreateProblem">
-    <DataAnnotationsValidator />
-    <div class="container text-center fw-bold mt-3">
-        <div class="row">
-            <div class="col-12 col-md-6 text-start my-2">
-                Názov úlohy
-            </div>
-            <div class="mb-3 col-12 col-md-6">
-                <InputText id="title" type="text" @bind-Value="_problem.Title" class="form-control create-problem text-white" placeholder="Súčet dvoch čísel" />
-                <ValidationMessage For="@(() => _problem.Title)" />
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-12 col-md-6 text-start my-2">
-                Výber programovacieho jazyka
-            </div>
-            <div class="col mb-3">
-                <InputSelect @bind-Value="_problem.Language" class="form-select bg-dark" aria-label="Default select example">
-                    <option selected disabled hidden>Vyber programovací jazyk</option>
-                    <option value="Java">Java</option>
-                    <option value="C#">C#</option>
-                </InputSelect>
-                <ValidationMessage For="@(() => _problem.Language)" />
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-12 col-md-6 text-start my-2">
-                Výber obťažnosti
-            </div>
-            <div class="col-12 col-md-6 mb-3">
-                <InputSelect @bind-Value="_problem.Difficulty" class="form-select bg-dark" aria-label="Default select example">
-                    <option selected disabled hidden value="0">Vyber obťažnosť</option>
-                    <option value="1" class="text-success">Ľahká</option>
-                    <option value="2" class="text-warning">Stredná</option>
-                    <option value="3" class="text-danger">Ťažká</option>
-                </InputSelect>
-                <ValidationMessage For="@(() => _problem.Difficulty)" />
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-12 col-md-6 text-start my-2">
-                Popis úlohy
-            </div>
-            <div class="mb-3 col-12 col-md-6">
-                <InputTextArea @bind-Value="_problem.Description" class="form-control bg-dark" id="TaskDescription" rows="9" placeholder="Príklad: Napíšte funkciu, ktorá berie ako vstup dve celé čísla a vracia ich súčet."></InputTextArea>
-                <ValidationMessage For="@(() => _problem.Description)" />
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-12 col-md-6 text-start my-2">
-                Požadovaný vstup
-            </div>
-            <div class="mb-3 col-12 col-md-6">
-                <InputTextArea @bind-Value="_problem.RequiredInput" class="form-control bg-dark" id="Input" rows="3" placeholder="a=3 b=5"></InputTextArea>
-                <ValidationMessage For="@(() => _problem.RequiredInput)" />
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-12 col-md-6 text-start my-2">
-                Požadovaný výstup
-            </div>
-            <div class="mb-3 col-12 col-md-6">
-                <InputTextArea @bind-Value="_problem.RequiredOutput" class="form-control bg-dark" id="RequiredOutput" rows="3" placeholder="8"></InputTextArea>
-                <ValidationMessage For="@(() => _problem.RequiredOutput)" />
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-12 col-md-6 text-start my-2">
-                Obmedzenia
-            </div>
-            <div class="mb-3 col-12 col-md-6">
-                <InputTextArea @bind-Value="_problem.Constraints" class="form-control bg-dark" id="exampleFormControlTextarea1" rows="6" placeholder="- Celé čísla a a b môžu mať akúkoľvek hodnotu v rozsahu 32-bitových celých čísel so znamienkom - Obidve celé čísla musia byť kladné"></InputTextArea>
-                <ValidationMessage For="@(() => _problem.Constraints)" />
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-12 col-md-6 text-start my-2">
-                Nápovedy
-            </div>
-            <div class="mb-3 col-12 col-md-6">
-                <InputTextArea @bind-Value="_problem.Hints" class="form-control bg-dark" id="HintFormControlTextarea" rows="6" placeholder="Pred sčítaním overte, či sú a a b väčšie ako 0"></InputTextArea>
-            </div>
-        </div>
+<AuthorizeView Roles="Admin,Učiteľ,Študent" Context="authContext">
+    <Authorized>
+        <EditForm Model="@_problem" OnValidSubmit="HandleCreateProblemFormSubmitAsync" FormName="CreateProblem">
+            <DataAnnotationsValidator />
+            <div class="container text-center fw-bold mt-3">
+                <div class="row">
+                    <div class="col-12 col-md-6 text-start my-2">
+                        Názov úlohy
+                    </div>
+                    <div class="mb-3 col-12 col-md-6">
+                        <InputText id="title" type="text" @bind-Value="_problem.Title" class="form-control create-problem text-white" placeholder="Súčet dvoch čísel" />
+                        <ValidationMessage For="@(() => _problem.Title)" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-md-6 text-start my-2">
+                        Výber programovacieho jazyka
+                    </div>
+                    <div class="col mb-3">
+                        <InputSelect @bind-Value="_problem.LanguageID" class="form-select bg-dark" aria-label="Default select example">
+                            <option value="0" selected disabled hidden>Vyber programovací jazyk</option>
+                            @foreach (var language in _languages)
+                            {
+                                <option value="@language.Id">@language.LanguageName</option>
+                            }
+                        </InputSelect>
+                        <ValidationMessage For="@(() => _problem.LanguageID)" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-md-6 text-start my-2">
+                        Výber obťažnosti
+                    </div>
+                    <div class="col-12 col-md-6 mb-3">
+                        <InputSelect @bind-Value="_problem.Difficulty" class="form-select bg-dark" aria-label="Default select example">
+                            <option selected disabled hidden value="0">Vyber obťažnosť</option>
+                            <option value="1" class="text-success">Ľahká</option>
+                            <option value="2" class="text-warning">Stredná</option>
+                            <option value="3" class="text-danger">Ťažká</option>
+                        </InputSelect>
+                        <ValidationMessage For="@(() => _problem.Difficulty)" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-md-6 text-start my-2">
+                        Popis úlohy
+                    </div>
+                    <div class="mb-3 col-12 col-md-6">
+                        <InputTextArea @bind-Value="_problem.Description" class="form-control bg-dark" id="TaskDescription" rows="9" placeholder="Príklad: Napíšte funkciu, ktorá berie ako vstup dve celé čísla a vracia ich súčet."></InputTextArea>
+                        <ValidationMessage For="@(() => _problem.Description)" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-md-6 text-start my-2">
+                        Požadovaný vstup
+                    </div>
+                    <div class="mb-3 col-12 col-md-6">
+                        <InputTextArea @bind-Value="_problem.RequiredInput" class="form-control bg-dark" id="Input" rows="3" placeholder="a=3 b=5"></InputTextArea>
+                        <ValidationMessage For="@(() => _problem.RequiredInput)" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-md-6 text-start my-2">
+                        Požadovaný výstup
+                    </div>
+                    <div class="mb-3 col-12 col-md-6">
+                        <InputTextArea @bind-Value="_problem.RequiredOutput" class="form-control bg-dark" id="RequiredOutput" rows="3" placeholder="8"></InputTextArea>
+                        <ValidationMessage For="@(() => _problem.RequiredOutput)" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-md-6 text-start my-2">
+                        Obmedzenia
+                    </div>
+                    <div class="mb-3 col-12 col-md-6">
+                        <InputTextArea @bind-Value="_problem.Constraints" class="form-control bg-dark" id="exampleFormControlTextarea1" rows="6" placeholder="- Celé čísla a a b môžu mať akúkoľvek hodnotu v rozsahu 32-bitových celých čísel so znamienkom - Obidve celé čísla musia byť kladné"></InputTextArea>
+                        <ValidationMessage For="@(() => _problem.Constraints)" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-md-6 text-start my-2">
+                        Nápovedy
+                    </div>
+                    <div class="mb-3 col-12 col-md-6">
+                        <InputTextArea @bind-Value="_problem.Hints" class="form-control bg-dark" id="HintFormControlTextarea" rows="6" placeholder="Pred sčítaním overte, či sú a a b väčšie ako 0"></InputTextArea>
+                    </div>
+                </div>
 
-        <div class="row">
-            <div class="col my-3">
-                <button class="btn btn-success me-2" type="submit">Vytvoriť</button>
-                <button class="btn btn-danger" @onclick="CancelCreation">Zrušiť</button>
+                <div class="row">
+                    <div class="col my-3">
+                        <button class="btn btn-success me-2" type="submit">Vytvoriť</button>
+                        <button class="btn btn-danger" @onclick="CancelCreation">Zrušiť</button>
+                    </div>
+                </div>
             </div>
+        </EditForm>
+    </Authorized>
+    <NotAuthorized>
+        <div align="center" style="color: ghostwhite">
+            <h3>Pre vytvorenie úlohy sa musíte najskôr prihlásiť. Ak nemáte účet, zaregistrujte sa.</h3>
         </div>
-    </div>
-</EditForm>
+    </NotAuthorized>
+</AuthorizeView>

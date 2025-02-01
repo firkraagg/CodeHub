@@ -1,4 +1,5 @@
 ﻿using CodeHub.Data;
+using CodeHub.Data.Entities;
 using CodeHub.Data.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
@@ -24,7 +25,7 @@ namespace CodeHub.Services
                     Description = problem.Description,
                     Acceptance = 0.0,
                     Difficulty = problem.Difficulty,
-                    Language = problem.Language,
+                    LanguageID = problem.LanguageID,
                     RequiredInput = problem.RequiredInput,
                     RequiredOutput = problem.RequiredOutput,
                     Constraints = problem.Constraints,
