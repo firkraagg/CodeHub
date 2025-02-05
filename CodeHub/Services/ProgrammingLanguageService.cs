@@ -17,7 +17,7 @@ namespace CodeHub.Services
         {
             using (var context = _dbContextFactory.CreateDbContext())
             {
-                return await context.ProgrammingLanguages.ToListAsync();
+                return await context.ProgrammingLanguage.ToListAsync();
             }
         }   
     }

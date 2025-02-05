@@ -13,7 +13,7 @@ namespace CodeHub.Data
         }
         public DbSet<User> Users { get; set; }
         public DbSet<Problem> Problems { get; set; }
-        public DbSet<ProgrammingLanguage> ProgrammingLanguages { get; set; }
+        public DbSet<ProgrammingLanguage> ProgrammingLanguage { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -28,14 +28,6 @@ namespace CodeHub.Data
                 .WithMany()
                 .HasForeignKey(p => p.LanguageID)
                 .OnDelete(DeleteBehavior.SetNull);
-
-            modelBuilder.Entity<ProgrammingLanguage>()
-                .ToTable("ProgrammingLanguage").HasData(
-                new ProgrammingLanguage { Id = 1, LanguageName = "Java" },
-                new ProgrammingLanguage { Id = 2, LanguageName = "C#" },
-                new ProgrammingLanguage { Id = 3, LanguageName = "C" },
-                new ProgrammingLanguage { Id = 4, LanguageName = "C++" }
-            );
         }
     }
 }

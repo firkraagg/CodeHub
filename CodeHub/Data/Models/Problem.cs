@@ -18,7 +18,7 @@ namespace CodeHub.Data.Models
         [Range(0, 100)]
         public double Acceptance { get; set; }
 
-        [Required(ErrorMessage = "Vyberte obtiažnosť")]
+        [Required, Range(1, 3, ErrorMessage = "Vyberte obťažnosť")]
         public int Difficulty { get; set; }
 
         [Required(ErrorMessage = "Pole nebolo vyplnené"), MaxLength(30)]
@@ -27,11 +27,13 @@ namespace CodeHub.Data.Models
         [Required(ErrorMessage = "Pole nebolo vyplnené"), MaxLength(30)]
         public string RequiredOutput { get; set; }
 
+        [MaxLength(500)]
         public string Constraints { get; set; }
 
+        [MaxLength(500)]
         public string Hints { get; set; }
 
-        [ForeignKey(nameof(ProgrammingLanguage))]
+        [ForeignKey(nameof(ProgrammingLanguage)), Required, Range(1, Int32.MaxValue, ErrorMessage = "Vyberte programovací jazyk")]
         public int LanguageID { get; set; }
         public virtual ProgrammingLanguage ProgrammingLanguage { get; set; }
 

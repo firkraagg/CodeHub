@@ -80,5 +80,13 @@ namespace CodeHub.Services
                 return await context.Problems.Where(p => p.UserID == userId).ToListAsync();
             }
         }
+
+        public async Task<Problem?> GetProblemByName(string title)
+        {
+            using (var context = _dbContextFactory.CreateDbContext())
+            {
+                return await context.Problems.FirstOrDefaultAsync(p => p.Title == title);
+            }
+        }
     }
 }
