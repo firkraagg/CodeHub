@@ -19,7 +19,7 @@ public partial class UserProfile
     private bool _showAlert;
     private bool _showUserProblems = false;
     private List<Problem> _userProblems = new();
-    private Problem _editingProblem = new Problem();
+    private Problem _editingProblem = null;
     private string _deleteModalText = string.Empty;
     private string _actionName = string.Empty;
     private string _alertMessage = String.Empty;
@@ -165,7 +165,7 @@ public partial class UserProfile
             await ProblemService.DeleteProblemAsync(_editingProblem);
             _userProblems.Remove(_editingProblem);
             _showUserProblems = _userProblems.Any();
-            _editingProblem = new Problem();
+            _editingProblem = null;
             _showDeleteModal = false;
             StateHasChanged();
         }

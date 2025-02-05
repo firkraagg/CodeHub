@@ -47,7 +47,7 @@
             <ul class="dropdown-menu dropdown-menu-dark">
                 @if (_tags.Any())
                 {
-                    @foreach (var tag in _tags)
+                    @foreach (var tag in _tags.GroupBy(t => t.Name).Select(group => group.First()))
                     {
                         <li>
                             <a class="dropdown-item" href="#" @onclick="() => FilterByTag(tag.Id)">@tag.Name</a>

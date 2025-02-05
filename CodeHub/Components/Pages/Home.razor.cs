@@ -54,12 +54,15 @@ public partial class Home
         _currentPage = 1;
     }
 
-    private void FilterByTag(int tagId)
+    private async Task FilterByTag(int tagId)
     {
         _selectedTagId = tagId;
-        _filteredProblems = tagId == 0
-            ? _problems
-            : _problems.Where(p => p.Tags != null && p.Tags.Any(t => t.Id == tagId)).ToList();
+        var selectedTag = _tags.FirstOrDefault(t => t.Id == tagId);
+
+        if (selectedTag != null)
+        {
+            _filteredProblems = await TagService.GetProblemsByTagAsync(selectedTag.Name);
+        }
         _currentPage = 1;
     }
 }

@@ -69,7 +69,7 @@
                     </div>
                     <div class="mb-3 col-12 col-md-6">
                         <InputSelect @bind-Value="_selectedTag" class="form-select bg-dark">
-                            @foreach (var tag in _tags)
+                            @foreach (var tag in _tags.GroupBy(t => t.Name).Select(group => group.First()))
                             {
                                 <option value="@tag.Name">@tag.Name</option>
                             }
