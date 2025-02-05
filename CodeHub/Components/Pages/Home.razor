@@ -33,9 +33,10 @@
                 Obťažnosť
             </button>
             <ul class="dropdown-menu dropdown-menu-dark">
-                <li><a class="dropdown-item" href="#" style="color:green;">Ľahká</a></li>
-                <li><a class="dropdown-item" href="#" style="color:darkorange;">Stredná</a></li>
-                <li><a class="dropdown-item" href="#" style="color:red;">Ťažká</a></li>
+                <li><a class="dropdown-item" href="#" style="color:green;" @onclick="() => FilterByDifficulty(1)">Ľahká</a></li>
+                <li><a class="dropdown-item" href="#" style="color:darkorange;" @onclick="() => FilterByDifficulty(2)">Stredná</a></li>
+                <li><a class="dropdown-item" href="#" style="color:red;" @onclick="() => FilterByDifficulty(3)">Ťažká</a></li>
+                <li><a class="dropdown-item" href="#" @onclick="() => FilterByDifficulty(0)">Všetky</a></li>
             </ul>
         </div>
         <div class="dropdown">
@@ -63,14 +64,18 @@
             </tr>
             </thead>
             <tbody>
-            @if (_problems.Any())
+            @if ((IsFiltered ? _filteredProblems : _problems).Any())
             {
                 int startIndex = (_currentPage - 1) * _maxProblemsToShow + 1;
-                foreach (var (problem, index) in _problems.Skip((_currentPage - 1) * _maxProblemsToShow).Take(_maxProblemsToShow).Select((p, i) => (p, i + startIndex)))
+                var problemsToDisplay = (IsFiltered ? _filteredProblems : _problems)
+                    .Skip((_currentPage - 1) * _maxProblemsToShow)
+                    .Take(_maxProblemsToShow);
+
+                foreach (var (problem, index) in problemsToDisplay.Select((p, i) => (p, i + startIndex)))
                 {
                     <tr>
                         <th scope="row">@index</th>
-                        <td></td> 
+                        <td></td>
                         <td>@problem.Title</td>
                         <td>@($"{problem.Acceptance:P}")</td>
                         <td>
