@@ -41,7 +41,6 @@ namespace CodeHub.Data.Models
         public int UserID { get; set; }
         public virtual User User { get; set; }
 
-        [Required]
         public ICollection<Tag> Tags { get; set; }
     }
 }

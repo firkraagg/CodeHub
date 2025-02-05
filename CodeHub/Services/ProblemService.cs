@@ -14,38 +14,48 @@ namespace CodeHub.Services
         {
             _dbContextFactory = dbContextFactory;
         }
-        
+
         public async Task<Problem?> CreateProblemAsync(Problem problem)
         {
-            using (var context = _dbContextFactory.CreateDbContext())
+            try
             {
-                var user = await context.Users.Include(u => u.Problems)
-                    .FirstOrDefaultAsync(u => u.Id == problem.UserID);
-
-                if (user == null)
+                using (var context = _dbContextFactory.CreateDbContext())
                 {
-                    return null;
+                    Console.WriteLine("Entering CreateProblemAsync");
+
+                    var user = await context.Users.Include(u => u.Problems)
+                        .FirstOrDefaultAsync(u => u.Id == problem.UserID);
+
+                    if (user == null)
+                    {
+                        Console.WriteLine($"CreateProblemAsync: No user found with ID {problem.UserID}");
+                        return null;
+                    }
+
+                    var newProblem = new Problem()
+                    {
+                        Title = problem.Title,
+                        Description = problem.Description,
+                        Acceptance = 0.0,
+                        Difficulty = problem.Difficulty,
+                        LanguageID = problem.LanguageID,
+                        RequiredInput = problem.RequiredInput,
+                        RequiredOutput = problem.RequiredOutput,
+                        Constraints = problem.Constraints,
+                        Hints = problem.Hints,
+                        Tags = problem.Tags?.Select(t => new Tag { Name = t.Name }).ToList(),
+                        UserID = problem.UserID
+                    };
+
+                    user.Problems.Add(newProblem);
+                    await AddProblemAsync(newProblem);
+                    return newProblem;
                 }
-
-                var newProblem = new Problem()
-                {
-                    Title = problem.Title,
-                    Description = problem.Description,
-                    Acceptance = 0.0,
-                    Difficulty = problem.Difficulty,
-                    LanguageID = problem.LanguageID,
-                    RequiredInput = problem.RequiredInput,
-                    RequiredOutput = problem.RequiredOutput,
-                    Constraints = problem.Constraints,
-                    Hints = problem.Hints,
-                    UserID = problem.UserID,
-                    User = user
-                };
-
-
-                user.Problems.Add(newProblem);
-                await AddProblemAsync(newProblem);
-                return newProblem;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"CreateProblemAsync: ERROR - {ex.Message}");
+                return null;
             }
         }
 

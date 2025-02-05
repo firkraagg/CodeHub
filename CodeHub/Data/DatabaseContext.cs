@@ -14,6 +14,7 @@ namespace CodeHub.Data
         public DbSet<User> Users { get; set; }
         public DbSet<Problem> Problems { get; set; }
         public DbSet<ProgrammingLanguage> ProgrammingLanguage { get; set; }
+        public DbSet<Tag> Tag { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
