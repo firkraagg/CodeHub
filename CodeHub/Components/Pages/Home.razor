@@ -13,7 +13,7 @@
                 Počet otázok
             </button>
             <ul class="dropdown-menu dropdown-menu-dark">
-                <li><a class="dropdown-item" href="#" @onclick="() => SetProblemCount(5)">zobraziť 10 otázok </a></li>
+                <li><a class="dropdown-item" href="#" @onclick="() => SetProblemCount(10)">zobraziť 10 otázok </a></li>
                 <li><a class="dropdown-item" href="#" @onclick="() => SetProblemCount(20)">zobraziť 20 otázok</a></li>
                 <li><a class="dropdown-item" href="#" @onclick="() => SetProblemCount(30)">zobraziť 30 otázok</a></li>
             </ul>
@@ -73,7 +73,24 @@
                         <td></td> 
                         <td>@problem.Title</td>
                         <td>@($"{problem.Acceptance:P}")</td>
-                        <td>@problem.Difficulty</td>
+                        <td>
+                            @if (problem.Difficulty == 1)
+                            {
+                                <span style="color: green;">Ľahká</span>
+                            }
+                            else if (problem.Difficulty == 2)
+                            {
+                                <span style="color: orange;">Stredná</span>
+                            }
+                            else if (problem.Difficulty == 3)
+                            {
+                                <span style="color: red;">Ťažká</span>
+                            }
+                            else
+                            {
+                                <span>Neznáma</span>
+                            }
+                        </td>
                     </tr>
                 }
             }

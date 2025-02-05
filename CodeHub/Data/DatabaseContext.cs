@@ -28,6 +28,15 @@ namespace CodeHub.Data
                 .WithMany()
                 .HasForeignKey(p => p.LanguageID)
                 .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<Problem>()
+                .HasMany(p => p.Tags)
+                .WithMany(t => t.Problems)
+                .UsingEntity<Dictionary<string, object>>(
+                    "ProblemTag",
+                    j => j.HasOne<Tag>().WithMany().HasForeignKey("TagId"),
+                    j => j.HasOne<Problem>().WithMany().HasForeignKey("ProblemId")
+                );
         }
     }
 }
