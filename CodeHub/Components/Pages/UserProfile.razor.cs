@@ -4,6 +4,7 @@ using CodeHub.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.IdentityModel.Tokens;
 
 namespace CodeHub.Components.Pages;
 
@@ -16,8 +17,14 @@ public partial class UserProfile
     private bool _showChangePassword = false;
     private bool _showDeleteModal = false;
     private bool _showAlert;
+    private bool _showUserProblems = false;
+    private List<Problem> _userProblems = new();
+    private Problem _editingProblem = new Problem();
+    private string _deleteModalText = string.Empty;
+    private string _actionName = string.Empty;
     private string _alertMessage = String.Empty;
     private string _alertColor = "alert-danger";
+    private bool _isLoading = false;
 
     [Inject] private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = null!;
     [SupplyParameterFromForm] private EditModel em { get; set; } = new();
@@ -29,6 +36,7 @@ public partial class UserProfile
         if (!string.IsNullOrEmpty(userId))
         {
             _user = await UserService.GetUserByIdAsync(userId);
+            _userProblems = await ProblemService.GetProblemsByUserIdAsync(_user!.Id);
             em.Username = _user!.Username;
             em.Email = _user.Email;
         }
@@ -117,21 +125,10 @@ public partial class UserProfile
         StateHasChanged();
     }
 
-    public void ShowDeleteModal()
-    {
-        _showDeleteModal = true;
-        StateHasChanged();
-    }
-
     public void CloseDeleteModal()
     {
         _showDeleteModal = false;
         StateHasChanged();
-    }
-
-    public async Task UpdateUser()
-    {
-        
     }
     
     public async Task DeleteUser()
@@ -148,4 +145,53 @@ public partial class UserProfile
         _showModal = false;
         StateHasChanged();
     }
+
+    private async Task LoadUserProblems()
+    {
+        _isLoading = true;
+        _userProblems = _user != null && _user.Id != 0
+            ? await ProblemService.GetProblemsByUserIdAsync(_user.Id) ?? new List<Problem>()
+            : new List<Problem>();
+
+        _isLoading = false;
+        _showUserProblems = true;
+        StateHasChanged();
+    }
+
+    public async Task DeleteProblem()
+    {
+        if (_editingProblem != null)
+        {
+            await ProblemService.DeleteProblemAsync(_editingProblem);
+            _userProblems.Remove(_editingProblem);
+            _showUserProblems = _userProblems.Any();
+            _editingProblem = new Problem();
+            _showDeleteModal = false;
+            StateHasChanged();
+        }
+    }
+
+    public void ShowDeleteProblemModal(Problem problem)
+    {
+        _editingProblem = problem;
+        _deleteModalText = "Naozaj chcete odstrániť túto úlohu?";
+        _actionName = "Odstrániť úlohu";
+        _showDeleteModal = true;
+        StateHasChanged();
+    }
+
+
+    public void ShowDeleteUserModal()
+    {
+        _deleteModalText = "Naozaj chcete zrušiť váš účet?";
+        _actionName = "Odstrániť účet";
+        _showDeleteModal = true;
+        StateHasChanged();
+    }
+
+    public void ShowUpdateProblem(Problem problem)
+    {
+
+    }
+
 }

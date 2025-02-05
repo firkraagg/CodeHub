@@ -2,6 +2,7 @@
 @using CodeHub.Data.Models
 @inject NavigationManager NavigationManager
 @inject CodeHub.Services.ProblemService ProblemService
+@inject CodeHub.Services.TagService TagService
 
 <PageTitle>Home</PageTitle>
 
@@ -44,10 +45,19 @@
                 Značky
             </button>
             <ul class="dropdown-menu dropdown-menu-dark">
-                <li><a class="dropdown-item" href="#">Array</a></li>
-                <li><a class="dropdown-item" href="#">String</a></li>
-                <li><a class="dropdown-item" href="#">Sorting</a></li>
-                <li><a class="dropdown-item" href="#">Hash Table</a></li>
+                @if (_tags.Any())
+                {
+                    @foreach (var tag in _tags)
+                    {
+                        <li>
+                            <a class="dropdown-item" href="#" @onclick="() => FilterByTag(tag.Id)">@tag.Name</a>
+                        </li>
+                    }
+                }
+                else
+                {
+                    <li><span class="dropdown-item disabled">Načítavam značky...</span></li>
+                }
             </ul>
         </div>
     </div>
@@ -81,15 +91,15 @@
                         <td>
                             @if (problem.Difficulty == 1)
                             {
-                                <span style="color: green;">Ľahká</span>
+                                <span class="badge bg-success">Ľahká</span>
                             }
                             else if (problem.Difficulty == 2)
                             {
-                                <span style="color: orange;">Stredná</span>
+                                <span class="badge bg-warning">Stredná</span>
                             }
                             else if (problem.Difficulty == 3)
                             {
-                                <span style="color: red;">Ťažká</span>
+                                <span class="badge bg-danger">Ťažká</span>
                             }
                             else
                             {

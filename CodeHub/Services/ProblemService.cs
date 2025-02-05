@@ -98,7 +98,12 @@ namespace CodeHub.Services
         {
             using (var context = _dbContextFactory.CreateDbContext())
             {
-                return await context.Problems.Where(p => p.UserID == userId).ToListAsync();
+                var problems = await context.Problems
+                    .Where(p => p.UserID == userId)
+                    .Include(p => p.Tags)
+                    .ToListAsync();
+
+                return problems;
             }
         }
 
