@@ -13,7 +13,7 @@
                 Počet otázok
             </button>
             <ul class="dropdown-menu dropdown-menu-dark">
-                <li><a class="dropdown-item" href="#" @onclick="() => SetProblemCount(10)">zobraziť 10 otázok </a></li>
+                <li><a class="dropdown-item" href="#" @onclick="() => SetProblemCount(5)">zobraziť 10 otázok </a></li>
                 <li><a class="dropdown-item" href="#" @onclick="() => SetProblemCount(20)">zobraziť 20 otázok</a></li>
                 <li><a class="dropdown-item" href="#" @onclick="() => SetProblemCount(30)">zobraziť 30 otázok</a></li>
             </ul>
@@ -65,7 +65,8 @@
             <tbody>
             @if (_problems.Any())
             {
-                foreach (var (problem, index) in _problems.Take(_maxProblemsToShow).Select((p, i) => (p, i + 1)))
+                int startIndex = (_currentPage - 1) * _maxProblemsToShow + 1;
+                foreach (var (problem, index) in _problems.Skip((_currentPage - 1) * _maxProblemsToShow).Take(_maxProblemsToShow).Select((p, i) => (p, i + startIndex)))
                 {
                     <tr>
                         <th scope="row">@index</th>
@@ -89,11 +90,19 @@
 <div class="navigation mb-2 w-100">
     <nav aria-label="Page navigation example" class="d-flex justify-content-around">
         <ul class="pagination bg-dark d-flex flex-wrap">
-            <li class="page-item"><a class="page-link bg-dark link-primary" href="#">&lt;</a></li>
-            <li class="page-item"><a class="page-link bg-dark link-primary" href="#">1</a></li>
-            <li class="page-item"><a class="page-link bg-dark link-primary" href="#">2</a></li>
-            <li class="page-item"><a class="page-link bg-dark link-primary" href="#">3</a></li>
-            <li class="page-item"><a class="page-link bg-dark link-primary" href="#">></a></li>
+            <li class="page-item @(_currentPage == 1 ? "disabled" : "")">
+                <a class="page-link bg-dark link-primary" href="#" @onclick="() => GoToPage(_currentPage - 1)">
+                    &lt;
+                </a>
+            </li>
+            <li class="page-item">
+                <span class="page-link bg-dark link-primary">@_currentPage</span>
+            </li>
+            <li class="page-item @(_currentPage == _totalPages ? "disabled" : "")">
+                <a class="page-link bg-dark link-primary" href="#" @onclick="() => GoToPage(_currentPage + 1)">
+                    &gt;
+                </a>
+            </li>
         </ul>
     </nav>
 </div>
