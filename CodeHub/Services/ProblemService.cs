@@ -19,7 +19,15 @@ namespace CodeHub.Services
         {
             using (var context = _dbContextFactory.CreateDbContext())
             {
-                var p = new Problem()
+                var user = await context.Users.Include(u => u.Problems)
+                    .FirstOrDefaultAsync(u => u.Id == problem.UserID);
+
+                if (user == null)
+                {
+                    return null;
+                }
+
+                var newProblem = new Problem()
                 {
                     Title = problem.Title,
                     Description = problem.Description,
@@ -30,11 +38,14 @@ namespace CodeHub.Services
                     RequiredOutput = problem.RequiredOutput,
                     Constraints = problem.Constraints,
                     Hints = problem.Hints,
-                    UserID = problem.UserID
+                    UserID = problem.UserID,
+                    User = user
                 };
 
-                await AddProblemAsync(p);
-                return p;
+
+                user.Problems.Add(newProblem);
+                await AddProblemAsync(newProblem);
+                return newProblem;
             }
         }
 

@@ -1,5 +1,7 @@
 ﻿@page "/"
+@using CodeHub.Data.Models
 @inject NavigationManager NavigationManager
+@inject CodeHub.Services.ProblemService ProblemService
 
 <PageTitle>Home</PageTitle>
 
@@ -51,174 +53,25 @@
             </tr>
             </thead>
             <tbody>
-            <tr>
-                <th scope="row">1</th>
-                <td></td>
-                <td>Maximum Swap</td>
-                <td>49.8%</td>
-                <td>Easy</td>
-            </tr>
-            <tr>
-                <th scope="row">2</th>
-                <td></td>
-                <td>Add Two Numbers</td>
-                <td>44.3%</td>
-                <td>Medium</td>
-            </tr>
-            <tr>
-                <th scope="row">3</th>
-                <td></td>
-                <td>Longest Substring Without Repeating Characters</td>
-                <td>35.6%</td>
-                <td>Medium</td>
-            </tr>
-            <tr>
-                <th scope="row">4</th>
-                <td></td>
-                <td>Longest Palindromic Substring</td>
-                <td>34.6%</td>
-                <td>Medium</td>
-            </tr>
-            <tr>
-                <th scope="row">5</th>
-                <td></td>
-                <td>Zigzag Conversion</td>
-                <td>49.5%</td>
-                <td>Medium</td>
-            </tr>
-            <tr>
-                <th scope="row">6</th>
-                <td></td>
-                <td>Reverse Integer</td>
-                <td>29.3%</td>
-                <td>Hard</td>
-            </tr>
-            <tr>
-                <th scope="row">7</th>
-                <td></td>
-                <td>String to Integer (atoi)</td>
-                <td>18.0%</td>
-                <td>Medium</td>
-            </tr>
-            <tr>
-                <th scope="row">8</th>
-                <td></td>
-                <td>Container With Most Water</td>
-                <td>56.4%</td>
-                <td>Medium</td>
-            </tr>
-            <tr>
-                <th scope="row">9</th>
-                <td></td>
-                <td>Integer to Roman</td>
-                <td>66.6%</td>
-                <td>Medium</td>
-            </tr>
-            <tr>
-                <th scope="row">10</th>
-                <td></td>
-                <td>3Sum</td>
-                <td>35.5%</td>
-                <td>Medium</td>
-            </tr>
-            <tr>
-                <th scope="row">11</th>
-                <td></td>
-                <td>3Sum Closest</td>
-                <td>46.1%</td>
-                <td>Medium</td>
-            </tr>
-            <tr>
-                <th scope="row">12</th>
-                <td></td>
-                <td>Letter Combinations of a Phone Number</td>
-                <td>62.0%</td>
-                <td>Medium</td>
-            </tr>
-            <tr>
-                <th scope="row">13</th>
-                <td></td>
-                <td>4Sum</td>
-                <td>36.9%</td>
-                <td>Hard</td>
-            </tr>
-            <tr>
-                <th scope="row">14</th>
-                <td></td>
-                <td>Remove Nth Node From End of List</td>
-                <td>47.0%</td>
-                <td>Medium</td>
-            </tr>
-            <tr>
-                <th scope="row">15</th>
-                <td></td>
-                <td>Generate Parentheses</td>
-                <td>75.7%</td>
-                <td>Easy</td>
-            </tr>
-            <tr>
-                <th scope="row">16</th>
-                <td></td>
-                <td>Swap Nodes in Pairs</td>
-                <td>65.5%</td>
-                <td>Medium</td>
-            </tr>
-            <tr>
-                <th scope="row">17</th>
-                <td></td>
-                <td>Divide Two Integers</td>
-                <td>17.8%</td>
-                <td>Hard</td>
-            </tr>
-            <tr>
-                <th scope="row">18</th>
-                <td></td>
-                <td>Next Permutation</td>
-                <td>41.3%</td>
-                <td>Medium</td>
-            </tr>
-            <tr>
-                <th scope="row">19</th>
-                <td></td>
-                <td>Search in Rotated Sorted Array</td>
-                <td>41.7%</td>
-                <td>Medium</td>
-            </tr>
-            <tr>
-                <th scope="row">20</th>
-                <td></td>
-                <td>Find First and Last Position of Element in Sorted Array</td>
-                <td>45.4%</td>
-                <td>Medium</td>
-            </tr>
-            <tr>
-                <th scope="row">21</th>
-                <td></td>
-                <td>Valid Sudoku</td>
-                <td>60.8%</td>
-                <td>Medium</td>
-            </tr>
-            <tr>
-                <th scope="row">22</th>
-                <td></td>
-                <td>Count and Say</td>
-                <td>56.7%</td>
-                <td>Hard</td>
-            </tr>
-            <tr>
-                <th scope="row">23</th>
-                <td></td>
-                <td>Combination Sum</td>
-                <td>72.9%</td>
-                <td>Medium</td>
-            </tr>
-            <tr>
-                <th scope="row">24</th>
-                <td></td>
-                <td>Combination Sum II</td>
-                <td>56.6%</td>
-                <td>Medium</td>
-            </tr>
+            @if (problems.Any())
+            {
+                @foreach (var (problem, index) in problems.Select((p, i) => (p, i + 1)))
+                {
+                    <tr>
+                        <th scope="row">@index</th>
+                        <td></td> 
+                        <td>@problem.Title</td>
+                        <td>@($"{problem.Acceptance:P}")</td>
+                        <td>@problem.Difficulty</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="5" class="text-center">Načítavam úlohy...</td>
+                </tr>
+            }
             </tbody>
         </table>
     </div>
