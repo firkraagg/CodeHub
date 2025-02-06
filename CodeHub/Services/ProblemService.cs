@@ -105,6 +105,14 @@ namespace CodeHub.Services
             }
         }
 
+        public async Task<Problem> GetProblemByIdAsync(int id)
+        {
+            using (var context = _dbContextFactory.CreateDbContext())
+            {
+                return await context.Problems.FirstOrDefaultAsync(p => p.Id == id);
+            }
+        }
+
         public async Task<List<Problem>> GetProblemsByUserIdAsync(int userId)
         {
             using (var context = _dbContextFactory.CreateDbContext())

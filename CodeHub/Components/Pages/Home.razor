@@ -86,7 +86,12 @@
                     <tr>
                         <th scope="row">@index</th>
                         <td></td>
-                        <td>@problem.Title</td>
+                        <td>
+                            <a href=@($"/problem/{problem.Id}") style="text-decoration: none; color: white;" 
+                               onmouseover="this.style.color='lightblue'" onmouseout="this.style.color='white'">
+                                @problem.Title
+                            </a>
+                        </td>
                         <td>@($"{problem.Acceptance:P}")</td>
                         <td>
                             @if (problem.Difficulty == 1)

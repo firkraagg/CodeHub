@@ -62,5 +62,17 @@ namespace CodeHub.Services
                 return problems;
             }
         }
+
+        public async Task<List<Tag>> GetTagsForProblemAsync(int problemId)
+        {
+            using (var context = _dbContextFactory.CreateDbContext())
+            {
+                var problem = await context.Problems
+                    .Include(p => p.Tags)
+                    .FirstOrDefaultAsync(p => p.Id == problemId);
+
+                return problem?.Tags.ToList() ?? new List<Tag>();
+            }
+        }
     }
 }

@@ -1,0 +1,54 @@
+﻿@page "/problem/{ProblemId:int}"
+@using CodeHub.Data.Models
+@using CodeHub.Services
+<PageTitle>Problem Details</PageTitle>
+
+@inject ProblemService ProblemService
+@inject TagService TagService
+
+
+<div class="container-fluid h-100 p-4">
+    <div class="row h-100">
+        <div class="col-md-6 p-6 text-white overflow-y-auto">
+            <h2 class="font-bold">@_problem?.Title</h2>
+            <div class="mb-4">
+                @if (_tags != null && _tags.Any())
+                {
+                    <div class="d-flex flex-wrap gap-2">
+                        @foreach (var tag in _tags)
+                        {
+                            <span class="badge bg-primary">@tag.Name</span>
+                        }
+                    </div>
+                }
+            </div>
+            <p class="text-gray-400 mb-6 pb-4">@_problem?.Description</p>
+
+            <div class="mb-4 pb-4">
+                <h5 class="text-lg font-semibold">Príklad:</h5>
+                <p><strong>Vstup:</strong> @_problem?.RequiredInput</p>
+                <p><strong>Výstup:</strong> @_problem?.RequiredOutput</p>
+            </div>
+
+            <div class="mb-4 pb-4">
+                <h5 class="text-lg font-semibold">Obmedzenia:</h5>
+                <p>@_problem?.Constraints</p>
+            </div>
+
+            <div class="pb-4">
+                <h5 class="text-lg font-semibold">Nápoveda:</h5>
+                <p class="d-inline-flex gap-1">
+                    <button class="btn btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseHint" aria-expanded="false" aria-controls="collapseHint">
+                        Zobraziť nápovedu
+                    </button>
+                </p>
+                <div class="collapse" id="collapseHint">
+                    <p>@_problem?.Hints</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 p-6 text-white">
+            <p>Druha polovica</p>
+        </div>
+    </div>
+</div>
