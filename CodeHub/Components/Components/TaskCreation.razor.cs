@@ -88,8 +88,11 @@ public partial class TaskCreation
             var existingTags = await TagService.GetTagsAsync();
             foreach (var selectedTag in _selectedTags)
             {
-                var tag = existingTags.FirstOrDefault(t => t.Name == selectedTag) ?? new Tag { Name = selectedTag };
-                _problem.Tags.Add(tag);
+                var tag = existingTags.FirstOrDefault(t => t.Name == selectedTag);
+                if (tag != null)
+                {
+                    _problem.Tags.Add(tag);
+                }
             }
             _problem.UserID = _user.Id;
             await ProblemService.CreateProblemAsync(_problem);

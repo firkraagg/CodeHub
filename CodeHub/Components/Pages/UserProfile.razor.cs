@@ -231,8 +231,8 @@ public partial class UserProfile
 
     private void RemoveTag(Tag tag)
     {
-        _editingProblem.Tags.Remove(tag);
         _availableTags.Add(tag);
+        _editingProblem.Tags.Remove(tag);
     }
 
     private async Task SaveUpdatedProblem()

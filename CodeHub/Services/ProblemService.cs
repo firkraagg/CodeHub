@@ -40,7 +40,7 @@ namespace CodeHub.Services
                         RequiredOutput = problem.RequiredOutput,
                         Constraints = problem.Constraints,
                         Hints = problem.Hints,
-                        Tags = problem.Tags,
+                        Tags = problem.Tags?.Select(t => new Tag { Name = t.Name }).ToList(),
                         UserID = problem.UserID
                     };
 
