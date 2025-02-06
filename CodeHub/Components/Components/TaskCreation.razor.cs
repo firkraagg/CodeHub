@@ -62,6 +62,14 @@ public partial class TaskCreation
         }
     }
 
+    private void RemoveTag(string tag)
+    {
+        if (_selectedTags.Contains(tag))
+        {
+            _selectedTags.Remove(tag);
+        }
+    }
+
     public async Task HandleCreateProblemFormSubmitAsync()
     {
         var existingProblem = await ProblemService.GetProblemByName(_problem.Title);

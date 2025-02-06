@@ -9,7 +9,7 @@ namespace CodeHub.Data
         public DatabaseContext(DbContextOptions<DatabaseContext> options)
             : base(options)
         {
-
+            this.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
         }
         public DbSet<User> Users { get; set; }
         public DbSet<Problem> Problems { get; set; }

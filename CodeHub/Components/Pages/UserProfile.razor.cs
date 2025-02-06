@@ -25,6 +25,10 @@ public partial class UserProfile
     private string _alertMessage = String.Empty;
     private string _alertColor = "alert-danger";
     private bool _isLoading = false;
+    private bool _showUpdateModal = false;
+    private int? _selectedTagId;
+    private List<Tag> _availableTags = new();
+    private List<ProgrammingLanguage> _languages = new();
 
     [Inject] private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = null!;
     [SupplyParameterFromForm] private EditModel em { get; set; } = new();
@@ -33,6 +37,8 @@ public partial class UserProfile
     protected override async Task OnInitializedAsync()
     {
         var userId = ((CustomAuthStateProvider)AuthenticationStateProvider).GetLoggedInUserId();
+        _languages = await ProgrammingLanguageService.GetProgrammingLanguagesAsync();
+        _availableTags = await TagService.GetTagsAsync();
         if (!string.IsNullOrEmpty(userId))
         {
             _user = await UserService.GetUserByIdAsync(userId);
@@ -114,6 +120,7 @@ public partial class UserProfile
     {
         _showAlert = false;
         _showChangePassword = false;
+        _showUserProblems = false;
         _showEditProfile = true;
         StateHasChanged();
     }
@@ -121,6 +128,7 @@ public partial class UserProfile
     public void ShowChangePassword()
     {
         _showEditProfile = false;
+        _showUserProblems = false;
         _showChangePassword = true;
         StateHasChanged();
     }
@@ -140,12 +148,6 @@ public partial class UserProfile
         StateHasChanged();
     }
 
-    public void CloseModal()
-    {
-        _showModal = false;
-        StateHasChanged();
-    }
-
     private async Task LoadUserProblems()
     {
         _isLoading = true;
@@ -154,6 +156,8 @@ public partial class UserProfile
             : new List<Problem>();
 
         _isLoading = false;
+        _showChangePassword = false;
+        _showEditProfile = false;
         _showUserProblems = true;
         StateHasChanged();
     }
@@ -189,9 +193,64 @@ public partial class UserProfile
         StateHasChanged();
     }
 
-    public void ShowUpdateProblem(Problem problem)
+    public async Task ShowUpdateProblem(Problem problem)
     {
+        var existingProblem = _userProblems.FirstOrDefault(p => p.Id == problem.Id);
+        if (existingProblem != null)
+        {
+            existingProblem.Title = problem.Title;
+            existingProblem.Description = problem.Description;
+            existingProblem.Acceptance = problem.Acceptance;
+            existingProblem.Difficulty = problem.Difficulty;
+            existingProblem.RequiredInput = problem.RequiredInput;
+            existingProblem.RequiredOutput = problem.RequiredOutput;
+            existingProblem.Constraints = problem.Constraints;
+            existingProblem.Hints = problem.Hints;
+            existingProblem.LanguageID = problem.LanguageID;
+            existingProblem.Tags = problem.Tags;
 
+            _editingProblem = existingProblem;
+            _showUpdateModal = true;
+            StateHasChanged();
+        }
+    }
+
+    private void AddTag()
+    {
+        if (_selectedTagId.HasValue)
+        {
+            var tagToAdd = _availableTags.FirstOrDefault(t => t.Id == _selectedTagId.Value);
+            if (tagToAdd != null && !_editingProblem.Tags.Contains(tagToAdd))
+            {
+                _editingProblem.Tags.Add(tagToAdd);
+                _availableTags.Remove(tagToAdd);
+                _selectedTagId = null;
+            }
+        }
+    }
+
+    private void RemoveTag(Tag tag)
+    {
+        _editingProblem.Tags.Remove(tag);
+        _availableTags.Add(tag);
+    }
+
+    private async Task SaveUpdatedProblem()
+    {
+        if (_editingProblem == null)
+        {
+            return;
+        }
+
+        _editingProblem.Tags = _editingProblem.Tags.Distinct().ToList();
+        await ProblemService.EditProblemAsync(_editingProblem);
+        CloseUpdateModal();
+    }
+
+    private void CloseUpdateModal()
+    {
+        _showUpdateModal = false;
+        StateHasChanged();
     }
 
 }

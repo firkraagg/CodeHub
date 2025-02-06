@@ -31,7 +31,7 @@
                     </div>
                     <div class="col mb-3">
                         <InputSelect @bind-Value="_problem.LanguageID" class="form-select bg-dark" aria-label="Default select example">
-                            <option value="0" selected disabled hidden>Vyber programovací jazyk</option>
+                            <option value="0" selected disabled hidden>-- Vyber programovací jazyk --</option>
                             @foreach (var language in _languages)
                             {
                                 <option value="@language.Id">@language.LanguageName</option>
@@ -46,7 +46,7 @@
                     </div>
                     <div class="col-12 col-md-6 mb-3">
                         <InputSelect @bind-Value="_problem.Difficulty" class="form-select bg-dark" aria-label="Default select example">
-                            <option selected disabled hidden value="0">Vyber obťažnosť</option>
+                            <option selected disabled hidden value="0">-- Vyber obťažnosť --</option>
                             <option value="1" class="text-success">Ľahká</option>
                             <option value="2" class="text-warning">Stredná</option>
                             <option value="3" class="text-danger">Ťažká</option>
@@ -69,6 +69,7 @@
                     </div>
                     <div class="mb-3 col-12 col-md-6">
                         <InputSelect @bind-Value="_selectedTag" class="form-select bg-dark">
+                            <option selected disabled hidden value="">-- Vyber značky --</option>
                             @foreach (var tag in _tags.GroupBy(t => t.Name).Select(group => group.First()))
                             {
                                 <option value="@tag.Name">@tag.Name</option>
@@ -82,7 +83,10 @@
                         {
                             @foreach (var tag in _selectedTags)
                             {
-                                <span class="badge" style="background-color: white; color: black; margin-right: 5px;">@tag</span>
+                                <span class="badge" style="background-color: white; color: black; margin-right: 5px;">
+                                    @tag
+                                    <button type="button" class="btn-close btn-close-dark btn-sm ms-1" @onclick="() => RemoveTag(tag)" aria-label="Remove"></button>
+                                </span>
                             }
                         }
                     </div>

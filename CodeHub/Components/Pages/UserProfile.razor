@@ -5,6 +5,8 @@
 @inject UserService UserService
 @inject NavigationManager NavigationManager
 @inject ProblemService ProblemService
+@inject ProgrammingLanguageService ProgrammingLanguageService
+@inject TagService TagService
 
 <PageTitle>User Profile</PageTitle>
 
@@ -141,57 +143,59 @@
                             }
                             else if (_userProblems != null && _userProblems.Any())
                             {
-                                <table class="table table-dark table-striped">
-                                    <thead>
-                                    <tr>
-                                        <th>Názov</th>
-                                        <th>Obťažnosť</th>
-                                        <th>Značky</th>
-                                        <th colspan="2" scope="col">Akcie</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    @foreach (var problem in _userProblems)
-                                    {
+                                <div class="table-responsive">
+                                    <table class="table table-dark table-striped">
+                                        <thead>
                                         <tr>
-                                            <td>@problem.Title</td>
-                                            <td>
-                                                @switch (problem.Difficulty)
-                                                {
-                                                    case 1:
-                                                        <span class="badge bg-success">Ľahká</span>
-                                                        break;
-                                                    case 2:
-                                                        <span class="badge bg-warning">Stredná</span>
-                                                        break;
-                                                    case 3:
-                                                        <span class="badge bg-danger">Ťažká</span>
-                                                        break;
-                                                    default:
-                                                        @:Nezname
-                                                        break;
-                                                }
-                                            </td>
-                                            <td>
-                                                @if (problem.Tags != null && problem.Tags.Any())
-                                                {
-                                                    @foreach (var tag in problem.Tags)
-                                                    {
-                                                        <span class="badge" style="background-color: white; color: black; margin-right: 5px;">@tag.Name</span>
-                                                    }
-                                                }
-                                                else
-                                                {
-                                                    <span>Žiadne značky</span>
-                                                }
-                                            </td>
-
-                                            <td><button type="button" class="btn btn-danger container-fluid" @onclick="@(() => ShowDeleteProblemModal(problem))"><i class="fa-solid fa-trash-can"></i></button></td>
-                                            <td><button type="button" class="btn btn-primary container-fluid" @onclick="@(() => ShowUpdateProblem(problem))"><i class="fa-solid fa-pen-to-square"></i></button></td>
+                                            <th>Názov</th>
+                                            <th>Obťažnosť</th>
+                                            <th>Značky</th>
+                                            <th colspan="2" scope="col">Akcie</th>
                                         </tr>
-                                    }
-                                    </tbody>
-                                </table>
+                                        </thead>
+                                        <tbody>
+                                        @foreach (var problem in _userProblems)
+                                        {
+                                            <tr>
+                                                <td>@problem.Title</td>
+                                                <td>
+                                                    @switch (problem.Difficulty)
+                                                    {
+                                                        case 1:
+                                                            <span class="badge bg-success">Ľahká</span>
+                                                            break;
+                                                        case 2:
+                                                            <span class="badge bg-warning">Stredná</span>
+                                                            break;
+                                                        case 3:
+                                                            <span class="badge bg-danger">Ťažká</span>
+                                                            break;
+                                                        default:
+                                                            @:Nezname
+                                                            break;
+                                                    }
+                                                </td>
+                                                <td>
+                                                    @if (problem.Tags != null && problem.Tags.Any())
+                                                    {
+                                                        @foreach (var tag in problem.Tags)
+                                                        {
+                                                            <span class="badge" style="background-color: white; color: black; margin-right: 5px;">@tag.Name</span>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <span>Žiadne značky</span>
+                                                    }
+                                                </td>
+
+                                                <td><button type="button" class="btn btn-danger container-fluid" @onclick="@(() => ShowDeleteProblemModal(problem))"><i class="fa-solid fa-trash-can"></i></button></td>
+                                                <td><button type="button" class="btn btn-primary container-fluid" @onclick="@(() => ShowUpdateProblem(problem))"><i class="fa-solid fa-pen-to-square"></i></button></td>
+                                            </tr>
+                                        }
+                                        </tbody>
+                                    </table>
+                                </div>
                             }
                             else
                             {
@@ -227,6 +231,112 @@
                                 <button type="button" class="btn btn-danger" @onclick="DeleteUser">Zrušiť účet</button>
                             }
                         </div>
+                    </div>
+                </div>
+            </div>
+        }
+        @if (_showUpdateModal)
+        {
+            <div class="modal d-block" tabindex="-1" style="background-color: rgba(0,0,0.1,0.7);">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content background-custom">
+                        <div class="modal-header text-white">
+                            <h5 class="modal-title">Upraviť úlohu</h5>
+                            <button type="button" class="btn-close btn-close-white" @onclick="CloseUpdateModal" aria-label="Close"></button>
+                        </div>
+                        <EditForm Model="_editingProblem" OnValidSubmit="SaveUpdatedProblem" FormName="UpdateProblem">
+                            <DataAnnotationsValidator />
+                            <div class="modal-body text-white">
+                                <div class="mb-3">
+                                    <label for="title" class="form-label">Názov úlohy</label>
+                                    <InputText id="title" class="form-control bg-dark text-white" @bind-Value="_editingProblem.Title" />
+                                    <ValidationMessage For="@(() => _editingProblem.Title)" />
+                                </div>
+                                <div class="mb-3">
+                                    <label for="description" class="form-label">Popis úlohy</label>
+                                    <InputTextArea id="description" class="form-control bg-dark" rows="4" @bind-Value="_editingProblem.Description"></InputTextArea>
+                                    <ValidationMessage For="@(() => _editingProblem.Description)" />
+                                </div>
+                                <div class="mb-3">
+                                    <label for="difficulty" class="form-label">Obťažnosť</label>
+                                    <InputSelect id="difficulty" class="form-select bg-dark text-white" @bind-Value="_editingProblem.Difficulty">
+                                        <option value="1">Ľahká</option>
+                                        <option value="2">Stredná</option>
+                                        <option value="3">Ťažká</option>
+                                    </InputSelect>
+                                    <ValidationMessage For="@(() => _editingProblem.Difficulty)" />
+                                </div>
+                                <div class="mb-3">
+                                    <label for="language" class="form-label">Programovací jazyk</label>
+                                    <InputSelect id="language" class="form-select bg-dark text-white" @bind-Value="_editingProblem.LanguageID">
+                                        @if (_languages != null)
+                                        {
+                                            @foreach (var language in _languages)
+                                            {
+                                                <option value="@language.Id">@language.LanguageName</option>
+                                            }
+                                        }
+                                    </InputSelect>
+                                    <ValidationMessage For="@(() => _editingProblem.LanguageID)" />
+                                </div>
+                                <div class="mb-3">
+                                    <label for="requiredInput" class="form-label">Požadovaný vstup</label>
+                                    <InputText id="requiredInput" class="form-control bg-dark text-white" @bind-Value="_editingProblem.RequiredInput" />
+                                    <ValidationMessage For="@(() => _editingProblem.RequiredInput)" />
+                                </div>
+                                <div class="mb-3">
+                                    <label for="requiredOutput" class="form-label">Požadovaný výstup</label>
+                                    <InputText id="requiredOutput" class="form-control bg-dark text-white" @bind-Value="_editingProblem.RequiredOutput" />
+                                    <ValidationMessage For="@(() => _editingProblem.RequiredOutput)" />
+                                </div>
+                                <div class="mb-3">
+                                    <label for="constraints" class="form-label">Obmedzenia</label>
+                                    <InputTextArea id="constraints" class="form-control bg-dark" @bind-Value="_editingProblem.Constraints"></InputTextArea>
+                                    <ValidationMessage For="@(() => _editingProblem.Constraints)" />
+                                </div>
+                                <div class="mb-3">
+                                    <label for="hints" class="form-label">Nápovedy</label>
+                                    <InputTextArea id="hints" class="form-control bg-dark" @bind-Value="_editingProblem.Hints"></InputTextArea>
+                                    <ValidationMessage For="@(() => _editingProblem.Hints)" />
+                                </div>
+                                <div class="mb-3">
+                                    <label for="tags" class="form-label">Značky</label>
+                                    <div>
+                                        @if (_editingProblem.Tags != null && _editingProblem.Tags.Any())
+                                        {
+                                            @foreach (var tag in _editingProblem.Tags)
+                                            {
+                                                <span class="badge bg-light text-dark me-2">
+                                                    @tag.Name 
+                                                    <button type="button" class="btn-close btn-close-dark btn-sm ms-1" @onclick="() => RemoveTag(tag)" aria-label="Remove"></button>
+                                                </span>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <span>Žiadne značky</span>
+                                        }
+                                    </div>
+                                    <div class="mt-2">
+                                        <InputSelect id="addTag" class="form-select bg-dark text-white" @bind-Value="_selectedTagId">
+                                            <option selected disabled hidden value="">-- Vyberte značku na pridanie --</option>
+                                            @if (_availableTags != null)
+                                            {
+                                                @foreach (var tag in _availableTags.GroupBy(t => t.Name).Select(group => group.First()))
+                                                {
+                                                    <option value="@tag.Id">@tag.Name</option>
+                                                }
+                                            }
+                                        </InputSelect>
+                                        <button type="button" class="btn btn-primary mt-2" @onclick="AddTag">Pridať značku</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" @onclick="CloseUpdateModal">Zrušiť</button>
+                                <button type="submit" class="btn btn-primary">Uložiť zmeny</button>
+                            </div>
+                        </EditForm>
                     </div>
                 </div>
             </div>

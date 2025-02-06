@@ -21,14 +21,11 @@ namespace CodeHub.Services
             {
                 using (var context = _dbContextFactory.CreateDbContext())
                 {
-                    Console.WriteLine("Entering CreateProblemAsync");
-
                     var user = await context.Users.Include(u => u.Problems)
                         .FirstOrDefaultAsync(u => u.Id == problem.UserID);
 
                     if (user == null)
                     {
-                        Console.WriteLine($"CreateProblemAsync: No user found with ID {problem.UserID}");
                         return null;
                     }
 
@@ -43,7 +40,7 @@ namespace CodeHub.Services
                         RequiredOutput = problem.RequiredOutput,
                         Constraints = problem.Constraints,
                         Hints = problem.Hints,
-                        Tags = problem.Tags?.Select(t => new Tag { Name = t.Name }).ToList(),
+                        Tags = problem.Tags,
                         UserID = problem.UserID
                     };
 
@@ -54,7 +51,6 @@ namespace CodeHub.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"CreateProblemAsync: ERROR - {ex.Message}");
                 return null;
             }
         }
@@ -72,8 +68,23 @@ namespace CodeHub.Services
         {
             using (var context = _dbContextFactory.CreateDbContext())
             {
-                context.Problems.Update(problem);
-                await context.SaveChangesAsync();
+                var existingProblem = await context.Problems
+                    .Include(p => p.Tags)
+                    .FirstOrDefaultAsync(p => p.Id == problem.Id);
+
+                if (existingProblem != null)
+                {
+                    context.Entry(existingProblem).State = EntityState.Detached;
+                    context.Problems.Attach(problem);
+                    context.Entry(problem).State = EntityState.Modified;
+                    foreach (var tag in problem.Tags)
+                    {
+                        context.Tag.Attach(tag);
+                        context.Entry(tag).State = EntityState.Unchanged;
+                    }
+
+                    await context.SaveChangesAsync();
+                }
             }
         }
 
