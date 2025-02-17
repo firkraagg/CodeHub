@@ -58,6 +58,7 @@ public partial class Login
             }
             else
             {
+                _alertColor = "alert-danger";
                 _alertMessage = "Zadané heslo je nesprávne. Skúste to znova.";
                 _showAlert = true;
             }

@@ -22,6 +22,7 @@ namespace CodeHub
             builder.Services.AddTransient<ProblemService>();
             builder.Services.AddTransient<ProgrammingLanguageService>();
             builder.Services.AddTransient<TagService>();
+            builder.Services.AddTransient<PistonService>();
             builder.Services.AddDistributedMemoryCache();
             builder.Services.AddSession(options =>
             {

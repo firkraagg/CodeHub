@@ -4,6 +4,7 @@
 @inject IJSRuntime JS
 @inject ProblemService ProblemService
 @inject TagService TagService
+@inject PistonService PistonService
 
 <PageTitle>Problem Details</PageTitle>
 
@@ -36,47 +37,84 @@
                 <h5 class="text-lg font-semibold">Obmedzenia:</h5>
                 <p>@_problem?.Constraints</p>
             </div>
+            
+            <div class="accordion w-75" id="accordionHint" style="--bs-accordion-transition: 0.7s ease-in-out;">
+                <div class="accordion-item bg-dark border border-secondary">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button bg-secondary text-light collapsed" type="button" data-bs-toggle="collapse" 
+                                data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                            Zobraziť nápovedy
+                        </button>
+                    </h2>
+                    <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionHint">
+                        <div class="accordion-body text-light">
+                            @_problem?.Hints
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-            <div class="pb-4">
-                <h5 class="text-lg font-semibold">Nápoveda:</h5>
-                <p class="d-inline-flex gap-1">
-                    <button class="btn btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseHint" aria-expanded="false" aria-controls="collapseHint">
-                        Zobraziť nápovedu
+        <div class="col-md-6 p-0 text-white">
+            <div class="d-flex gap-2 pb-1">
+                <div class="dropdown">
+                    <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="border:3px solid #0059b3;">
+                        Jazyk: @_selectedLanguage
                     </button>
-                </p>
-                <div class="collapse" id="collapseHint">
-                    <p>@_problem?.Hints</p>
+                    <ul class="dropdown-menu dropdown-menu-dark">
+                        <li><a class="dropdown-item @(_selectedLanguage == "java" ? "active" : "")" @onclick="@(() => ChangeLanguage("Java"))">Java</a></li>
+                        <li><a class="dropdown-item @(_selectedLanguage == "csharp" ? "active" : "")" @onclick="@(() => ChangeLanguage("C#"))">C#</a></li>
+                    </ul>
+                </div>
+                <div class="dropdown">
+                    <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="border:3px solid #0059b3">
+                        Režim: @(_selectedTheme == "vs-dark" ? "Tmavý" : "Svetlý")
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-dark">
+                        <li><a class="dropdown-item @(_selectedTheme == "vs-dark" ? "active" : "")" @onclick="@(() => ChangeTheme("vs-dark"))">Tmavý režim</a></li>
+                        <li><a class="dropdown-item @(_selectedTheme == "vs" ? "active" : "")" @onclick="@(() => ChangeTheme("vs"))">Svetlý režim</a></li>
+                    </ul>
                 </div>
             </div>
-        </div>
+            <div id="editorContainer" style="height: 65vh; border: 3px solid #0059b3;"></div>
+            <div class="mt-3 d-flex gap-2 mb-2">
+                <button class="btn btn-primary align-self-start" @onclick="GetEditorValue" disabled="@_isSubmitLoading">
+                    @if (_isSubmitLoading)
+                    {
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        <span class="ms-2">Odovzdávam...</span>
+                    }
+                    else
+                    {
+                        <span>Odovzdaj</span>
+                    }
+                </button>
 
-        <div class="col-md-6 p-4 text-white">
-            <h5 class="text-lg font-semibold">Editor:</h5>
-            <div id="editorContainer" style="height: 60vh; border: 3px solid #0000cc; border-radius: 6px"></div>
-            <div class="mt-3 d-flex justify-content-between">
-                <button class="btn btn-primary align-self-start" @onclick="GetEditorValue">Get Code</button>
-                <div class="d-flex gap-2">
-                    <div class="dropdown">
-                        <button class="btn btn-success dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Jazyk: @_selectedLanguage
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-dark">
-                            <li><a class="dropdown-item @(_selectedLanguage == "java" ? "active" : "")" @onclick="@(() => ChangeLanguage("Java"))">Java</a></li>
-                            <li><a class="dropdown-item @(_selectedLanguage == "csharp" ? "active" : "")" @onclick="@(() => ChangeLanguage("C#"))">C#</a></li>
-                        </ul>
-                    </div>
-                    <div class="dropdown">
-                        <button class="btn btn-info dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Režim: @(_selectedTheme == "vs-dark" ? "Tmavý" : "Svetlý")
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-dark">
-                            <li><a class="dropdown-item @(_selectedTheme == "vs-dark" ? "active" : "")" @onclick="@(() => ChangeTheme("vs-dark"))">Tmavý režim</a></li>
-                            <li><a class="dropdown-item @(_selectedTheme == "vs" ? "active" : "")" @onclick="@(() => ChangeTheme("vs"))">Svetlý režim</a></li>
-                        </ul>
-                    </div>
-                </div>
+                <button class="btn btn-success align-self-start" @onclick="CheckCodeAsync" disabled="@_isCheckLoading">
+                    @if (_isCheckLoading)
+                    {
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        <span class="ms-2">Kontrolujem...</span>
+                    }
+                    else
+                    {
+                        <span>Skontroluj</span>
+                    }
+                </button>
+            </div>
+            @{
+                var borderColor = "";
+                if (_hasExecuted)
+                {
+                    borderColor = _noErrors ? "border-success" : "border-danger";
+                }
+
+            }
+
+            <div class="p-3 border rounded bg-dark text-light w-100 @borderColor" 
+                 style="overflow-y: auto; white-space: pre-wrap; font-family: monospace;">
+                <pre class="m-0">@_output</pre>
             </div>
         </div>
-
     </div>
 </div>
