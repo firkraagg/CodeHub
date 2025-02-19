@@ -5,6 +5,7 @@
 @inject ProblemService ProblemService
 @inject TagService TagService
 @inject PistonService PistonService
+@inject ProgrammingLanguageService ProgrammingLanguageService
 
 <PageTitle>Problem Details</PageTitle>
 
@@ -17,6 +18,26 @@
                 @if (_tags != null && _tags.Any())
                 {
                     <div class="d-flex flex-wrap gap-2">
+                        @if (_problem != null)
+                        {
+                            string difficultyText = _problem.Difficulty switch
+                            {
+                                1 => "Ľahká",
+                                2 => "Stredná",
+                                3 => "Ťažká"
+                            };
+
+                            string difficultyClass = _problem.Difficulty switch
+                            {
+                                1 => "bg-success",
+                                2 => "bg-warning",
+                                3 => "bg-danger"
+                            };
+
+                            <span class="badge @difficultyClass">
+                                @difficultyText
+                            </span>
+                        }
                         @foreach (var tag in _tags)
                         {
                             <span class="badge bg-primary">@tag.Name</span>
@@ -37,12 +58,12 @@
                 <h5 class="text-lg font-semibold">Obmedzenia:</h5>
                 <p>@_problem?.Constraints</p>
             </div>
-            
-            <div class="accordion w-75" id="accordionHint" style="--bs-accordion-transition: 0.7s ease-in-out;">
+            <div class="accordion accordion-flush w-75" id="accordionHint">
                 <div class="accordion-item bg-dark border border-secondary">
                     <h2 class="accordion-header">
-                        <button class="accordion-button bg-secondary text-light collapsed" type="button" data-bs-toggle="collapse" 
-                                data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                        <button class="accordion-button collapsed bg-dark text-light" type="button" 
+                                data-bs-toggle="collapse" data-bs-target="#collapseOne" 
+                                aria-expanded="false" aria-controls="collapseOne">
                             Zobraziť nápovedy
                         </button>
                     </h2>
@@ -59,11 +80,18 @@
             <div class="d-flex gap-2 pb-1">
                 <div class="dropdown">
                     <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="border:3px solid #0059b3;">
-                        Jazyk: @_selectedLanguage
+                        Jazyk: @_selectedLanguage.DisplayName
                     </button>
                     <ul class="dropdown-menu dropdown-menu-dark">
-                        <li><a class="dropdown-item @(_selectedLanguage == "java" ? "active" : "")" @onclick="@(() => ChangeLanguage("Java"))">Java</a></li>
-                        <li><a class="dropdown-item @(_selectedLanguage == "csharp" ? "active" : "")" @onclick="@(() => ChangeLanguage("C#"))">C#</a></li>
+                        @foreach (var language in _languages)
+                        {
+                            <li>
+                                <a class="dropdown-item @( _selectedLanguage.ApiName == language.ApiName ? "active" : "" )" 
+                                    @onclick="@(() => ChangeLanguage(language.ApiName))">
+                                    @language.DisplayName
+                                </a>
+                            </li>
+                        }
                     </ul>
                 </div>
                 <div class="dropdown">

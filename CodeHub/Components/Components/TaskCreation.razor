@@ -34,7 +34,7 @@
                             <option value="0" selected disabled hidden>-- Vyber programovací jazyk --</option>
                             @foreach (var language in _languages)
                             {
-                                <option value="@language.Id">@language.LanguageName</option>
+                                <option value="@language.Id">@language.DisplayName</option>
                             }
                         </InputSelect>
                         <ValidationMessage For="@(() => _problem.LanguageID)"/>

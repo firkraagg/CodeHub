@@ -9,13 +9,22 @@ namespace CodeHub.Services
 
         public async Task<string> ExecuteCodeAsync(string language, string version, string code)
         {
+            string fileName = language.ToLower() switch
+            {
+                "java" => "Main.java",
+                "c" => "main.c",
+                "c++" => "main.cpp",
+                "csharp" => "Program.cs",
+                _ => "main.txt"
+            };
+
             var requestBody = new
             {
                 language = language.ToLower(),
                 version = version,
                 files = new[]
                 {
-                    new { name = "Main.java", content = code, encoding = "utf8" }
+                    new { name = fileName, content = code, encoding = "utf8" }
                 },
                 stdin = "",
                 args = Array.Empty<string>(),

@@ -90,6 +90,15 @@ html, body {
     opacity: 1 !important;
 }
 
+#accordionHint .accordion-button:not(.collapsed) {
+    background-color: #0a1931 !important;
+    color: white !important;
+}
+
+#accordionHint .accordion-button::after {
+    filter: invert(1);
+}
+
 /*.fixed-bottom-alert {
     position: fixed;
     bottom: 0;

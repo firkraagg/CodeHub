@@ -13,7 +13,8 @@ public partial class ProblemDetails
 
     private Problem? _problem;
     private List<Tag> _tags = new();
-    private string _selectedLanguage = "java";
+    private List<ProgrammingLanguage> _languages = new();
+    private ProgrammingLanguage _selectedLanguage = new ProgrammingLanguage();
     private string _selectedTheme = "vs-dark";
     private string _userCode;
     private string _output;
@@ -27,6 +28,8 @@ public partial class ProblemDetails
     {
         _problem = await ProblemService.GetProblemByIdAsync(ProblemId);
         _tags = await TagService.GetTagsForProblemAsync(_problem.Id);
+        _languages = await ProgrammingLanguageService.GetProgrammingLanguagesAsync();
+        _selectedLanguage = _languages.First();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -43,7 +46,7 @@ public partial class ProblemDetails
         try
         {
             _userCode = await JS.InvokeAsync<string>("monacoInterop.getValue");
-            string responseJson = await PistonService.ExecuteCodeAsync("java", "15.0.2", _userCode);
+            string responseJson = await PistonService.ExecuteCodeAsync(_selectedLanguage.ApiName, _selectedLanguage.Version, _userCode);
             var response = JsonSerializer.Deserialize<PistonResponse>(responseJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
             if (response?.Run != null)
             {
@@ -73,7 +76,7 @@ public partial class ProblemDetails
         try
         {
             _userCode = await JS.InvokeAsync<string>("monacoInterop.getValue");
-            string responseJson = await PistonService.ExecuteCodeAsync("java", "15.0.2", _userCode);
+            string responseJson = await PistonService.ExecuteCodeAsync(_selectedLanguage.ApiName, _selectedLanguage.Version, _userCode);
             var response = JsonSerializer.Deserialize<PistonResponse>(responseJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
             if (response?.Run != null)
             {
@@ -111,16 +114,11 @@ public partial class ProblemDetails
         _selectedTheme = theme;
         await JS.InvokeVoidAsync("monacoInterop.setTheme", _selectedTheme);
     }
-
-    private async Task ChangeLanguage(string language)
+    private async Task ChangeLanguage(string apiName)
     {
-        _selectedLanguage = language switch
-        {
-            "Java" => "java",
-            "C#" => "csharp",
-            _ => "plaintext"
-        };
-
-        await JS.InvokeVoidAsync("monacoInterop.setLanguage", _selectedLanguage);
+        var language = _languages.FirstOrDefault(l => l.ApiName == apiName);
+        _selectedLanguage = language ?? _languages.First();
+        await JS.InvokeVoidAsync("monacoInterop.setLanguage", _selectedLanguage.MonacoName);
     }
+
 }
