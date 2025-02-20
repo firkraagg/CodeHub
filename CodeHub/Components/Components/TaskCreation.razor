@@ -4,6 +4,7 @@
 @inject ProblemService ProblemService
 @inject ProgrammingLanguageService ProgrammingLanguageService
 @inject TagService TagService
+@inject ProblemHintService ProblemHintService
 
 <AuthorizeView Roles="Admin,Učiteľ,Študent" Context="authContext">
     <Authorized>
@@ -59,7 +60,7 @@
                         Popis úlohy
                     </div>
                     <div class="mb-3 col-12 col-md-6">
-                        <InputTextArea @bind-Value="_problem.Description" class="form-control bg-dark" id="TaskDescription" rows="9" placeholder="Príklad: Napíšte funkciu, ktorá berie ako vstup dve celé čísla a vracia ich súčet."></InputTextArea>
+                        <InputTextArea @bind-Value="_problem.Description" class="form-control bg-dark" id="TaskDescription" rows="9" placeholder="Napíšte funkciu, ktorá berie ako vstup dve celé čísla a vracia ich súčet."></InputTextArea>
                         <ValidationMessage For="@(() => _problem.Description)"/>
                     </div>
                 </div>
@@ -83,9 +84,11 @@
                         {
                             @foreach (var tag in _selectedTags)
                             {
-                                <span class="badge" style="background-color: white; color: black; margin-right: 5px;">
+                                <span class="badge" style="background-color: #C9E1F4; color: black; margin-right: 5px; font-size:15px">
                                     @tag
-                                    <button type="button" class="btn-close btn-close-dark btn-sm ms-1" @onclick="() => RemoveTag(tag)" aria-label="Remove"></button>
+                                    <button type="button" class="btn btn-sm bg-danger" @onclick="() => RemoveTag(tag)" aria-label="Remove">
+                                        <i class="fa-solid fa-xmark"></i>
+                                    </button>
                                 </span>
                             }
                         }
@@ -124,8 +127,67 @@
                         Obmedzenia
                     </div>
                     <div class="mb-3 col-12 col-md-6">
-                        <InputTextArea @bind-Value="_problem.Constraints" class="form-control bg-dark" id="exampleFormControlTextarea1" rows="6" placeholder="- Celé čísla a a b môžu mať akúkoľvek hodnotu v rozsahu 32-bitových celých čísel so znamienkom - Obidve celé čísla musia byť kladné"></InputTextArea>
-                        <ValidationMessage For="@(() => _problem.Constraints)"/>
+                        <InputTextArea @bind-Value="_constraint.Constraint" @oninput="UpdateConstraint" class="form-control bg-dark" id="ConstraintFormControlTextare" rows="3"
+                                       placeholder="Celé čísla a a b môžu mať akúkoľvek hodnotu v rozsahu 32-bitových celých čísel so znamienkom"></InputTextArea>
+                        <div class="row">
+                            <div class="mt-3 text-end">
+                                @if (_constraints.Any())
+                                {
+                                    int i = 1;
+                                    @foreach (var constraint in _constraints)
+                                    {
+                                        <span class="badge mb-1 pb-2" style="background-color: #042549; color: white; margin-right: 5px; font-size:15px; display:inline-block">
+                                            <div class="mb-2">
+                                                Obmedzenie @i
+                                            </div>
+                                            <div class="mb-2">
+                                                <InputTextArea @bind-Value="constraint.Constraint" class="form-control bg-dark" rows="4"></InputTextArea>
+                                            </div>
+                                            <button type="button" class="btn btn-sm ms-1 bg-warning" @onclick="() => ShowModal(constraint)">
+                                                <i class="fa-solid fa-pen-to-square"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm ms-1 bg-danger" @onclick="() => RemoveConstraint(constraint)" aria-label="Remove">
+                                                <i class="fa-solid fa-xmark"></i>
+                                            </button>
+                                        </span>
+                                        i++;
+                                    }
+                                }
+                            </div>
+                        </div>
+                        @* <ValidationMessage For="@(() => _problem.Constraints)"/> *@
+                    </div>
+                </div>
+                @if (_showModalConstraint)
+                {
+                    <div class="modal d-block" style="background-color: rgba(0,0,0.1,0.7);" tabindex="-1">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content background-custom">
+                                <div class="modal-header text-white">
+                                    <h5 class="modal-title">Upraviť obmedzenie</h5>
+                                    <button type="button" class="btn-close btn-close-white" @onclick="CloseModal" aria-label="Zatvoriť"></button>
+                                </div>
+                                <div class="modal-body text-white">
+                                    <div class="mb-3">
+                                        <InputTextArea @bind-Value="_editingConstraint.Constraint" class="form-control bg-dark text-white" rows="8"></InputTextArea>
+                                    </div>
+                                </div>
+                                <div class="modal-footer text-white">
+                                    <button type="button" class="btn btn-secondary" @onclick="CloseModal">Zrušiť</button>
+                                    <button type="button" class="btn btn-primary" @onclick="UpdateConstraintText">Uložiť</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+                <div class="row">
+                    <div class="mt-3 text-end pb-4 d-flex justify-content-end">
+                        <button class="btn btn-primary me-2" type="button" @onclick="AddConstraint" disabled="@string.IsNullOrWhiteSpace(_constraint.Constraint)">
+                            Pridaj obmedzenie
+                        </button>
+                        <button class="btn btn-danger" type="button" @onclick="RemoveConstraint" disabled="@(!_constraints.Any())">
+                            Odstráň obmedzenie
+                        </button>
                     </div>
                 </div>
                 <div class="row">
@@ -133,7 +195,67 @@
                         Nápovedy
                     </div>
                     <div class="mb-3 col-12 col-md-6">
-                        <InputTextArea @bind-Value="_problem.Hints" class="form-control bg-dark" id="HintFormControlTextarea" rows="6" placeholder="Pred sčítaním overte, či sú a a b väčšie ako 0"></InputTextArea>
+                        <InputTextArea @bind-Value="_hint.Hint" @oninput="UpdateHint" class="form-control bg-dark" id="HintFormControlTextarea" rows="3" 
+                                       placeholder="Pred sčítaním overte, či sú a a b väčšie ako 0"></InputTextArea>
+                        <div class="row">
+                            <div class="mt-3 text-end">
+                                @if (_hints.Any())
+                                {
+                                    int i = 1;
+                                    @foreach (var hint in _hints)
+                                    {
+                                        <span class="badge mb-1 pb-2" style="background-color: #042549; color: white; margin-right: 5px; font-size:15px; display:inline-block">
+                                            <div class="mb-2">
+                                                Nápoveda @i
+                                            </div>
+                                            <div class="mb-2">
+                                                <InputTextArea @bind-Value="hint.Hint" class="form-control bg-dark" rows="4"></InputTextArea>
+                                            </div>
+                                            <button type="button" class="btn btn-sm ms-1 bg-warning" @onclick="() => ShowModal(hint)">
+                                                <i class="fa-solid fa-pen-to-square"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm ms-1 bg-danger" @onclick="() => RemoveHint(hint)" aria-label="Remove">
+                                                <i class="fa-solid fa-xmark"></i>
+                                            </button>
+                                        </span>
+                                        i++;
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @if (_showModalHint)
+                {
+                    <div class="modal d-block" style="background-color: rgba(0,0,0.1,0.7);" tabindex="-1">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content background-custom">
+                                <div class="modal-header text-white">
+                                    <h5 class="modal-title">Upraviť nápovedu</h5>
+                                    <button type="button" class="btn-close btn-close-white" @onclick="CloseModal" aria-label="Zatvoriť"></button>
+                                </div>
+                                <div class="modal-body text-white">
+                                    <div class="mb-3">
+                                        <InputTextArea @bind-Value="_editingHint.Hint" class="form-control bg-dark text-white" rows="8"></InputTextArea>
+                                    </div>
+                                </div>
+                                <div class="modal-footer text-white">
+                                    <button type="button" class="btn btn-secondary" @onclick="CloseModal">Zrušiť</button>
+                                    <button type="button" class="btn btn-primary" @onclick="UpdateHintText">Uložiť</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                <div class="row">
+                    <div class="mt-3 text-end pb-4 d-flex justify-content-end">
+                        <button class="btn btn-primary me-2" type="button" @onclick="AddHint" disabled="@string.IsNullOrWhiteSpace(_hint.Hint)">
+                            Pridaj nápovedu
+                        </button>
+                        <button class="btn btn-danger" type="button" @onclick="RemoveHint" disabled="@(!_hints.Any())">
+                            Odstráň nápovedu
+                        </button>
                     </div>
                 </div>
 

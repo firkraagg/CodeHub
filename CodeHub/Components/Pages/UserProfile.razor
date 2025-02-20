@@ -291,12 +291,12 @@
                                 </div>
                                 <div class="mb-3">
                                     <label for="constraints" class="form-label">Obmedzenia</label>
-                                    <InputTextArea id="constraints" class="form-control bg-dark" @bind-Value="_editingProblem.Constraints"></InputTextArea>
+                                    @* <InputTextArea id="constraints" class="form-control bg-dark" @bind-Value="_editingProblem.Constraints"></InputTextArea> *@
                                     <ValidationMessage For="@(() => _editingProblem.Constraints)" />
                                 </div>
                                 <div class="mb-3">
                                     <label for="hints" class="form-label">Nápovedy</label>
-                                    <InputTextArea id="hints" class="form-control bg-dark" @bind-Value="_editingProblem.Hints"></InputTextArea>
+                                    @* <InputTextArea id="hints" class="form-control bg-dark" @bind-Value="_editingProblem.Hints"></InputTextArea> *@
                                     <ValidationMessage For="@(() => _editingProblem.Hints)" />
                                 </div>
                                 <div class="mb-3">

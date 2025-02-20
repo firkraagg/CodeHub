@@ -38,14 +38,43 @@ namespace CodeHub.Services
                         LanguageID = problem.LanguageID,
                         RequiredInput = problem.RequiredInput,
                         RequiredOutput = problem.RequiredOutput,
-                        Constraints = problem.Constraints,
-                        Hints = problem.Hints,
+                        Constraints = new List<ProblemConstraint>(),
+                        Hints = new List<ProblemHint>(),
                         Tags = problem.Tags?.Select(t => new Tag { Name = t.Name }).ToList(),
                         UserID = problem.UserID
                     };
 
-                    user.Problems.Add(newProblem);
-                    await AddProblemAsync(newProblem);
+                    context.Problems.Add(newProblem);
+                    await context.SaveChangesAsync();
+
+                    if (problem.Hints.Any())
+                    {
+                        foreach (var hint in problem.Hints)
+                        {
+                            var newHint = new ProblemHint
+                            {
+                                ProblemId = newProblem.Id,
+                                Hint = hint.Hint
+                            };
+                            context.ProblemHint.Add(newHint);
+                        }
+                        await context.SaveChangesAsync();
+                    }
+
+                    if (problem.Constraints.Any())
+                    {
+                        foreach (var constraint in problem.Constraints)
+                        {
+                            var newConstraint = new ProblemConstraint
+                            {
+                                ProblemId = newProblem.Id,
+                                Constraint = constraint.Constraint
+                            };
+                            context.ProblemConstraint.Add(newConstraint);
+                        }
+                        await context.SaveChangesAsync();
+                    }
+
                     return newProblem;
                 }
             }

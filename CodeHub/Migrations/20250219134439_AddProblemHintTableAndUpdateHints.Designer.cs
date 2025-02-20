@@ -4,6 +4,7 @@ using CodeHub.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CodeHub.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20250219134439_AddProblemHintTableAndUpdateHints")]
+    partial class AddProblemHintTableAndUpdateHints
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,29 +24,6 @@ namespace CodeHub.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("CodeHub.Data.Entities.ProblemConstraint", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Constraint")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<int>("ProblemId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProblemId");
-
-                    b.ToTable("ProblemConstraint");
-                });
 
             modelBuilder.Entity("CodeHub.Data.Entities.ProblemHint", b =>
                 {
@@ -55,8 +35,7 @@ namespace CodeHub.Migrations
 
                     b.Property<string>("Hint")
                         .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("ProblemId")
                         .HasColumnType("int");
@@ -166,6 +145,11 @@ namespace CodeHub.Migrations
                     b.Property<double>("Acceptance")
                         .HasColumnType("float");
 
+                    b.Property<string>("Constraints")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(1000)
@@ -217,17 +201,6 @@ namespace CodeHub.Migrations
                     b.HasIndex("TagId");
 
                     b.ToTable("ProblemTag");
-                });
-
-            modelBuilder.Entity("CodeHub.Data.Entities.ProblemConstraint", b =>
-                {
-                    b.HasOne("CodeHub.Data.Models.Problem", "Problem")
-                        .WithMany("Constraints")
-                        .HasForeignKey("ProblemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Problem");
                 });
 
             modelBuilder.Entity("CodeHub.Data.Entities.ProblemHint", b =>
@@ -282,8 +255,6 @@ namespace CodeHub.Migrations
 
             modelBuilder.Entity("CodeHub.Data.Models.Problem", b =>
                 {
-                    b.Navigation("Constraints");
-
                     b.Navigation("Hints");
                 });
 #pragma warning restore 612, 618

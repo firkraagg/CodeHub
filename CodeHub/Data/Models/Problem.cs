@@ -9,10 +9,10 @@ namespace CodeHub.Data.Models
         [Key]
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "Musíte zadať názov úlohy"), MaxLength(50)]
+        [Required(ErrorMessage = "Musíte zadať názov úlohy"), MaxLength(150)]
         public string Title { get; set; }
 
-        [Required(ErrorMessage = "Musíte zadať popis úlohy"), MaxLength(200)]
+        [Required(ErrorMessage = "Musíte zadať popis úlohy"), MaxLength(1000)]
         public string Description { get; set; }
 
         [Range(0, 100)]
@@ -27,11 +27,9 @@ namespace CodeHub.Data.Models
         [Required(ErrorMessage = "Pole nebolo vyplnené"), MaxLength(30)]
         public string RequiredOutput { get; set; }
 
-        [MaxLength(500)]
-        public string Constraints { get; set; }
+        public virtual ICollection<ProblemConstraint> Constraints { get; set; }
 
-        [MaxLength(500)]
-        public string Hints { get; set; }
+        public virtual ICollection<ProblemHint> Hints { get; set; }
 
         [ForeignKey(nameof(ProgrammingLanguage)), Required, Range(1, Int32.MaxValue, ErrorMessage = "Vyberte programovací jazyk")]
         public int LanguageID { get; set; }

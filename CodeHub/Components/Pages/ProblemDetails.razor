@@ -6,6 +6,8 @@
 @inject TagService TagService
 @inject PistonService PistonService
 @inject ProgrammingLanguageService ProgrammingLanguageService
+@inject ProblemHintService ProblemHintService
+@inject ProblemConstraintService ProblemConstraintService
 
 <PageTitle>Problem Details</PageTitle>
 
@@ -56,26 +58,45 @@
 
             <div class="mb-4 pb-4">
                 <h5 class="text-lg font-semibold">Obmedzenia:</h5>
+                @if (_constraints.Any())
+                {
+                    @foreach (var constraint in _constraints)
+                    {
+                        <p>&#9679; @constraint.Constraint</p>
+                    }
+                }
                 <p>@_problem?.Constraints</p>
             </div>
             <div class="accordion accordion-flush w-75" id="accordionHint">
-                <div class="accordion-item bg-dark border border-secondary">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button collapsed bg-dark text-light" type="button" 
-                                data-bs-toggle="collapse" data-bs-target="#collapseOne" 
-                                aria-expanded="false" aria-controls="collapseOne">
-                            Zobraziť nápovedy
-                        </button>
-                    </h2>
-                    <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionHint">
-                        <div class="accordion-body text-light">
-                            @_problem?.Hints
+                @if (_hints.Any())
+                {
+                    int index = 0;
+                    @foreach (var hint in _hints)
+                    {
+                        var collapseId = $"collapseHint{index}";
+                        var headingId = $"headingHint{index}";
+
+                        <div class="accordion-item bg-dark border border-secondary">
+                            <h2 class="accordion-header" id="@headingId">
+                                <button class="accordion-button collapsed bg-dark text-light" 
+                                        type="button" data-bs-toggle="collapse" 
+                                        data-bs-target="#@collapseId"
+                                        aria-expanded="false" aria-controls="@collapseId">
+                                    Nápoveda @(index + 1)
+                                </button>
+                            </h2>
+                            <div id="@collapseId" class="accordion-collapse collapse" 
+                                 aria-labelledby="@headingId" data-bs-parent="#accordionHint">
+                                <div class="accordion-body text-light">
+                                    @hint.Hint
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
+                        index++;
+                    }
+                }
             </div>
         </div>
-
         <div class="col-md-6 p-0 text-white">
             <div class="d-flex gap-2 pb-1">
                 <div class="dropdown">

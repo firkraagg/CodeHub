@@ -14,7 +14,9 @@ public partial class ProblemDetails
     private Problem? _problem;
     private List<Tag> _tags = new();
     private List<ProgrammingLanguage> _languages = new();
-    private ProgrammingLanguage _selectedLanguage = new ProgrammingLanguage();
+    private ProgrammingLanguage _selectedLanguage = new();
+    private List<ProblemHint> _hints = new();
+    private List<ProblemConstraint> _constraints = new();
     private string _selectedTheme = "vs-dark";
     private string _userCode;
     private string _output;
@@ -23,13 +25,14 @@ public partial class ProblemDetails
     private bool _noErrors;
     private bool _hasExecuted;
 
-
     protected override async Task OnInitializedAsync()
     {
         _problem = await ProblemService.GetProblemByIdAsync(ProblemId);
         _tags = await TagService.GetTagsForProblemAsync(_problem.Id);
         _languages = await ProgrammingLanguageService.GetProgrammingLanguagesAsync();
         _selectedLanguage = _languages.First();
+        _hints = await ProblemHintService.GetHintsForProblemAsync(_problem.Id);
+        _constraints = await ProblemConstraintService.GetConstraintsForProblemAsync(_problem.Id);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
