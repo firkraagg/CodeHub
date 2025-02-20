@@ -19,8 +19,7 @@ public partial class TaskCreation
         LanguageID = 0,
         Difficulty = 0,
         Description = string.Empty,
-        RequiredInput = string.Empty,
-        RequiredOutput = string.Empty,
+        Examples = new List<ProblemExample>(),
         Constraints = new List<ProblemConstraint>(),
         Hints = new List<ProblemHint>(),
         Tags = new List<Tag>()
@@ -35,12 +34,16 @@ public partial class TaskCreation
     private ProblemConstraint _constraint = new();
     private List<ProblemConstraint> _constraints = new();
     private ProblemConstraint _editingConstraint;
+    private ProblemExample _example = new();
+    private List<ProblemExample> _examples = new();
+    private ProblemExample _editingExample;
     private User? _user;
     private bool _showAlert;
     private string _alertColor = "";
     private string _alertMessage = "";
     private bool _showModalHint;
     private bool _showModalConstraint;
+    private bool _showModalExample;
 
     [Inject] private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = null!;
 
@@ -114,6 +117,11 @@ public partial class TaskCreation
                 _problem.Constraints.Add(problemConstraint);
             }
 
+            foreach (var problemExample in _examples)
+            {
+                _problem.Examples.Add(problemExample);
+            }
+
             _problem.UserID = _user.Id;
             await ProblemService.CreateProblemAsync(_problem);
             StateHasChanged();
@@ -185,6 +193,26 @@ public partial class TaskCreation
         };
     }
 
+    public void ShowModal(ProblemExample example)
+    {
+        _showModalExample = true;
+        _editingExample = new ProblemExample()
+        {
+            Id = example.Id,
+            Input = example.Input,
+            Output = example.Output,
+            Explanation = example.Explanation,
+            ProblemId = example.ProblemId,
+            Problem = _problem
+        };
+    }
+
+    public void ShowModalExample()
+    {
+        _editingExample = new();
+        _showModalExample = true;
+    }
+
     public void UpdateHintText()
     {
         var hint = _hints.FirstOrDefault(h => h.Id == _editingHint.Id);
@@ -243,9 +271,76 @@ public partial class TaskCreation
         }
     }
 
+    private void AddExample()
+    {
+        _examples.Add(new ProblemExample
+        {
+            Id = _examples.Count + 1,
+            Input = _example.Input,
+            Output = _example.Output,
+            Explanation = _example.Explanation,
+            Problem = _problem,
+            ProblemId = 1
+        });
+        _example.Input = string.Empty;
+        _example.Output = string.Empty;
+        _example.Explanation = string.Empty;
+    }
+
+    private void RemoveExample()
+    {
+        if (_examples.Any())
+        {
+            _examples.RemoveAt(_examples.Count - 1);
+        }
+    }
+
+    private void RemoveExample(ProblemExample example)
+    {
+        if (_examples.Contains(example))
+        {
+            _examples.Remove(example);
+        }
+    }
+
+    public void CreateExample()
+    {
+        if (!string.IsNullOrWhiteSpace(_editingExample.Input) &&
+            !string.IsNullOrWhiteSpace(_editingExample.Output))
+        {
+            var newExample = new ProblemExample
+            {
+                Id = _examples.Count + 1,
+                Input = _editingExample.Input,
+                Output = _editingExample.Output,
+                Explanation = _editingExample.Explanation,
+                ProblemId = _problem.Id,  
+                Problem = _problem
+            };
+
+            _examples.Add(newExample);
+            CloseModal();
+        }
+    }
+
+
+    public void UpdateExample()
+    {
+        var example = _examples.FirstOrDefault(e => e.Id == _editingExample.Id);
+        if (example != null)
+        {
+            example.Input = _editingExample.Input;
+            example.Output = _editingExample.Output;
+            example.Explanation = _editingExample.Explanation;
+        }
+
+        CloseModal();
+    }
+
     public void CloseModal()
     {
         _showModalHint = false;
         _showModalConstraint = false;
+        _showModalExample = false;
     }
 }

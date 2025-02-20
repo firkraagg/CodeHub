@@ -4,6 +4,7 @@ using CodeHub.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CodeHub.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20250220185052_Added_ProblemExamples_Table")]
+    partial class Added_ProblemExamples_Table
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -45,7 +48,7 @@ namespace CodeHub.Migrations
                     b.ToTable("ProblemConstraint");
                 });
 
-            modelBuilder.Entity("CodeHub.Data.Entities.ProblemExample", b =>
+            modelBuilder.Entity("CodeHub.Data.Entities.ProblemExamples", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -54,6 +57,7 @@ namespace CodeHub.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Explanation")
+                        .IsRequired()
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)");
 
@@ -209,6 +213,16 @@ namespace CodeHub.Migrations
                     b.Property<int>("LanguageID")
                         .HasColumnType("int");
 
+                    b.Property<string>("RequiredInput")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<string>("RequiredOutput")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(150)
@@ -252,10 +266,10 @@ namespace CodeHub.Migrations
                     b.Navigation("Problem");
                 });
 
-            modelBuilder.Entity("CodeHub.Data.Entities.ProblemExample", b =>
+            modelBuilder.Entity("CodeHub.Data.Entities.ProblemExamples", b =>
                 {
                     b.HasOne("CodeHub.Data.Models.Problem", "Problem")
-                        .WithMany("Examples")
+                        .WithMany()
                         .HasForeignKey("ProblemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -316,8 +330,6 @@ namespace CodeHub.Migrations
             modelBuilder.Entity("CodeHub.Data.Models.Problem", b =>
                 {
                     b.Navigation("Constraints");
-
-                    b.Navigation("Examples");
 
                     b.Navigation("Hints");
                 });

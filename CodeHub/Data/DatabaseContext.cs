@@ -17,6 +17,7 @@ namespace CodeHub.Data
         public DbSet<Tag> Tag { get; set; }
         public DbSet<ProblemHint> ProblemHint { get; set; }
         public DbSet<ProblemConstraint> ProblemConstraint { get; set; }
+        public DbSet<ProblemExample> ProblemExample { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

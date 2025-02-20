@@ -1,6 +1,7 @@
 ﻿@page "/problem/{ProblemId:int}"
 @using CodeHub.Data.Models
 @using CodeHub.Services
+@using Microsoft.IdentityModel.Tokens
 @inject IJSRuntime JS
 @inject ProblemService ProblemService
 @inject TagService TagService
@@ -8,6 +9,7 @@
 @inject ProgrammingLanguageService ProgrammingLanguageService
 @inject ProblemHintService ProblemHintService
 @inject ProblemConstraintService ProblemConstraintService
+@inject ProblemExampleService ProblemExampleService
 
 <PageTitle>Problem Details</PageTitle>
 
@@ -50,16 +52,28 @@
 
             <p class="text-gray-400 mb-6 pb-4">@_problem?.Description</p>
 
-            <div class="mb-4 pb-4">
-                <h5 class="text-lg font-semibold">Príklad:</h5>
-                <p><strong>Vstup:</strong> @_problem?.RequiredInput</p>
-                <p><strong>Výstup:</strong> @_problem?.RequiredOutput</p>
-            </div>
+            @if (_examples.Any())
+            {
+                int i = 1;
+                @foreach (var example in _examples)
+                {
+                    <div class="mb-4 pb-4">
+                        <h5 class="text-lg font-semibold">Príklad @i:</h5>
+                        <p><strong>Vstup:</strong> @example?.Input</p>
+                        <p><strong>Výstup:</strong> @example?.Output</p>
+                        @if (!string.IsNullOrEmpty(example?.Explanation))
+                        {
+                            <p><strong>Vysvetlenie:</strong> @example?.Explanation</p>
+                        }
+                    </div>
+                    i++;
+                }
+            }
 
             <div class="mb-4 pb-4">
-                <h5 class="text-lg font-semibold">Obmedzenia:</h5>
                 @if (_constraints.Any())
                 {
+                    <h5 class="text-lg font-semibold">Obmedzenia:</h5>
                     @foreach (var constraint in _constraints)
                     {
                         <p>&#9679; @constraint.Constraint</p>

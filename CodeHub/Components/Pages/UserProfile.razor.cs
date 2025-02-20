@@ -202,8 +202,8 @@ public partial class UserProfile
             existingProblem.Description = problem.Description;
             existingProblem.Acceptance = problem.Acceptance;
             existingProblem.Difficulty = problem.Difficulty;
-            existingProblem.RequiredInput = problem.RequiredInput;
-            existingProblem.RequiredOutput = problem.RequiredOutput;
+            //existingProblem.RequiredInput = problem.RequiredInput;
+            //existingProblem.RequiredOutput = problem.RequiredOutput;
             existingProblem.Constraints = problem.Constraints;
             existingProblem.Hints = problem.Hints;
             existingProblem.LanguageID = problem.LanguageID;

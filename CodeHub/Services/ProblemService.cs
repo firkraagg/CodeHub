@@ -36,8 +36,7 @@ namespace CodeHub.Services
                         Acceptance = 0.0,
                         Difficulty = problem.Difficulty,
                         LanguageID = problem.LanguageID,
-                        RequiredInput = problem.RequiredInput,
-                        RequiredOutput = problem.RequiredOutput,
+                        Examples = new List<ProblemExample>(),
                         Constraints = new List<ProblemConstraint>(),
                         Hints = new List<ProblemHint>(),
                         Tags = problem.Tags?.Select(t => new Tag { Name = t.Name }).ToList(),
@@ -71,6 +70,22 @@ namespace CodeHub.Services
                                 Constraint = constraint.Constraint
                             };
                             context.ProblemConstraint.Add(newConstraint);
+                        }
+                        await context.SaveChangesAsync();
+                    }
+
+                    if (problem.Examples.Any())
+                    {
+                        foreach (var example in problem.Examples)
+                        {
+                            var newExample = new ProblemExample
+                            {
+                                ProblemId = newProblem.Id,
+                                Input = example.Input,
+                                Output = example.Output,
+                                Explanation = example.Explanation ?? ""
+                            };
+                            context.ProblemExample.Add(newExample);
                         }
                         await context.SaveChangesAsync();
                     }

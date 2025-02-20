@@ -21,11 +21,7 @@ namespace CodeHub.Data.Models
         [Required, Range(1, 3, ErrorMessage = "Vyberte obťažnosť")]
         public int Difficulty { get; set; }
 
-        [Required(ErrorMessage = "Pole nebolo vyplnené"), MaxLength(30)]
-        public string RequiredInput { get; set; }
-
-        [Required(ErrorMessage = "Pole nebolo vyplnené"), MaxLength(30)]
-        public string RequiredOutput { get; set; }
+        public virtual ICollection<ProblemExample> Examples { get; set; }
 
         public virtual ICollection<ProblemConstraint> Constraints { get; set; }
 

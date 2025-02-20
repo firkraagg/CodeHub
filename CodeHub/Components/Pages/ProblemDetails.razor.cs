@@ -17,6 +17,7 @@ public partial class ProblemDetails
     private ProgrammingLanguage _selectedLanguage = new();
     private List<ProblemHint> _hints = new();
     private List<ProblemConstraint> _constraints = new();
+    private List<ProblemExample> _examples = new();
     private string _selectedTheme = "vs-dark";
     private string _userCode;
     private string _output;
@@ -33,6 +34,7 @@ public partial class ProblemDetails
         _selectedLanguage = _languages.First();
         _hints = await ProblemHintService.GetHintsForProblemAsync(_problem.Id);
         _constraints = await ProblemConstraintService.GetConstraintsForProblemAsync(_problem.Id);
+        _examples = await ProblemExampleService.GetExamplesForProblemAsync(_problem.Id);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
