@@ -21,6 +21,9 @@ namespace CodeHub.Data.Models
         [Required, Range(1, 3, ErrorMessage = "Vyberte obťažnosť")]
         public int Difficulty { get; set; }
 
+        [MaxLength(1500)]
+        public string? DefaultCode { get; set; }
+
         public virtual ICollection<ProblemExample> Examples { get; set; }
 
         public virtual ICollection<ProblemConstraint> Constraints { get; set; }

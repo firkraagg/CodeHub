@@ -36,6 +36,7 @@ namespace CodeHub.Services
                         Acceptance = 0.0,
                         Difficulty = problem.Difficulty,
                         LanguageID = problem.LanguageID,
+                        DefaultCode = problem.DefaultCode,
                         Examples = new List<ProblemExample>(),
                         Constraints = new List<ProblemConstraint>(),
                         Hints = new List<ProblemHint>(),

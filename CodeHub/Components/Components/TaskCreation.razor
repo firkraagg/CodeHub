@@ -308,6 +308,22 @@
                         </button>
                     </div>
                 </div>
+                
+                <div class="row">
+                    <div class="col-12 col-md-6 text-start my-2">
+                        Prednastavený kód
+                    </div>
+                    <div class="mb-3 col-12 col-md-6">
+                        <InputTextArea @bind-Value="_problem.DefaultCode" class="form-control bg-dark" id="DefaultCode" rows="10" 
+                                       placeholder="class HelloWorld {
+    public static void main(String[] args) {
+        int number = 10;
+        System.out.println(number); 
+    }
+}"></InputTextArea>
+                        <ValidationMessage For="@(() => _problem.DefaultCode)" />
+                    </div>
+                </div>
 
                 <div class="row">
                     <div class="col my-3">
