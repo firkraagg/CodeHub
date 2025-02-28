@@ -35,7 +35,7 @@
                             <option value="0" selected disabled hidden>-- Vyber programovací jazyk --</option>
                             @foreach (var language in _languages)
                             {
-                                <option value="@language.Id">@language.DisplayName</option>
+                                <option value="@language.Id">@language.Name</option>
                             }
                         </InputSelect>
                         <ValidationMessage For="@(() => _problem.LanguageID)"/>
@@ -315,7 +315,7 @@
                     </div>
                     <div class="mb-3 col-12 col-md-6">
                         <InputTextArea @bind-Value="_problem.DefaultCode" class="form-control bg-dark" id="DefaultCode" rows="10" 
-                                       placeholder="class HelloWorld {
+                                       @oninput="OnCodeInput" placeholder="class HelloWorld {
     public static void main(String[] args) {
         int number = 10;
         System.out.println(number); 

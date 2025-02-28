@@ -12,6 +12,10 @@
                 smoothScrolling: true
             });
 
+            if (defaultCode) {
+                window.monacoInterop.editorInstance.setValue(defaultCode);
+            }
+
             setTimeout(() => {
                 window.monacoInterop.editorInstance.setValue(defaultCode || "");
             }, 100);

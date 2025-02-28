@@ -115,15 +115,15 @@
             <div class="d-flex gap-2 pb-1">
                 <div class="dropdown">
                     <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="border:3px solid #0059b3;">
-                        Jazyk: @_selectedLanguage.DisplayName
+                        Jazyk: @_selectedLanguage.Name
                     </button>
                     <ul class="dropdown-menu dropdown-menu-dark">
                         @foreach (var language in _languages)
                         {
                             <li>
-                                <a class="dropdown-item @( _selectedLanguage.ApiName == language.ApiName ? "active" : "" )" 
-                                    @onclick="@(() => ChangeLanguage(language.ApiName))">
-                                    @language.DisplayName
+                                <a class="dropdown-item @( _selectedLanguage.Name == language.Name ? "active" : "" )" 
+                                    @onclick="@(() => ChangeLanguage(language.Name))">
+                                    @language.Name
                                 </a>
                             </li>
                         }

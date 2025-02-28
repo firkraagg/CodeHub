@@ -28,8 +28,6 @@ namespace CodeHub.Services
                 $"docker run --rm -v \"{tempPath.Replace("\\", "/")}:/app\" mcr.microsoft.com/dotnet/sdk:9.0 sh -c " +
                 $"\"dotnet build /app/cs_project -c Debug && dotnet run --project /app/cs_project\"";
 
-
-
             return await RunCommandAsync(runCommand);
         }
 

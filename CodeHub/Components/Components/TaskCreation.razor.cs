@@ -82,6 +82,11 @@ public partial class TaskCreation
         }
     }
 
+    private async Task OnCodeInput(ChangeEventArgs e)
+    {
+        _problem.DefaultCode = e.Value.ToString();
+    }
+
     public async Task HandleCreateProblemFormSubmitAsync()
     {
         var existingProblem = await ProblemService.GetProblemByName(_problem.Title);
