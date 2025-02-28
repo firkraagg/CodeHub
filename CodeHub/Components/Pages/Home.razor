@@ -7,141 +7,188 @@
 <PageTitle>Home</PageTitle>
 
 <div class="container-fluid">
-<div class="d-flex justify-content-center mt-5 gap-2 flex-wrap">
-    <div class="sorting_buttons mt-3 gap-2 w-50 w-md-50">
-        <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle bg-dark" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                Počet otázok
-            </button>
-            <ul class="dropdown-menu dropdown-menu-dark">
-                <li><a class="dropdown-item" href="#" @onclick="() => SetProblemCount(10)">zobraziť 10 otázok </a></li>
-                <li><a class="dropdown-item" href="#" @onclick="() => SetProblemCount(20)">zobraziť 20 otázok</a></li>
-                <li><a class="dropdown-item" href="#" @onclick="() => SetProblemCount(30)">zobraziť 30 otázok</a></li>
-            </ul>
-        </div>
-        <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle bg-dark" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                Zoznam
-            </button>
-            <ul class="dropdown-menu dropdown-menu-dark">
-                <li><a class="dropdown-item" href="#">50 najobľúbenejších otázok </a></li>
-                <li><a class="dropdown-item" href="#">50 najľahších otázok</a></li>
-                <li><a class="dropdown-item" href="#">50 najťažších otázok</a></li>
-            </ul>
-        </div>
-        <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle bg-dark" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                Obťažnosť
-            </button>
-            <ul class="dropdown-menu dropdown-menu-dark">
-                <li><a class="dropdown-item" href="#" style="color:green;" @onclick="() => FilterByDifficulty(1)">Ľahká</a></li>
-                <li><a class="dropdown-item" href="#" style="color:darkorange;" @onclick="() => FilterByDifficulty(2)">Stredná</a></li>
-                <li><a class="dropdown-item" href="#" style="color:red;" @onclick="() => FilterByDifficulty(3)">Ťažká</a></li>
-                <li><a class="dropdown-item" href="#" @onclick="() => FilterByDifficulty(0)">Všetky</a></li>
-            </ul>
-        </div>
-        <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle bg-dark" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                Značky
-            </button>
-            <ul class="dropdown-menu dropdown-menu-dark">
-                @if (_tags.Any())
-                {
-                    @foreach (var tag in _tags.GroupBy(t => t.Name).Select(group => group.First()))
+    <div class="d-flex justify-content-center mt-5 gap-2 flex-wrap">
+        <div class="sorting_buttons mt-3 gap-2 w-50 w-md-50">
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle bg-dark" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Počet otázok
+                </button>
+                <ul class="dropdown-menu dropdown-menu-dark">
+                    <li><a class="dropdown-item" href="#" @onclick="() => SetProblemCount(2)">zobraziť 10 otázok </a></li>
+                    <li><a class="dropdown-item" href="#" @onclick="() => SetProblemCount(10)">zobraziť 20 otázok</a></li>
+                    <li><a class="dropdown-item" href="#" @onclick="() => SetProblemCount(30)">zobraziť 30 otázok</a></li>
+                </ul>
+            </div>
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle bg-dark" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Zoznam
+                </button>
+                <ul class="dropdown-menu dropdown-menu-dark">
+                    <li><a class="dropdown-item" href="#">50 najobľúbenejších otázok </a></li>
+                    <li><a class="dropdown-item" href="#">50 najľahších otázok</a></li>
+                    <li><a class="dropdown-item" href="#">50 najťažších otázok</a></li>
+                </ul>
+            </div>
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle bg-dark" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Obťažnosť
+                </button>
+                <ul class="dropdown-menu dropdown-menu-dark">
+                    <li><a class="dropdown-item" href="#" style="color:green;" @onclick="() => FilterByDifficulty(1)">Ľahká</a></li>
+                    <li><a class="dropdown-item" href="#" style="color:darkorange;" @onclick="() => FilterByDifficulty(2)">Stredná</a></li>
+                    <li><a class="dropdown-item" href="#" style="color:red;" @onclick="() => FilterByDifficulty(3)">Ťažká</a></li>
+                    <li><a class="dropdown-item" href="#" @onclick="() => FilterByDifficulty(0)">Všetky</a></li>
+                </ul>
+            </div>
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle bg-dark" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Značky
+                </button>
+                <ul class="dropdown-menu dropdown-menu-dark">
+                    @if (_tags.Any())
                     {
-                        <li>
-                            <a class="dropdown-item" href="#" @onclick="() => FilterByTag(tag.Id)">@tag.Name</a>
+                        @foreach (var tag in _tags.GroupBy(t => t.Name).Select(group => group.First()))
+                        {
+                            <li>
+                                <a class="dropdown-item" href="#" @onclick="() => FilterByTag(tag.Id)">@tag.Name</a>
+                            </li>
+                        }
+                    }
+                    else
+                    {
+                        <li><span class="dropdown-item disabled">Načítavam značky...</span></li>
+                    }
+                </ul>
+            </div>
+        </div>
+        <div class="custom-table">
+            <div class="table-responsive">
+                <table class="table table-striped table-dark">
+                    <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Stav</th>
+                        <th scope="col">Názov</th>
+                        <th scope="col">Prijatie</th>
+                        <th scope="col">Náročnosť</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @if ((IsFiltered ? _filteredProblems : _problems).Any())
+                    {
+                        int startIndex = (_currentPage - 1) * _maxProblemsToShow + 1;
+                        var problemsToDisplay = (IsFiltered ? _filteredProblems : _problems)
+                            .Skip((_currentPage - 1) * _maxProblemsToShow)
+                            .Take(_maxProblemsToShow);
+
+                        foreach (var (problem, index) in problemsToDisplay.Select((p, i) => (p, i + startIndex)))
+                        {
+                            <tr>
+                                <th scope="row">@index</th>
+                                <td></td>
+                                <td>
+                                    <a href=@($"/problem/{problem.Id}") style="text-decoration: none; color: white;" 
+                                       onmouseover="this.style.color='lightblue'" onmouseout="this.style.color='white'">
+                                        @problem.Title
+                                    </a>
+                                </td>
+                                <td>@($"{problem.Acceptance:P}")</td>
+                                <td>
+                                    @if (problem.Difficulty == 1)
+                                    {
+                                        <span class="badge bg-success">Ľahká</span>
+                                    }
+                                    else if (problem.Difficulty == 2)
+                                    {
+                                        <span class="badge bg-warning">Stredná</span>
+                                    }
+                                    else if (problem.Difficulty == 3)
+                                    {
+                                        <span class="badge bg-danger">Ťažká</span>
+                                    }
+                                    else
+                                    {
+                                        <span>Neznáma</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center">Načítavam úlohy...</td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="navigation mb-2 w-100">
+            <nav aria-label="Page navigation example" class="d-flex justify-content-around">
+                <ul class="pagination bg-dark d-flex flex-wrap">
+                    <li class="page-item @(_currentPage == 1 ? "disabled" : "")">
+                        <a class="page-link bg-dark link-primary" href="#" @onclick="() => GoToPage(_currentPage - 1)">
+                            &lt;
+                        </a>
+                    </li>
+                    
+                    @if (_totalPages <= 5)
+                    {
+                        @for (int i = 1; i <= _totalPages; i++)
+                        {
+                            var page = i;
+                            <li class="page-item">
+                                <a class="page-link bg-dark link-primary" href="#" @onclick="() => GoToPage(page)">
+                                    @i
+                                </a>
+                            </li>
+                        }
+                    }
+                    else
+                    {
+                        <li class="page-item @(1 == _currentPage ? "active" : "")">
+                            <a class="page-link bg-dark link-primary" href="#" @onclick="() => GoToPage(1)">1</a>
+                        </li>
+
+                        @if (_currentPage > 3)
+                        {
+                            <li class="page-item">
+                                <span class="page-link bg-dark link-secondary">...</span>
+                            </li>
+                        }
+
+                        int start = Math.Max(2, _currentPage - 2);
+                        int end = Math.Min(_totalPages - 1, _currentPage + 2);
+                        @for (int i = start; i <= end; i++)
+                        {
+                            var page = i;
+                            <li class="page-item @(page == _currentPage ? "active" : "")">
+                                <a class="page-link bg-dark link-primary" href="#" @onclick="() => GoToPage(page)">
+                                    @i
+                                </a>
+                            </li>
+                        }
+
+                        @if (_currentPage < _totalPages - 2)
+                        {
+                            <li class="page-item">
+                                <span class="page-link bg-dark link-secondary">...</span>
+                            </li>
+                        }
+
+                        <li class="page-item @(_totalPages == _currentPage ? "active" : "")">
+                            <a class="page-link bg-dark link-primary" href="#" @onclick="() => GoToPage(_totalPages)">@_totalPages</a>
                         </li>
                     }
-                }
-                else
-                {
-                    <li><span class="dropdown-item disabled">Načítavam značky...</span></li>
-                }
-            </ul>
+                    
+                    <li class="page-item @(_currentPage == _totalPages ? "disabled" : "")">
+                        <a class="page-link bg-dark link-primary" href="#" @onclick="() => GoToPage(_currentPage + 1)">
+                            &gt;
+                        </a>
+                    </li>
+                </ul>
+            </nav>
         </div>
     </div>
-<div class="custom-table">
-    <div class="table-responsive">
-        <table class="table table-striped table-dark">
-            <thead>
-            <tr>
-                <th scope="col">#</th>
-                <th scope="col">Stav</th>
-                <th scope="col">Názov</th>
-                <th scope="col">Prijatie</th>
-                <th scope="col">Náročnosť</th>
-            </tr>
-            </thead>
-            <tbody>
-            @if ((IsFiltered ? _filteredProblems : _problems).Any())
-            {
-                int startIndex = (_currentPage - 1) * _maxProblemsToShow + 1;
-                var problemsToDisplay = (IsFiltered ? _filteredProblems : _problems)
-                    .Skip((_currentPage - 1) * _maxProblemsToShow)
-                    .Take(_maxProblemsToShow);
-
-                foreach (var (problem, index) in problemsToDisplay.Select((p, i) => (p, i + startIndex)))
-                {
-                    <tr>
-                        <th scope="row">@index</th>
-                        <td></td>
-                        <td>
-                            <a href=@($"/problem/{problem.Id}") style="text-decoration: none; color: white;" 
-                               onmouseover="this.style.color='lightblue'" onmouseout="this.style.color='white'">
-                                @problem.Title
-                            </a>
-                        </td>
-                        <td>@($"{problem.Acceptance:P}")</td>
-                        <td>
-                            @if (problem.Difficulty == 1)
-                            {
-                                <span class="badge bg-success">Ľahká</span>
-                            }
-                            else if (problem.Difficulty == 2)
-                            {
-                                <span class="badge bg-warning">Stredná</span>
-                            }
-                            else if (problem.Difficulty == 3)
-                            {
-                                <span class="badge bg-danger">Ťažká</span>
-                            }
-                            else
-                            {
-                                <span>Neznáma</span>
-                            }
-                        </td>
-                    </tr>
-                }
-            }
-            else
-            {
-                <tr>
-                    <td colspan="5" class="text-center">Načítavam úlohy...</td>
-                </tr>
-            }
-            </tbody>
-        </table>
-    </div>
-</div>
-<div class="navigation mb-2 w-100">
-    <nav aria-label="Page navigation example" class="d-flex justify-content-around">
-        <ul class="pagination bg-dark d-flex flex-wrap">
-            <li class="page-item @(_currentPage == 1 ? "disabled" : "")">
-                <a class="page-link bg-dark link-primary" href="#" @onclick="() => GoToPage(_currentPage - 1)">
-                    &lt;
-                </a>
-            </li>
-            <li class="page-item">
-                <span class="page-link bg-dark link-primary">@_currentPage</span>
-            </li>
-            <li class="page-item @(_currentPage == _totalPages ? "disabled" : "")">
-                <a class="page-link bg-dark link-primary" href="#" @onclick="() => GoToPage(_currentPage + 1)">
-                    &gt;
-                </a>
-            </li>
-        </ul>
-    </nav>
-</div>
-</div>
 </div>

@@ -31,7 +31,7 @@ public partial class Home
 
     private void GoToPage(int page)
     {
-        if (page < 1 || page > _maxProblemsToShow) return;
+        if (page < 1 || page > _totalPages) return;
         _currentPage = page;
     }
 

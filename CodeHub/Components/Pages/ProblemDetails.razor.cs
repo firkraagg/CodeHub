@@ -122,9 +122,12 @@ public partial class ProblemDetails
 
     private async Task ChangeTheme(string theme)
     {
-        _selectedTheme = theme;
-        await JS.InvokeVoidAsync("monacoInterop.setTheme", _selectedTheme);
-        await SetCode(_userCode);
+        if (_selectedTheme != theme)
+        {
+            _selectedTheme = theme;
+            await JS.InvokeVoidAsync("monacoInterop.setTheme", _selectedTheme);
+            StateHasChanged();
+        }
     }
     private async Task ChangeLanguage(string name)
     {
