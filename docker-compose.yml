@@ -1,0 +1,40 @@
+networks:
+  codehubapp:
+    driver: bridge
+    
+
+services:
+  codehubdb:
+    container_name: codehub-db
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    ports:
+    - 8002:1433
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=CodeHub@2023
+    networks:
+    - codehubapp
+    volumes:
+      - mssql_data:/var/opt/mssql
+  codehub:
+    container_name: codehub-app
+    image: ${DOCKER_REGISTRY-}codehub
+    build:
+      context: .
+      dockerfile: CodeHub/Dockerfile
+    ports:
+    - "8001:8081"
+    depends_on:
+    - codehubdb
+    environment:
+    - DB_HOST=codehubdb
+    - DB_PORT=8002 
+    - DB_NAME=CodeHubApp
+    - DB_SA_PASSWORD=CodeHub@2023
+    networks:
+    - codehubapp
+
+volumes:
+  mssql_data:
+    driver: local
+  

@@ -38,8 +38,8 @@ namespace CodeHub.Data
                 .WithMany(t => t.Problems)
                 .UsingEntity<Dictionary<string, object>>(
                     "ProblemTag",
-                    j => j.HasOne<Tag>().WithMany().HasForeignKey("TagId"),
-                    j => j.HasOne<Problem>().WithMany().HasForeignKey("ProblemId")
+                    j => j.HasOne<Tag>().WithMany().HasForeignKey("TagId").OnDelete(DeleteBehavior.Cascade),
+                    j => j.HasOne<Problem>().WithMany().HasForeignKey("ProblemId").OnDelete(DeleteBehavior.Cascade)
                 );
         }
     }

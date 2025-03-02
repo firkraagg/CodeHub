@@ -25,6 +25,7 @@ public partial class ProblemDetails
     private bool _isCheckLoading;
     private bool _noErrors;
     private bool _hasExecuted;
+    private bool _isEditorInitialized = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -39,10 +40,11 @@ public partial class ProblemDetails
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender)
-        {
-            await JS.InvokeVoidAsync("monacoInterop.initialize", "editorContainer", "java", _problem?.DefaultCode);
-        }
+        if (_problem == null || _isEditorInitialized) return;
+
+        string defaultCode = string.IsNullOrEmpty(_problem.DefaultCode) ? "" : _problem.DefaultCode;
+        await JS.InvokeVoidAsync("monacoInterop.initialize", "editorContainer", "java", defaultCode);
+        _isEditorInitialized = true;
     }
 
     private async Task GetEditorValue()

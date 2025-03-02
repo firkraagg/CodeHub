@@ -24,6 +24,9 @@ namespace CodeHub.Data.Models
         [MaxLength(1500)]
         public string? DefaultCode { get; set; }
 
+        [Required]
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+
         public virtual ICollection<ProblemExample> Examples { get; set; }
 
         public virtual ICollection<ProblemConstraint> Constraints { get; set; }

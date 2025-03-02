@@ -5,6 +5,8 @@ VisualStudioVersion = 17.11.35303.130
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeHub", "CodeHub\CodeHub.csproj", "{6621D599-D1E8-417B-B92C-12E0A5F1D9D2}"
 EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{186C09D2-B2F7-421A-9084-5C64CD7CA4F4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{6621D599-D1E8-417B-B92C-12E0A5F1D9D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6621D599-D1E8-417B-B92C-12E0A5F1D9D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6621D599-D1E8-417B-B92C-12E0A5F1D9D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{186C09D2-B2F7-421A-9084-5C64CD7CA4F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{186C09D2-B2F7-421A-9084-5C64CD7CA4F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{186C09D2-B2F7-421A-9084-5C64CD7CA4F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{186C09D2-B2F7-421A-9084-5C64CD7CA4F4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

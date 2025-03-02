@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.IdentityModel.Tokens;
+using System.Text.Json;
 
 namespace CodeHub.Components.Pages;
 
@@ -27,6 +28,7 @@ public partial class UserProfile
     private bool _isLoading = false;
     private bool _showUpdateModal = false;
     private int? _selectedTagId;
+    private string _tempCode;
     private List<Tag> _availableTags = new();
     private List<ProgrammingLanguage> _languages = new();
 
@@ -198,18 +200,25 @@ public partial class UserProfile
         var existingProblem = _userProblems.FirstOrDefault(p => p.Id == problem.Id);
         if (existingProblem != null)
         {
-            existingProblem.Title = problem.Title;
-            existingProblem.Description = problem.Description;
-            existingProblem.Acceptance = problem.Acceptance;
-            existingProblem.Difficulty = problem.Difficulty;
-            //existingProblem.RequiredInput = problem.RequiredInput;
-            //existingProblem.RequiredOutput = problem.RequiredOutput;
-            existingProblem.Constraints = problem.Constraints;
-            existingProblem.Hints = problem.Hints;
-            existingProblem.LanguageID = problem.LanguageID;
-            existingProblem.Tags = problem.Tags;
+            _editingProblem = new Problem
+            {
+                Id = existingProblem.Id,
+                Title = existingProblem.Title,
+                Description = existingProblem.Description,
+                Acceptance = existingProblem.Acceptance,
+                Difficulty = existingProblem.Difficulty,
+                Constraints = existingProblem.Constraints,
+                Hints = existingProblem.Hints,
+                LanguageID = existingProblem.LanguageID,
+                DefaultCode = existingProblem.DefaultCode,
+                Tags = existingProblem.Tags.Select(t => new Tag
+                {
+                    Id = t.Id,
+                    Name = t.Name
+                }).ToList()
+            };
 
-            _editingProblem = existingProblem;
+            _tempCode = _editingProblem.DefaultCode!;
             _showUpdateModal = true;
             StateHasChanged();
         }
@@ -237,19 +246,23 @@ public partial class UserProfile
 
     private async Task SaveUpdatedProblem()
     {
-        if (_editingProblem == null)
-        {
-            return;
-        }
+        if (_editingProblem == null) return;
 
-        _editingProblem.Tags = _editingProblem.Tags.Distinct().ToList();
+        _editingProblem.Tags = _editingProblem.Tags
+            .DistinctBy(t => t.Name)
+            .ToList();
+        _editingProblem.DefaultCode = _tempCode;
         await ProblemService.EditProblemAsync(_editingProblem);
+        //_editingProblem = new();
         CloseUpdateModal();
+        StateHasChanged();
     }
 
     private void CloseUpdateModal()
     {
         _showUpdateModal = false;
+        _editingProblem = new();
+        _tempCode = string.Empty;
         StateHasChanged();
     }
 

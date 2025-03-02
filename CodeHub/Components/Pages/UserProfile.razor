@@ -331,6 +331,11 @@
                                         <button type="button" class="btn btn-primary mt-2" @onclick="AddTag">Pridať značku</button>
                                     </div>
                                 </div>
+                                <div class="mb-3">
+                                    <label for="defaultCode" class="form-label">Prednastavený kód</label>
+                                    <InputTextArea @bind-Value="_tempCode" class="form-control bg-dark" id="DefaultCode" rows="5" ></InputTextArea>
+                                    @* <ValidationMessage For="@(() => _editingProblem.Hints)" /> *@
+                                </div>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" @onclick="CloseUpdateModal">Zrušiť</button>

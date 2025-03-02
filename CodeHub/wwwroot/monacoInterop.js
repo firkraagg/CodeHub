@@ -2,6 +2,10 @@
     editorInstance: null,
 
     initialize: function (elementId, language, defaultCode) {
+        if (window.monacoInterop.editorInstance) {
+            window.monacoInterop.editorInstance.dispose();
+        }
+
         require.config({ paths: { vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.43.0/min/vs' } });
         require(['vs/editor/editor.main'], function () {
             window.monacoInterop.editorInstance = monaco.editor.create(document.getElementById(elementId), {
@@ -15,10 +19,6 @@
             if (defaultCode) {
                 window.monacoInterop.editorInstance.setValue(defaultCode);
             }
-
-            setTimeout(() => {
-                window.monacoInterop.editorInstance.setValue(defaultCode || "");
-            }, 100);
         });
     },
 
