@@ -24,20 +24,22 @@
                     Zoradiť podľa
                 </button>
                 <ul class="dropdown-menu dropdown-menu-dark">
-                    <li><a class="dropdown-item @(_selectedSort == "newest" ? "active bg-warning text-dark" : "")" href="#" @onclick="@(() => FilterProblems(_selectedDifficulty, "newest"))">Najnovšie</a></li>
-                    <li><a class="dropdown-item @(_selectedSort == "easiest" ? "active bg-warning text-dark" : "")" href="#" @onclick="@(() => FilterProblems(_selectedDifficulty, "easiest"))">Najľahšie</a></li>
-                    <li><a class="dropdown-item @(_selectedSort == "hardest" ? "active bg-warning text-dark" : "")" href="#" @onclick="@(() => FilterProblems(_selectedDifficulty, "hardest"))">Najťažšie</a></li>
+                    <li><a class="dropdown-item @( _selectedSort == "newest" ? "active bg-warning text-dark" : "")" href="#" @onclick="@(() => ApplySorting("newest"))">Najnovšie</a></li>
+                    <li><a class="dropdown-item @( _selectedSort == "oldest" ? "active bg-warning text-dark" : "")" href="#" @onclick="@(() => ApplySorting("oldest"))">Najstaršie</a></li>
+                    <li><a class="dropdown-item @( _selectedSort == "easiest" ? "active bg-warning text-dark" : "")" href="#" @onclick="@(() => ApplySorting("easiest"))">Najľahšie</a></li>
+                    <li><a class="dropdown-item @( _selectedSort == "hardest" ? "active bg-warning text-dark" : "")" href="#" @onclick="@(() => ApplySorting("hardest"))">Najťažšie</a></li>
                 </ul>
             </div>
+
             <div class="dropdown">
                 <button class="btn btn-secondary dropdown-toggle bg-dark" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                     Obťažnosť
                 </button>
                 <ul class="dropdown-menu dropdown-menu-dark">
-                    <li><a class="dropdown-item @(_selectedDifficulty == 1 ? "active bg-dark" : "")" href="#" style="color:green;" @onclick="() => FilterProblems(difficulty:1, _selectedSort)">Ľahká</a></li>
-                    <li><a class="dropdown-item @(_selectedDifficulty == 2 ? "active bg-secondary" : "")" href="#" style="color:darkorange;" @onclick="() => FilterProblems(difficulty:2, _selectedSort)">Stredná</a></li>
-                    <li><a class="dropdown-item @(_selectedDifficulty == 3 ? "active bg-light" : "")" href="#" style="color:red;" @onclick="() => FilterProblems(difficulty:3, _selectedSort)">Ťažká</a></li>
-                    <li><a class="dropdown-item @(_selectedDifficulty == 0 ? "active bg-primary" : "")" href="#" @onclick="() => FilterProblems(difficulty:0, _selectedSort)">Všetky</a></li>
+                    <li><a class="dropdown-item @( _selectedDifficulty == 1 ? "active bg-dark" : "")" href="#" style="color:green;" @onclick="@(() => ApplyFilter(1))">Ľahká</a></li>
+                    <li><a class="dropdown-item @( _selectedDifficulty == 2 ? "active bg-secondary" : "")" href="#" style="color:darkorange;" @onclick="@(() => ApplyFilter(2))">Stredná</a></li>
+                    <li><a class="dropdown-item @( _selectedDifficulty == 3 ? "active bg-light" : "")" href="#" style="color:red;" @onclick="@(() => ApplyFilter(3))">Ťažká</a></li>
+                    <li><a class="dropdown-item @( _selectedDifficulty == 0 ? "active bg-primary" : "")" href="#" @onclick="@(() => ApplyFilter(0))">Všetky</a></li>
                 </ul>
             </div>
             <div class="dropdown">
@@ -74,10 +76,10 @@
                     </tr>
                     </thead>
                     <tbody>
-                    @if ((IsFiltered ? _filteredProblems : _problems).Any())
+                    @if ((_isFiltered ? _filteredProblems : _problems).Any())
                     {
                         int startIndex = (_currentPage - 1) * _maxProblemsToShow + 1;
-                        var problemsToDisplay = (IsFiltered ? _filteredProblems : _problems)
+                        var problemsToDisplay = (_isFiltered ? _filteredProblems : _problems)
                             .Skip((_currentPage - 1) * _maxProblemsToShow)
                             .Take(_maxProblemsToShow);
 
