@@ -15,9 +15,8 @@
 
 <div class="container-fluid h-100 p-4">
     <div class="row h-100">
-        <div class="col-md-6 p-4 text-white overflow-y-auto">
+        <div class="col-md-6 p-4 text-white overflow-y-auto" style="border:3px solid #0059b3; border-radius:5px; overflow-y: auto; max-height: 85vh; background-color: #1e1e1e">
             <h2 class="font-bold">@_problem?.Title</h2>
-
             <div class="mb-4">
                 @if (_tags != null && _tags.Any())
                 {
@@ -111,7 +110,7 @@
                 }
             </div>
         </div>
-        <div class="col-md-6 p-0 text-white">
+        <div class="col-md-6 p-0 text-white ps-3">
             <div class="d-flex gap-2 pb-1">
                 <div class="dropdown">
                     <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="border:3px solid #0059b3;">
@@ -122,7 +121,7 @@
                         {
                             <li>
                                 <a class="dropdown-item @( _selectedLanguage.Name == language.Name ? "active" : "" )" 
-                                    @onclick="@(() => ChangeLanguage(language.Name))">
+                                   @onclick="@(() => ChangeLanguage(language.Name))">
                                     @language.Name
                                 </a>
                             </li>
@@ -139,45 +138,62 @@
                     </ul>
                 </div>
             </div>
-            <div id="editorContainer" style="height: 65vh; border: 3px solid #0059b3;"></div>
-            <div class="mt-3 d-flex gap-2 mb-2">
-                <button class="btn btn-primary align-self-start" @onclick="GetEditorValue" disabled="@_isSubmitLoading">
-                    @if (_isSubmitLoading)
-                    {
-                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                        <span class="ms-2">Odovzdávam...</span>
-                    }
-                    else
-                    {
-                        <span>Odovzdaj</span>
-                    }
-                </button>
+            <div id="editorContainer" style="height: 65vh; border: 3px solid #0059b3;" class="pb-3"></div>
+            <AuthorizeView Roles="Admin,Učiteľ,Študent" Context="authContext">
+                <Authorized>
+                    <div class="mt-3 d-flex gap-2 mb-2">
+                        <button class="btn btn-primary align-self-start" @onclick="GetEditorValue" disabled="@_isSubmitLoading">
+                            @if (_isSubmitLoading)
+                            {
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                <span class="ms-2">Odovzdávam...</span>
+                            }
+                            else
+                            {
+                                <span>Odovzdaj</span>
+                            }
+                        </button>
 
-                <button class="btn btn-success align-self-start" @onclick="CheckCodeAsync" disabled="@_isCheckLoading">
-                    @if (_isCheckLoading)
-                    {
-                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                        <span class="ms-2">Kontrolujem...</span>
-                    }
-                    else
-                    {
-                        <span>Skontroluj</span>
-                    }
-                </button>
-            </div>
-            @{
-                var borderColor = "";
-                if (_hasExecuted)
-                {
-                    borderColor = _noErrors ? "border-success" : "border-danger";
-                }
+                        <button class="btn btn-success align-self-start" @onclick="CheckCodeAsync" disabled="@_isCheckLoading">
+                            @if (_isCheckLoading)
+                            {
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                <span class="ms-2">Kontrolujem...</span>
+                            }
+                            else
+                            {
+                                <span>Skontroluj</span>
+                            }
+                        </button>
+                    </div>
+                    @{
+                        var borderColor = "";
+                        if (_hasExecuted)
+                        {
+                            borderColor = _noErrors ? "border-success" : "border-danger";
+                        }
 
-            }
+                    }
 
-            <div class="p-3 border rounded bg-dark text-light w-100 @borderColor" 
-                 style="overflow-y: auto; white-space: pre-wrap; font-family: monospace;">
-                <pre class="m-0">@_output</pre>
-            </div>
+                    <div class="p-3 border rounded bg-dark text-light w-100 @borderColor" 
+                         style="overflow-y: auto; white-space: pre-wrap; font-family: monospace;">
+                        <pre class="m-0">@_output</pre>
+                    </div>
+                </Authorized>
+                <NotAuthorized>
+                    <div>
+                        <h6>
+                            Musíte sa 
+                            <a href="/login" style="text-decoration: none; color: lightblue" onmouseover="this.style.color='dodgerblue'; this.style.textDecoration='underline';"
+                               onmouseout="this.style.color='lightblue'; this.style.textDecoration='none'">prihlásiť</a>
+                            /
+                            <a href="/register" style="text-decoration: none; color: lightblue" onmouseover="this.style.color='dodgerblue'; this.style.textDecoration='underline'"
+                               onmouseout="this.style.color='lightblue'; this.style.textDecoration='none'">zaregistrovať</a>.
+                            pre riešenie problému
+                        </h6>
+                    </div>
+                </NotAuthorized>
+            </AuthorizeView>
         </div>
     </div>
 </div>

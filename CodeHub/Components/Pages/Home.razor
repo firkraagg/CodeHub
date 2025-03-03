@@ -140,7 +140,7 @@
                         @for (int i = 1; i <= _totalPages; i++)
                         {
                             var page = i;
-                            <li class="page-item">
+                            <li class="page-item @(i == _currentPage ? "active" : "")">
                                 <a class="page-link bg-dark link-primary" href="#" @onclick="() => GoToPage(page)">
                                     @i
                                 </a>
