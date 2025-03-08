@@ -46,13 +46,16 @@
                 <button class="btn btn-secondary dropdown-toggle bg-dark" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                     Značky
                 </button>
-                <ul class="dropdown-menu dropdown-menu-dark">
+                <ul class="dropdown-menu dropdown-menu-dark overflow-auto" style="max-height:20vh">
                     @if (_tags.Any())
                     {
                         @foreach (var tag in _tags.GroupBy(t => t.Name).Select(group => group.First()))
                         {
                             <li>
-                                <a class="dropdown-item" href="#" @onclick="() => FilterByTag(tag.Id)">@tag.Name</a>
+                                <input type="checkbox" class="form-check-input me-2 ms-2"
+                                       checked="@_selectedTags.Contains(tag)"
+                                       @onchange="() => ToggleTagSelection(tag)" />
+                                <label class="form-check-label">@tag.Name</label>
                             </li>
                         }
                     }
@@ -119,7 +122,7 @@
                     else
                     {
                         <tr>
-                            <td colspan="5" class="text-center">Načítavam úlohy...</td>
+                            <td colspan="5" class="text-center">Žiadne úlohy.</td>
                         </tr>
                     }
                     </tbody>

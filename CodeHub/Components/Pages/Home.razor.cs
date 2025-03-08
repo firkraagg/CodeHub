@@ -9,6 +9,7 @@ public partial class Home
     private List<Problem> _problems = new();
     private List<Problem> _filteredProblems = new();
     private List<Tag> _tags = new();
+    private List<Tag> _selectedTags = new();
     private int _selectedDifficulty = -1;
     private string _selectedSort = "";
     private int _selectedTagId = 0;
@@ -22,6 +23,7 @@ public partial class Home
     {
         await LoadProblems();
         await LoadTags();
+        _selectedTags = new List<Tag>();
     }
 
     public void SetProblemCount(int count)
@@ -62,13 +64,35 @@ public partial class Home
         FilterProblems();
     }
 
-    private void FilterProblems()
+    private void ToggleTagSelection(Tag tag)
     {
-        _filteredProblems = _selectedDifficulty switch
+        if (_selectedTags.Contains(tag))
         {
-            0 => _problems,
-            _ => _problems.Where(p => p.Difficulty == _selectedDifficulty).ToList()
-        };
+            _selectedTags.Remove(tag);
+        }
+        else
+        {
+            _selectedTags.Add(tag);
+        }
+
+        ApplyFilter(0);
+        FilterProblems();
+    }
+
+    private async Task FilterProblems()
+    {
+        _filteredProblems = _problems;
+
+        if (_selectedTags.Any())
+        {
+            var selectedTagNames = _selectedTags.Select(tag => tag.Name).ToList();
+            _filteredProblems = await TagService.GetProblemsByTagsAsync(selectedTagNames);
+        }
+
+        if (_selectedDifficulty > 0)
+        {
+            _filteredProblems = _filteredProblems.Where(p => p.Difficulty == _selectedDifficulty).ToList();
+        }
 
         _filteredProblems = _selectedSort switch
         {
@@ -81,18 +105,5 @@ public partial class Home
 
         _currentPage = 1;
         StateHasChanged();
-    }
-
-
-    private async Task FilterByTag(int tagId)
-    {
-        _selectedTagId = tagId;
-        var selectedTag = _tags.FirstOrDefault(t => t.Id == tagId);
-
-        if (selectedTag != null)
-        {
-            _filteredProblems = await TagService.GetProblemsByTagAsync(selectedTag.Name);
-        }
-        _currentPage = 1;
     }
 }

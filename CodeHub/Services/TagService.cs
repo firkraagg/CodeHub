@@ -56,12 +56,13 @@ namespace CodeHub.Services
                 }
 
                 var problems = await context.Problems
-                    .Where(p => p.Tags.Any(t => tags.Contains(t)))
+                    .Where(p => p.Tags.Count(t => tagNames.Contains(t.Name)) == tagNames.Count)
                     .ToListAsync();
 
                 return problems;
             }
         }
+
 
         public async Task<List<Tag>> GetTagsForProblemAsync(int problemId)
         {
