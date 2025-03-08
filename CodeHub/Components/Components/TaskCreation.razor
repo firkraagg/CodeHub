@@ -1,4 +1,5 @@
 ﻿@using CodeHub.Services
+@using Markdig
 @inject NavigationManager NavigationManager
 @inject UserService UserService
 @inject ProblemService ProblemService
@@ -60,24 +61,32 @@
                         Popis úlohy
                     </div>
                     <div class="mb-3 col-12 col-md-6">
-                        <InputTextArea @bind-Value="_problem.Description" class="form-control bg-dark" id="TaskDescription" rows="9" placeholder="Napíšte funkciu, ktorá berie ako vstup dve celé čísla a vracia ich súčet."></InputTextArea>
+                        <PreviewTextArea @bind-Value="_problem.Description" class="form-control bg-dark" id="TaskDescription" rows="9" placeholder="Napíšte funkciu, ktorá berie ako vstup dve celé čísla a vracia ich súčet."></PreviewTextArea>
                         <ValidationMessage For="@(() => _problem.Description)"/>
                     </div>
+                    <div class="mb-2 col-12 col-md-6 offset-md-6 text-start">
+                        <p class="mb-1">Náhľad:</p>
+                        <div class="bg-dark p-3 rounded" style="overflow-y: auto; border: 1px solid white;">
+                            @((MarkupString)Markdown.ToHtml(_problem.Description))
+                        </div>
+                    </div>
                 </div>
-                <div class="row">
+                <div class="row mt-4"> 
                     <div class="col-12 col-md-6 text-start my-2">
                         Výber značiek
                     </div>
                     <div class="mb-3 col-12 col-md-6">
-                        <InputSelect @bind-Value="_selectedTag" class="form-select bg-dark">
+                        <InputSelect @bind-Value="_selectedTag" class="form-select bg-dark" onfocus='this.size=5;'>
                             <option selected disabled hidden value="">-- Vyber značky --</option>
                             @foreach (var tag in _tags.GroupBy(t => t.Name).Select(group => group.First()))
                             {
                                 <option value="@tag.Name">@tag.Name</option>
                             }
                         </InputSelect>
+                        <InputText type="text" class="form-control create-problem  bg-dark text-white mt-2" placeholder="Zadajte novú značku" @bind-Value="_customTag" @oninput="OnCustomTagInput" />
                     </div>
                 </div>
+
                 <div class="row">
                     <div class="mt-3 text-end">
                         @if (_selectedTags.Any())
@@ -96,7 +105,8 @@
                 </div>
                 <div class="row mb-5">
                     <div class="mt-3 text-end pb-4 d-flex justify-content-end">
-                        <button class="btn btn-primary me-2" type="button" @onclick="AddTag" disabled="@string.IsNullOrEmpty(_selectedTag)">
+                        <button class="btn btn-primary me-2" type="button" @onclick="AddTag" 
+                                disabled="@(string.IsNullOrEmpty(_selectedTag) && string.IsNullOrEmpty(_customTag))">
                             Pridaj značku
                         </button>
                         <button class="btn btn-danger" type="button" @onclick="RemoveTag" disabled="@(!_selectedTags.Any())">
@@ -141,7 +151,7 @@
                 @if (_showModalExample)
                 {
                     <div class="modal d-block" style="background-color: rgba(0,0,0.1,0.7);" tabindex="-1">
-                        <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-dialog modal-dialog-centered" style="max-width: 75%">
                             <div class="modal-content background-custom text-start">
                                 <div class="modal-header text-white">
                                     <h5 class="modal-title">Upraviť príklad</h5>
@@ -176,9 +186,13 @@
                     <div class="col-12 col-md-6 text-start my-2">
                         Obmedzenia
                     </div>
-                    <div class="mb-3 col-12 col-md-6">
+                    <div class="mb-3 col-12 col-md-6 text-start">
                         <InputTextArea @bind-Value="_constraint.Constraint" @oninput="UpdateConstraint" class="form-control bg-dark" id="ConstraintFormControlTextare" rows="3"
                                        placeholder="Celé čísla a a b môžu mať akúkoľvek hodnotu v rozsahu 32-bitových celých čísel so znamienkom"></InputTextArea>
+                        <p class="mb-1 mt-3">Náhľad:</p>
+                        <div class="bg-dark p-3 rounded" style="overflow-y: auto; border: 1px solid white;">
+                            @((MarkupString)Markdown.ToHtml(_constraint.Constraint ?? ""))
+                        </div>
                         <div class="row">
                             <div class="mt-3 text-end">
                                 @if (_constraints.Any())
@@ -211,7 +225,7 @@
                 @if (_showModalConstraint)
                 {
                     <div class="modal d-block" style="background-color: rgba(0,0,0.1,0.7);" tabindex="-1">
-                        <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-dialog modal-dialog-centered" style="max-width: 50%">
                             <div class="modal-content background-custom">
                                 <div class="modal-header text-white">
                                     <h5 class="modal-title">Upraviť obmedzenie</h5>
@@ -219,7 +233,11 @@
                                 </div>
                                 <div class="modal-body text-white">
                                     <div class="mb-3">
-                                        <InputTextArea @bind-Value="_editingConstraint.Constraint" class="form-control bg-dark text-white" rows="8"></InputTextArea>
+                                        <PreviewTextArea @bind-Value="_editingConstraint.Constraint" class="form-control bg-dark text-white" rows="8"></PreviewTextArea>
+                                    </div>
+                                    <p class="mb-1 text-start">Náhľad:</p>
+                                    <div class="bg-dark p-3 rounded text-start" style="overflow-y: auto; border: 1px solid white;">
+                                        @((MarkupString)Markdown.ToHtml(_editingConstraint.Constraint ?? ""))
                                     </div>
                                 </div>
                                 <div class="modal-footer text-white">
@@ -247,6 +265,10 @@
                     <div class="mb-3 col-12 col-md-6">
                         <InputTextArea @bind-Value="_hint.Hint" @oninput="UpdateHint" class="form-control bg-dark" id="HintFormControlTextarea" rows="3" 
                                        placeholder="Pred sčítaním overte, či sú a a b väčšie ako 0"></InputTextArea>
+                        <p class="mb-1 mt-3 text-start">Náhľad:</p>
+                        <div class="bg-dark p-3 rounded text-start" style="overflow-y: auto; border: 1px solid white;">
+                            @((MarkupString)Markdown.ToHtml(_hint.Hint ?? ""))
+                        </div>
                         <div class="row">
                             <div class="mt-3 text-end">
                                 @if (_hints.Any())
@@ -278,15 +300,19 @@
                 @if (_showModalHint)
                 {
                     <div class="modal d-block" style="background-color: rgba(0,0,0.1,0.7);" tabindex="-1">
-                        <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-dialog modal-dialog-centered" style="max-width: 50%">
                             <div class="modal-content background-custom">
                                 <div class="modal-header text-white">
                                     <h5 class="modal-title">Upraviť nápovedu</h5>
                                     <button type="button" class="btn-close btn-close-white" @onclick="CloseModal" aria-label="Zatvoriť"></button>
                                 </div>
-                                <div class="modal-body text-white">
+                                <div class="modal-body text-white text-start">
                                     <div class="mb-3">
-                                        <InputTextArea @bind-Value="_editingHint.Hint" class="form-control bg-dark text-white" rows="8"></InputTextArea>
+                                        <PreviewTextArea @bind-Value="_editingHint.Hint" class="form-control bg-dark text-white" rows="8"></PreviewTextArea>
+                                    </div>
+                                    <p class="mb-1 text-start">Náhľad:</p>
+                                    <div class="bg-dark p-3 rounded text-start" style="overflow-y: auto; border: 1px solid white;">
+                                        @((MarkupString)Markdown.ToHtml(_editingHint.Hint ?? ""))
                                     </div>
                                 </div>
                                 <div class="modal-footer text-white">

@@ -8,12 +8,12 @@ EXPOSE 8080
 EXPOSE 8081
 EXPOSE 80
 
-
 # This stage is used to build the service project
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["CodeHub/CodeHub.csproj", "CodeHub/"]
+RUN apt-get update && apt-get install -y apt-transport-https ca-certificates docker.io
 RUN dotnet restore "./CodeHub/CodeHub.csproj"
 COPY . .
 WORKDIR "/src/CodeHub"
@@ -28,4 +28,5 @@ RUN dotnet publish "./CodeHub.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+RUN apt-get update && apt-get install -y docker.io
 ENTRYPOINT ["dotnet", "CodeHub.dll"]

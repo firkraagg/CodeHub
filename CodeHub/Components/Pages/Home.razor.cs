@@ -54,8 +54,11 @@ public partial class Home
 
     private void ApplySorting(string sort)
     {
+        if (_selectedDifficulty < 0)
+        {
+            _selectedDifficulty = 0;
+        }
         _selectedSort = sort;
-        _selectedDifficulty = 0;
         FilterProblems();
     }
 

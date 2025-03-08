@@ -33,20 +33,22 @@ namespace CodeHub.Services
 
         public async Task<string> ExecuteJavaCodeAsync(string userCode)
         {
-            string tempPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+            string tempPath = Path.Combine("C:\\docker_temp", Path.GetRandomFileName());
             Directory.CreateDirectory(tempPath);
 
             string codeFilePath = Path.Combine(tempPath, "Main.java");
             await File.WriteAllTextAsync(codeFilePath, userCode);
 
             string containerCommand =
-                $"docker run --rm " +
-                $"--memory=128m --cpus=0.5 " +
-                $"--security-opt=no-new-privileges " +
-                $"--network=none " +
-                $"-v \"{tempPath.Replace("\\", "/")}:/app:ro\" " +
-                $"-v \"{tempPath}/output:/output\" " + 
-                $"openjdk:21 sh -c \"timeout 5 javac /app/Main.java -d /output && timeout 5 java -cp /output Main\"";
+                "docker --host=tcp://dind:2375 run --rm " +
+                "--memory=128m --cpus=0.5 " +
+                "--security-opt=no-new-privileges " +
+                "--network=none " +
+                $"-v \"{tempPath.Replace("\\", "/")}:/app\" " +
+                "openjdk:21 sh -c \"timeout 10 javac /app/Main.java && timeout 10 java -cp /app Main\"";
+
+
+
 
             return await RunCommandAsync(containerCommand, tempPath);
         }

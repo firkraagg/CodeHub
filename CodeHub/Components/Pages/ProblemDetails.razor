@@ -2,6 +2,7 @@
 @using CodeHub.Data.Models
 @using CodeHub.Services
 @using Microsoft.IdentityModel.Tokens
+@using Markdig
 @inject IJSRuntime JS
 @inject ProblemService ProblemService
 @inject TagService TagService
@@ -48,8 +49,14 @@
                     </div>
                 }
             </div>
-
-            <p class="text-gray-400 mb-6 pb-4">@_problem?.Description</p>
+            @if (_problem != null)
+            {
+                @((MarkupString)Markdown.ToHtml(_problem.Description))
+            }
+            else
+            {
+                <p>Načítavam..</p>
+            }
 
             @if (_examples.Any())
             {
@@ -57,12 +64,12 @@
                 @foreach (var example in _examples)
                 {
                     <div class="mb-4 pb-4">
-                        <h5 class="text-lg font-semibold">Príklad @i:</h5>
-                        <p><strong>Vstup:</strong> @example?.Input</p>
-                        <p><strong>Výstup:</strong> @example?.Output</p>
+                        <h5 class="text-lg font-semibold"><i>Príklad @i:</i></h5>
+                        <p><strong><i>Vstup: </i></strong><i> @example?.Input</i></p>
+                        <p><strong><i>Výstup: </i></strong><i>@example?.Output</i></p>
                         @if (!string.IsNullOrEmpty(example?.Explanation))
                         {
-                            <p><strong>Vysvetlenie:</strong> @example?.Explanation</p>
+                            <p><strong><i>Vysvetlenie: </i></strong><i>@example?.Explanation</i></p>
                         }
                     </div>
                     i++;
@@ -113,10 +120,10 @@
         <div class="col-md-6 p-0 text-white ps-3">
             <div class="d-flex gap-2 pb-1">
                 <div class="dropdown">
-                    <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="border:3px solid #0059b3;">
+                    <button class="btn btn-dark" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="border:3px solid #0059b3;">
                         Jazyk: @_selectedLanguage.Name
                     </button>
-                    <ul class="dropdown-menu dropdown-menu-dark">
+                    @* <ul class="dropdown-menu dropdown-menu-dark">
                         @foreach (var language in _languages)
                         {
                             <li>
@@ -126,7 +133,7 @@
                                 </a>
                             </li>
                         }
-                    </ul>
+                    </ul> *@
                 </div>
                 <div class="dropdown">
                     <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="border:3px solid #0059b3">
@@ -188,7 +195,7 @@
                                onmouseout="this.style.color='lightblue'; this.style.textDecoration='none'">prihlásiť</a>
                             /
                             <a href="/register" style="text-decoration: none; color: lightblue" onmouseover="this.style.color='dodgerblue'; this.style.textDecoration='underline'"
-                               onmouseout="this.style.color='lightblue'; this.style.textDecoration='none'">zaregistrovať</a>.
+                               onmouseout="this.style.color='lightblue'; this.style.textDecoration='none'">zaregistrovať</a>
                             pre riešenie problému
                         </h6>
                     </div>

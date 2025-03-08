@@ -32,7 +32,15 @@ public partial class ProblemDetails
         _problem = await ProblemService.GetProblemByIdAsync(ProblemId);
         _tags = await TagService.GetTagsForProblemAsync(_problem.Id);
         _languages = await ProgrammingLanguageService.GetProgrammingLanguagesAsync();
-        _selectedLanguage = _languages.First();
+        if (_problem.LanguageID != 0)
+        {
+            _selectedLanguage = _languages.FirstOrDefault(lang => lang.Id == _problem.LanguageID);
+        }
+        else
+        {
+            _selectedLanguage = _languages.First();
+        }
+
         _hints = await ProblemHintService.GetHintsForProblemAsync(_problem.Id);
         _constraints = await ProblemConstraintService.GetConstraintsForProblemAsync(_problem.Id);
         _examples = await ProblemExampleService.GetExamplesForProblemAsync(_problem.Id);

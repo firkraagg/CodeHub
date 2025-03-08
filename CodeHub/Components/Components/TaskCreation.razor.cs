@@ -5,6 +5,7 @@ using System.Reflection.Metadata;
 using CodeHub.Data.Entities;
 using CodeHub.Data.Models;
 using CodeHub.Services;
+using Markdig;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Forms;
@@ -28,6 +29,7 @@ public partial class TaskCreation
     private List<Tag> _tags = new();
     private List<string> _selectedTags = new();
     private string _selectedTag = "";
+    private string _customTag = "";
     private ProblemHint _hint = new();
     private List<ProblemHint> _hints = new();
     private ProblemHint _editingHint;
@@ -63,9 +65,16 @@ public partial class TaskCreation
         if (!string.IsNullOrEmpty(_selectedTag) && !_selectedTags.Contains(_selectedTag))
         {
             _selectedTags.Add(_selectedTag);
-            _selectedTag = "";
+        } 
+        else if (!string.IsNullOrEmpty(_customTag) && !_selectedTags.Contains(_customTag))
+        {
+            _selectedTags.Add(_customTag);
         }
+
+        _selectedTag = "";
+        _customTag = "";
     }
+
     private void RemoveTag()
     {
         if (_selectedTags.Any())
@@ -87,6 +96,12 @@ public partial class TaskCreation
         _problem.DefaultCode = e.Value.ToString();
     }
 
+    private void OnCustomTagInput(ChangeEventArgs e)
+    {
+        _customTag = e.Value.ToString();
+        StateHasChanged();
+    }
+
     public async Task HandleCreateProblemFormSubmitAsync()
     {
         var existingProblem = await ProblemService.GetProblemByName(_problem.Title);
@@ -102,14 +117,14 @@ public partial class TaskCreation
 
         if (_user != null)
         {
-            var existingTags = await TagService.GetTagsAsync();
             foreach (var selectedTag in _selectedTags)
             {
-                var tag = existingTags.FirstOrDefault(t => t.Name == selectedTag);
-                if (tag != null)
+                var tag = new Tag
                 {
-                    _problem.Tags.Add(tag);
-                }
+                    Name = selectedTag
+                };
+                
+                _problem.Tags.Add(tag);
             }
 
             foreach (var problemHint in _hints)
