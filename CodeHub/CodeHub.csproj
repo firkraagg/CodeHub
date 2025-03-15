@@ -13,6 +13,7 @@
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageReference Include="BlazorMonaco" Version="3.3.0" />
     <PackageReference Include="BlazorStrap" Version="5.2.101" />
+    <PackageReference Include="Docker.DotNet" Version="3.125.15" />
     <PackageReference Include="Markdig" Version="0.40.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.11" />
     <PackageReference Include="Microsoft.AspNetCore.Session" Version="2.2.0" />
@@ -25,6 +26,8 @@
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
     <PackageReference Include="NetcodeHub.Packages.Components.Modal" Version="1.0.1" />
     <PackageReference Include="NetcodeHub.Packages.Components.Toast" Version="1.0.5" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="RabbitMQ.Client" Version="7.1.1" />
   </ItemGroup>
 
 </Project>

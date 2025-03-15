@@ -4,6 +4,7 @@ using CodeHub.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.IdentityModel.Tokens;
 using System.Text.Json;
 
@@ -195,35 +196,6 @@ public partial class UserProfile
         StateHasChanged();
     }
 
-    public async Task ShowUpdateProblem(Problem problem)
-    {
-        var existingProblem = _userProblems.FirstOrDefault(p => p.Id == problem.Id);
-        if (existingProblem != null)
-        {
-            _editingProblem = new Problem
-            {
-                Id = existingProblem.Id,
-                Title = existingProblem.Title,
-                Description = existingProblem.Description,
-                Acceptance = existingProblem.Acceptance,
-                Difficulty = existingProblem.Difficulty,
-                Constraints = existingProblem.Constraints,
-                Hints = existingProblem.Hints,
-                LanguageID = existingProblem.LanguageID,
-                DefaultCode = existingProblem.DefaultCode,
-                Tags = existingProblem.Tags.Select(t => new Tag
-                {
-                    Id = t.Id,
-                    Name = t.Name
-                }).ToList()
-            };
-
-            _tempCode = _editingProblem.DefaultCode!;
-            _showUpdateModal = true;
-            StateHasChanged();
-        }
-    }
-
     private void AddTag()
     {
         if (_selectedTagId.HasValue)
@@ -264,6 +236,11 @@ public partial class UserProfile
         _editingProblem = new();
         _tempCode = string.Empty;
         StateHasChanged();
+    }
+
+    private void NavigateToTaskCreation(int problemId)
+    {
+        NavigationManager.NavigateTo($"/task-edit/{problemId}");
     }
 
 }

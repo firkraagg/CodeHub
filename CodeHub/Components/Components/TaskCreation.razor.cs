@@ -46,8 +46,10 @@ public partial class TaskCreation
     private bool _showModalHint;
     private bool _showModalConstraint;
     private bool _showModalExample;
+    private bool _isEditing;
 
     [Inject] private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = null!;
+    [Parameter] public Problem? ProblemToEdit { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -57,6 +59,20 @@ public partial class TaskCreation
         if (!string.IsNullOrEmpty(userId))
         {
             _user = await UserService.GetUserByIdAsync(userId);
+        }
+
+        if (ProblemToEdit != null) 
+        {
+            _problem = ProblemToEdit;
+            _selectedTags = await TagService.GetTagNamesForProblemAsync(_problem.Id);
+            _examples = await ProblemExampleService.GetExamplesForProblemAsync(_problem.Id);
+            _constraints = await ProblemConstraintService.GetConstraintsForProblemAsync(_problem.Id);
+            _hints = await ProblemHintService.GetHintsForProblemAsync(_problem.Id);
+            _problem.Tags = await TagService.GetTagsForProblemAsync(_problem.Id);
+            _problem.Hints = await ProblemHintService.GetHintsForProblemAsync(_problem.Id);
+            _problem.Constraints = await ProblemConstraintService.GetConstraintsForProblemAsync(_problem.Id);
+            _problem.Examples = await ProblemExampleService.GetExamplesForProblemAsync(_problem.Id);
+            _isEditing = true;
         }
     }
 
@@ -100,6 +116,65 @@ public partial class TaskCreation
     {
         _customTag = e.Value.ToString();
         StateHasChanged();
+    }
+
+    private async Task HandleFormSubmitAsync()
+    {
+        if (_problem.Id > 0)
+        {
+            await HandleEditProblemFormSubmitAsync();
+        }
+        else
+        {
+            await HandleCreateProblemFormSubmitAsync();
+        }
+    }
+
+
+    public async Task HandleEditProblemFormSubmitAsync()
+    {
+        var existingTagNames = await TagService.GetTagNamesForProblemAsync(_problem.Id);
+        foreach (var selectedTag in _selectedTags)
+        {
+            if (!existingTagNames.Contains(selectedTag, StringComparer.OrdinalIgnoreCase))
+            {
+                var tag = new Tag
+                {
+                    Name = selectedTag
+                };
+
+                _problem.Tags.Add(tag);
+            }
+        }
+
+        foreach (var problemHint in _hints)
+        {
+            if (!_problem.Hints.Any(h => h.Hint == problemHint.Hint))
+            {
+                _problem.Hints.Add(problemHint);
+            }
+        }
+
+        foreach (var problemConstraint in _constraints)
+        {
+            if (!_problem.Constraints.Any(c => c.Constraint == problemConstraint.Constraint))
+            {
+                _problem.Constraints.Add(problemConstraint);
+            }
+        }
+
+        foreach (var problemExample in _examples)
+        {
+            if (!_problem.Examples.Any(e => e.Input == problemExample.Input && e.Output == problemExample.Output))
+            {
+                _problem.Examples.Add(problemExample);
+            }
+        }
+
+        _problem.UserID = _user.Id;
+        await ProblemService.EditProblemAsync(_problem);
+        StateHasChanged();
+        NavigationManager.NavigateTo("userprofile");
     }
 
     public async Task HandleCreateProblemFormSubmitAsync()
@@ -163,10 +238,8 @@ public partial class TaskCreation
             Problem = _problem,
             ProblemId = 1
         });
+
         _hint.Hint = string.Empty;
-        //_hint.ProblemId = _problem.Id;
-        //_hint.Problem = _problem;
-        //_hints.Add(_hint);
     }
 
     private void UpdateHint(ChangeEventArgs e)

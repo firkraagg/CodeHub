@@ -1,6 +1,7 @@
 ﻿using CodeHub.Data.Models;
 using CodeHub.Data;
 using CodeHub.Data.Entities;
+using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
 
 namespace CodeHub.Services
@@ -74,6 +75,24 @@ namespace CodeHub.Services
 
                 return problem?.Tags.ToList() ?? new List<Tag>();
             }
+        }
+
+        public async Task<List<string>> GetTagNamesForProblemAsync(int problemId)
+        {
+            using (var context = _dbContextFactory.CreateDbContext())
+            {
+                var tagNames = await context.Problems
+                    .Where(p => p.Id == problemId)
+                    .SelectMany(p => p.Tags.Select(t => t.Name))
+                    .ToListAsync();
+
+                return tagNames;
+            }
+        }
+
+        public async Task DeleteAllTagsForProblemAsync(int problemId)
+        {
+            //to-do
         }
     }
 }

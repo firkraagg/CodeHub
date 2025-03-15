@@ -16,6 +16,7 @@ services:
     - codehubapp
     volumes:
       - mssql_data:/var/opt/mssql
+      - dataprotection_keys:/app/keys
 
   codehub:
     container_name: codehub-app
@@ -27,7 +28,6 @@ services:
     - "8001:8081"
     depends_on:
     - codehubdb
-    - dind 
     environment:
     - DB_HOST=codehubdb
     - DB_PORT=8002 
@@ -38,18 +38,9 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
 
-  dind:
-    image: docker:dind
-    privileged: true
-    environment:
-      - DOCKER_TLS_CERTDIR=
-    ports:
-      - "2375:2375"
-    command: ["--host=tcp://0.0.0.0:2375"]
-    networks:
-      - codehubapp
-
 volumes:
   mssql_data:
+    driver: local
+  dataprotection_keys:
     driver: local
   

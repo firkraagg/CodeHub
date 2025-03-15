@@ -138,7 +138,7 @@
                             @if (_isLoading)
                             {
                                 <div class="text-center text-white">
-                                    <p>Načítavam vaše úlohy...</p>
+                                    <p>Načítavanie úloh...</p>
                                     <div class="spinner-border text-light" role="status">
                                         <span class="visually-hidden">Loading...</span>
                                     </div>
@@ -193,7 +193,7 @@
                                                 </td>
 
                                                 <td><button type="button" class="btn btn-danger container-fluid" @onclick="@(() => ShowDeleteProblemModal(problem))"><i class="fa-solid fa-trash-can"></i></button></td>
-                                                <td><button type="button" class="btn btn-primary container-fluid" @onclick="@(() => ShowUpdateProblem(problem))"><i class="fa-solid fa-pen-to-square"></i></button></td>
+                                                <td><button type="button" class="btn btn-primary container-fluid" @onclick="@(() => NavigateToTaskCreation(problem.Id))"><i class="fa-solid fa-pen-to-square"></i></button></td>
                                             </tr>
                                         }
                                         </tbody>
@@ -238,7 +238,7 @@
                 </div>
             </div>
         }
-        @if (_showUpdateModal)
+        @* @if (_showUpdateModal)
         {
             <div class="modal d-block" tabindex="-1" style="background-color: rgba(0,0,0.1,0.7);">
                 <div class="modal-dialog modal-dialog-centered">
@@ -286,23 +286,23 @@
                                     <label for="requiredInput" class="form-label">Požadovaný vstup</label>
                                     @* <InputText id="requiredInput" class="form-control bg-dark text-white" @bind-Value="_editingProblem.RequiredInput" />
                                     <ValidationMessage For="@(() => _editingProblem.RequiredInput)" /> *@
-                                </div>
+                                @* </div>
                                 <div class="mb-3">
                                     <label for="requiredOutput" class="form-label">Požadovaný výstup</label>
                                     @* <InputText id="requiredOutput" class="form-control bg-dark text-white" @bind-Value="_editingProblem.RequiredOutput" />
                                     <ValidationMessage For="@(() => _editingProblem.RequiredOutput)" /> *@
-                                </div>
+                                @* </div>
                                 <div class="mb-3">
                                     <label for="constraints" class="form-label">Obmedzenia</label>
                                     @* <InputTextArea id="constraints" class="form-control bg-dark" @bind-Value="_editingProblem.Constraints"></InputTextArea> *@
-                                    <ValidationMessage For="@(() => _editingProblem.Constraints)" />
+                               @*      <ValidationMessage For="@(() => _editingProblem.Constraints)" />
                                 </div>
                                 <div class="mb-3">
                                     <label for="hints" class="form-label">Nápovedy</label>
                                     @* <InputTextArea id="hints" class="form-control bg-dark" @bind-Value="_editingProblem.Hints"></InputTextArea> *@
-                                    <ValidationMessage For="@(() => _editingProblem.Hints)" />
-                                </div>
-                                <div class="mb-3">
+                                    @* @* @* <ValidationMessage For="@(() => _editingProblem.Hints)" />
+                                </div> *@
+                                @* <div class="mb-3">
                                     <label for="tags" class="form-label">Značky</label>
                                     <div>
                                         @if (_editingProblem.Tags != null && _editingProblem.Tags.Any())
@@ -318,10 +318,10 @@
                                         else
                                         {
                                             <span>Žiadne značky</span>
-                                        }
-                                    </div>
-                                    <div class="mt-2">
-                                        <InputSelect id="addTag" class="form-select bg-dark text-white" @bind-Value="_selectedTagId">
+                                        } *@
+                                    @* </div>
+                                    <div class="mt-2"> *@
+                                        @* <InputSelect id="addTag" class="form-select bg-dark text-white" @bind-Value="_selectedTagId">
                                             <option selected disabled hidden value="">-- Vyberte značku na pridanie --</option>
                                             @if (_availableTags != null)
                                             {
@@ -338,8 +338,8 @@
                                     <label for="defaultCode" class="form-label">Prednastavený kód</label>
                                     <InputTextArea @bind-Value="_tempCode" class="form-control bg-dark" id="DefaultCode" rows="5" ></InputTextArea>
                                     @* <ValidationMessage For="@(() => _editingProblem.Hints)" /> *@
-                                </div>
-                            </div>
+                                @* </div> *@
+                          @*   </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" @onclick="CloseUpdateModal">Zrušiť</button>
                                 <button type="submit" class="btn btn-primary">Uložiť zmeny</button>
@@ -348,7 +348,7 @@
                     </div>
                 </div>
             </div>
-        }
+        } *@
     </Authorized>
     <NotAuthorized>
         <div align="center" style="color: ghostwhite">

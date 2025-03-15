@@ -4,6 +4,8 @@ using CodeHub.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using System.Text.Json;
+using System.Threading;
+using static System.Net.WebRequestMethods;
 
 namespace CodeHub.Components.Pages;
 
@@ -24,8 +26,10 @@ public partial class ProblemDetails
     private bool _isSubmitLoading;  
     private bool _isCheckLoading;
     private bool _noErrors;
+    private TaskCompletionSource<bool> _executionCompletion = new();
     private bool _hasExecuted;
     private bool _isEditorInitialized = false;
+    private CancellationTokenSource _cts = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -44,6 +48,9 @@ public partial class ProblemDetails
         _hints = await ProblemHintService.GetHintsForProblemAsync(_problem.Id);
         _constraints = await ProblemConstraintService.GetConstraintsForProblemAsync(_problem.Id);
         _examples = await ProblemExampleService.GetExamplesForProblemAsync(_problem.Id);
+
+        RabbitMqProducerService.ResultReceived += HandleResultReceived;
+        Task.Run(() => RabbitMqProducerService.ListenForResults());
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -53,82 +60,59 @@ public partial class ProblemDetails
         string defaultCode = string.IsNullOrEmpty(_problem.DefaultCode) ? "" : _problem.DefaultCode;
         await JS.InvokeVoidAsync("monacoInterop.initialize", "editorContainer", "java", defaultCode);
         _isEditorInitialized = true;
+
     }
 
-    private async Task GetEditorValue()
+    private void HandleResultReceived(string output)
     {
-        //_isSubmitLoading = true;
-        //try
-        //{
-        //    _userCode = await JS.InvokeAsync<string>("monacoInterop.getValue");
-        //    string responseJson = await PistonService.ExecuteCodeAsync(_selectedLanguage.ApiName, _selectedLanguage.Version, _userCode);
-        //    var response = JsonSerializer.Deserialize<PistonResponse>(responseJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-        //    if (response?.Run != null)
-        //    {
-        //        _output = !string.IsNullOrEmpty(response.Run.Stdout)
-        //            ? response.Run.Stdout
-        //            : response.Run.Stderr;
-        //    }
-        //    else
-        //    {
-        //        _output = "No output available";
-        //    }
-        //}
-        //catch (Exception)
-        //{
-        //    _output = "Error: Failed to execute code";
-        //    throw;
-        //}
-        //finally
-        //{
-        //    _isSubmitLoading = false;
-        //}
+        InvokeAsync(() =>
+        {
+            _output = output;
+            _executionCompletion.TrySetResult(true);
+            StateHasChanged();
+        });
     }
 
-    private async Task CheckCodeAsync()
+    public void Dispose()
+    {
+        RabbitMqProducerService.ResultReceived -= HandleResultReceived;
+    }
+
+    private async Task SendCodeToQueue()
     {
         _isCheckLoading = true;
+        _executionCompletion = new TaskCompletionSource<bool>();
         try
         {
-            _userCode = await JS.InvokeAsync<string>("monacoInterop.getValue");
-            var executionService = new CodeExecutionService();
-            string output = "";
-
-            switch (_selectedLanguage.MonacoName)
+            string codeToSend = await JS.InvokeAsync<string>("monacoInterop.getValue");
+            if (string.IsNullOrEmpty(codeToSend))
             {
-                case "csharp":
-                    output = await executionService.ExecuteCSharpCodeAsync(_userCode);
-                    break;
-                case "java":
-                    output = await executionService.ExecuteJavaCodeAsync(_userCode);
-                    break;
-                default:
-                    _output = "Chyba: Nepodporovaný jazyk";
-                    break;
+                _output = "Kód je prázdny";
+                _noErrors = false;
+                _isCheckLoading = false;
+                _hasExecuted = true;
+                return;
             }
 
-            _hasExecuted = true;
-            if (!string.IsNullOrEmpty(output))
-            {
-                _output = output;
-                _noErrors = !output.Contains("error");
-            }
-            else
-            {
-                _output = "Žiadny výstup nie je k dispozícií";
-            }
+            var rabbitMqProducer = new RabbitMqProducerService();
+            var language = await ProgrammingLanguageService.GetProgrammingLanguageByIdAsync(_problem!.LanguageID);
+            var languageName = language.Name;
+
+            await rabbitMqProducer.SendToRabbitMq(codeToSend, languageName);
+            await _executionCompletion.Task;
         }
-        catch (Exception)
+        catch (Exception e)
         {
-            _output = "Chyba: Nepodarilo sa spustiť kód";
+            Console.WriteLine(e);
             throw;
         }
         finally
         {
+            _noErrors = !_output.ToLower().Contains("error") && !_output.ToLower().Contains("exception") && !_output.ToLower().Contains("failed");
             _isCheckLoading = false;
+            _hasExecuted = true;
         }
     }
-
 
     private async Task ChangeTheme(string theme)
     {

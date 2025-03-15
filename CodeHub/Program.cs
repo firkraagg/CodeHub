@@ -3,6 +3,7 @@ using CodeHub.Data;
 using CodeHub.Data.Models;
 using CodeHub.Services;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 
 namespace CodeHub
@@ -28,18 +29,23 @@ namespace CodeHub
                 var dbContext = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
                 dbContext.Database.Migrate();
             }
+
+            builder.Services.AddDataProtection()
+                .PersistKeysToFileSystem(new DirectoryInfo("/app/keys"))
+                .SetApplicationName("CodeHubApp");
             builder.Services.AddTransient<UserService>();
             builder.Services.AddTransient<ProblemService>();
             builder.Services.AddTransient<ProgrammingLanguageService>();
             builder.Services.AddTransient<TagService>();
-            builder.Services.AddTransient<PistonService>();
             builder.Services.AddTransient<ProblemHintService>();
             builder.Services.AddTransient<ProblemConstraintService>();
             builder.Services.AddTransient<ProblemExampleService>();
+            builder.Services.AddTransient<CodeExecutionService>();
+            builder.Services.AddSingleton<RabbitMqProducerService>();
             builder.Services.AddDistributedMemoryCache();
             builder.Services.AddSession(options =>
             {
-                options.IdleTimeout = TimeSpan.FromMinutes(30);
+                options.IdleTimeout = TimeSpan.FromMinutes(300);
                 options.Cookie.HttpOnly = true;
                 options.Cookie.IsEssential = true;
             });

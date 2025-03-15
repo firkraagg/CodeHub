@@ -19,6 +19,14 @@ namespace CodeHub.Services
             {
                 return await context.ProgrammingLanguage.ToListAsync();
             }
-        }   
+        }  
+        
+        public async Task<ProgrammingLanguage> GetProgrammingLanguageByIdAsync(int id)
+        {
+            using (var context = _dbContextFactory.CreateDbContext())
+            {
+                return await context.ProgrammingLanguage.FirstOrDefaultAsync(pl => pl.Id == id);
+            }
+        }
     }
 }

@@ -1,0 +1,27 @@
+﻿@page "/task-edit/{problemId:int}"
+@using CodeHub.Components.Components
+@using CodeHub.Data.Models
+@using CodeHub.Services
+
+<PageTitle>Úprava úlohy</PageTitle>
+
+@if (_problem != null)
+{
+    <TaskCreation ProblemToEdit="@_problem" />
+}
+else
+{
+    <p>Načítavanie...</p>
+}
+
+@code {
+    [Parameter] public int ProblemId { get; set; }
+    private Problem? _problem;
+
+    [Inject] private ProblemService ProblemService { get; set; } = null!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _problem = await ProblemService.GetProblemByIdAsync(ProblemId);
+    }
+}

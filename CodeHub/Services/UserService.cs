@@ -99,6 +99,21 @@ namespace CodeHub.Services
 
         public async Task<User?> LoginUser(User storedUser)
         {
+            //string token = CreateToken(storedUser);
+            //var httpContext = _httpContextAccessor.HttpContext;
+
+            //if (httpContext != null)
+            //{
+            //    httpContext.Response.Cookies.Append("authToken", token, new CookieOptions
+            //    {
+            //        HttpOnly = true,
+            //        Secure = true,
+            //        SameSite = SameSiteMode.Strict,
+            //        Expires = DateTime.Now.AddDays(1)
+            //    });
+            //}
+
+            //return storedUser;
             string token = CreateToken(storedUser);
             var session = _httpContextAccessor.HttpContext?.Session;
             if (session != null)
@@ -111,6 +126,11 @@ namespace CodeHub.Services
 
         public async Task LogoutUserAsync()
         {
+            //var httpContext = _httpContextAccessor.HttpContext;
+            //if (httpContext != null)
+            //{
+            //    httpContext.Response.Cookies.Delete("authToken");
+            //}
             var session = _httpContextAccessor.HttpContext?.Session;
             session?.Remove("authToken");
             session?.Clear();

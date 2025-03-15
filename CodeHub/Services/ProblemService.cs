@@ -9,6 +9,7 @@ namespace CodeHub.Services
     public class ProblemService
     {
         private readonly IDbContextFactory<DatabaseContext> _dbContextFactory;
+        [Inject] TagService TagService { get; set; } = null!;
 
         public ProblemService(IDbContextFactory<DatabaseContext> dbContextFactory)
         {
@@ -115,24 +116,34 @@ namespace CodeHub.Services
             using (var context = _dbContextFactory.CreateDbContext())
             {
                 var existingProblem = await context.Problems
-                    .Include(p => p.Tags)
                     .FirstOrDefaultAsync(p => p.Id == problem.Id);
 
                 if (existingProblem != null)
                 {
-                    context.Entry(existingProblem).State = EntityState.Detached;
-                    context.Problems.Attach(problem);
-                    context.Entry(problem).State = EntityState.Modified;
-                    foreach (var tag in problem.Tags)
+                    existingProblem.Title = problem.Title;
+                    existingProblem.Difficulty = problem.Difficulty;
+                    existingProblem.ProgrammingLanguage = problem.ProgrammingLanguage;
+                    existingProblem.LanguageID = problem.LanguageID;
+                    existingProblem.Description = problem.Description;
+                    existingProblem.DefaultCode = problem.DefaultCode;
+
+                    if (existingProblem.Tags == null)
                     {
-                        context.Tag.Attach(tag);
-                        context.Entry(tag).State = EntityState.Unchanged;
+                        existingProblem.Tags = new List<Tag>();
                     }
 
+                    TagService?.DeleteAllTagsForProblemAsync(existingProblem.Id);
+                    foreach (var newTag in problem.Tags)
+                    {
+                        existingProblem.Tags.Add(new Tag { Name = newTag.Name });
+                    }
+
+                    context.Problems.Update(existingProblem);
                     await context.SaveChangesAsync();
                 }
             }
         }
+
 
         public async Task DeleteProblemAsync(Problem problem)
         {
