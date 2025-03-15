@@ -18,7 +18,7 @@ namespace CodeHub.Data.Models
         [Range(0, 100)]
         public double Acceptance { get; set; }
 
-        [Required, Range(1, 3, ErrorMessage = "Vyberte obťažnosť")]
+        [Required, Range(1, 5, ErrorMessage = "Vyberte obťažnosť")]
         public int Difficulty { get; set; }
 
         [MaxLength(1500)]

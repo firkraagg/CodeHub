@@ -75,7 +75,11 @@ public partial class Home
             _selectedTags.Add(tag);
         }
 
-        ApplyFilter(0);
+        if (!(_selectedDifficulty > 0))
+        {
+            ApplyFilter(0);
+        }
+        
         FilterProblems();
     }
 

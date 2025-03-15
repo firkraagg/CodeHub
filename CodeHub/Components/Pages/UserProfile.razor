@@ -80,7 +80,7 @@
                                     </div>
                                     <div class="row">
                                         <div class="col my-2 text-center">
-                                            <button class="btn btn-success btn-sm" type="submit">Aktualizovať</button>
+                                            <button class="btn button-custom button-create-bg btn-sm" type="submit">Aktualizovať</button>
                                         </div>
                                     </div>
                                 </div>
@@ -121,7 +121,7 @@
                                         Vaše nové heslo musí mať aspoň 8 znakov a nie viac ako 24 znakov, musí obsahovať písmená, číslice a špeciálne znaky.
                                     </div>
                                     <div class="col my-2 text-center">
-                                        <button class="btn btn-success btn-sm" type="submit">Aktualizovať</button>
+                                        <button class="btn button-custom button-create-bg btn-sm" type="submit">Aktualizovať</button>
                                     </div>
                                 </div>
                             </EditForm>
@@ -130,10 +130,12 @@
                     else if (_showUserProblems)
                     {
                         <div class="w-100 d-flex flex-column position-relative" style="min-height: 100vh;">
-                            <button type="button" class="btn btn-info position-absolute top-0 end-0" 
-                                    onmouseover="this.style.backgroundColor='#0eb6d8'" onmouseout="this.style.backgroundColor='#31d2f2'">
-                                <a href="task-form" style="text-decoration: none; color: inherit; background-color: inherit;">Pridať úlohu</a>
-                            </button>
+                            <div class="position-relative mb-2">
+                                <button type="button" class="btn add-task-button" onclick="window.location.href='task-form'">
+                                    ➕ Pridať úlohu
+                                </button>
+                            </div>
+
                             <h3 class="text-center text-white">Moje Úlohy</h3>
                             @if (_isLoading)
                             {
@@ -165,16 +167,22 @@
                                                     @switch (problem.Difficulty)
                                                     {
                                                         case 1:
-                                                            <span class="badge bg-success">Ľahká</span>
+                                                            <span class="badge badge-veryeasy">Veľmi ľahká</span>
                                                             break;
                                                         case 2:
-                                                            <span class="badge bg-warning">Stredná</span>
+                                                                <span class="badge badge-easy">Ľahká</span>
                                                             break;
                                                         case 3:
-                                                            <span class="badge bg-danger">Ťažká</span>
+                                                                <span class="badge badge-medium">Stredná</span>
+                                                            break;
+                                                        case 4:
+                                                                <span class="badge badge-hard">Ťažká</span>
+                                                            break;
+                                                        case 5:
+                                                                <span class="badge badge-veryhard">Veľmi ťažká</span>
                                                             break;
                                                         default:
-                                                            @:Nezname
+                                                            @:Neznáma
                                                             break;
                                                     }
                                                 </td>
@@ -192,8 +200,8 @@
                                                     }
                                                 </td>
 
-                                                <td><button type="button" class="btn btn-danger container-fluid" @onclick="@(() => ShowDeleteProblemModal(problem))"><i class="fa-solid fa-trash-can"></i></button></td>
-                                                <td><button type="button" class="btn btn-primary container-fluid" @onclick="@(() => NavigateToTaskCreation(problem.Id))"><i class="fa-solid fa-pen-to-square"></i></button></td>
+                                                <td><button type="button" class="btn button-custom button-remove-bg container-fluid" @onclick="@(() => ShowDeleteProblemModal(problem))"><i class="fa-solid fa-trash-can"></i></button></td>
+                                                <td><button type="button" class="btn button-custom button-add-bg container-fluid" @onclick="@(() => NavigateToTaskCreation(problem.Id))"><i class="fa-solid fa-pen-to-square"></i></button></td>
                                             </tr>
                                         }
                                         </tbody>
@@ -224,131 +232,20 @@
                             </div>
                         </div>
                         <div class="modal-footer text-white">
-                            <button type="button" class="btn btn-secondary" @onclick="CloseDeleteModal">Zrušiť</button>
+                            <button type="button" class="btn button-custom button-close-bg" @onclick="CloseDeleteModal">Zrušiť</button>
                             @if (_editingProblem != null)
                             {
-                                <button type="button" class="btn btn-danger" @onclick="DeleteProblem">Zrušiť úlohu</button>
+                                <button type="button" class="btn button-custom button-remove-bg" @onclick="DeleteProblem">Zrušiť úlohu</button>
                             }
                             else
                             {
-                                <button type="button" class="btn btn-danger" @onclick="DeleteUser">Zrušiť účet</button>
+                                <button type="button" class="btn button-custom button-remove-bg" @onclick="DeleteUser">Zrušiť účet</button>
                             }
                         </div>
                     </div>
                 </div>
             </div>
         }
-        @* @if (_showUpdateModal)
-        {
-            <div class="modal d-block" tabindex="-1" style="background-color: rgba(0,0,0.1,0.7);">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content background-custom">
-                        <div class="modal-header text-white">
-                            <h5 class="modal-title">Upraviť úlohu</h5>
-                            <button type="button" class="btn-close btn-close-white" @onclick="CloseUpdateModal" aria-label="Close"></button>
-                        </div>
-                        <EditForm Model="_editingProblem" OnValidSubmit="SaveUpdatedProblem" FormName="UpdateProblem">
-                            <DataAnnotationsValidator />
-                            <div class="modal-body text-white">
-                                <div class="mb-3">
-                                    <label for="title" class="form-label">Názov úlohy</label>
-                                    <InputText id="title" class="form-control bg-dark text-white" @bind-Value="_editingProblem.Title" />
-                                    <ValidationMessage For="@(() => _editingProblem.Title)" />
-                                </div>
-                                <div class="mb-3">
-                                    <label for="description" class="form-label">Popis úlohy</label>
-                                    <InputTextArea id="description" class="form-control bg-dark" rows="4" @bind-Value="_editingProblem.Description"></InputTextArea>
-                                    <ValidationMessage For="@(() => _editingProblem.Description)" />
-                                </div>
-                                <div class="mb-3">
-                                    <label for="difficulty" class="form-label">Obťažnosť</label>
-                                    <InputSelect id="difficulty" class="form-select bg-dark text-white" @bind-Value="_editingProblem.Difficulty">
-                                        <option value="1">Ľahká</option>
-                                        <option value="2">Stredná</option>
-                                        <option value="3">Ťažká</option>
-                                    </InputSelect>
-                                    <ValidationMessage For="@(() => _editingProblem.Difficulty)" />
-                                </div>
-                                <div class="mb-3">
-                                    <label for="language" class="form-label">Programovací jazyk</label>
-                                    <InputSelect id="language" class="form-select bg-dark text-white" @bind-Value="_editingProblem.LanguageID">
-                                        @if (_languages != null)
-                                        {
-                                            @foreach (var language in _languages)
-                                            {
-                                                <option value="@language.Id">@language.Name</option>
-                                            }
-                                        }
-                                    </InputSelect>
-                                    <ValidationMessage For="@(() => _editingProblem.LanguageID)" />
-                                </div>
-                                <div class="mb-3">
-                                    <label for="requiredInput" class="form-label">Požadovaný vstup</label>
-                                    @* <InputText id="requiredInput" class="form-control bg-dark text-white" @bind-Value="_editingProblem.RequiredInput" />
-                                    <ValidationMessage For="@(() => _editingProblem.RequiredInput)" /> *@
-                                @* </div>
-                                <div class="mb-3">
-                                    <label for="requiredOutput" class="form-label">Požadovaný výstup</label>
-                                    @* <InputText id="requiredOutput" class="form-control bg-dark text-white" @bind-Value="_editingProblem.RequiredOutput" />
-                                    <ValidationMessage For="@(() => _editingProblem.RequiredOutput)" /> *@
-                                @* </div>
-                                <div class="mb-3">
-                                    <label for="constraints" class="form-label">Obmedzenia</label>
-                                    @* <InputTextArea id="constraints" class="form-control bg-dark" @bind-Value="_editingProblem.Constraints"></InputTextArea> *@
-                               @*      <ValidationMessage For="@(() => _editingProblem.Constraints)" />
-                                </div>
-                                <div class="mb-3">
-                                    <label for="hints" class="form-label">Nápovedy</label>
-                                    @* <InputTextArea id="hints" class="form-control bg-dark" @bind-Value="_editingProblem.Hints"></InputTextArea> *@
-                                    @* @* @* <ValidationMessage For="@(() => _editingProblem.Hints)" />
-                                </div> *@
-                                @* <div class="mb-3">
-                                    <label for="tags" class="form-label">Značky</label>
-                                    <div>
-                                        @if (_editingProblem.Tags != null && _editingProblem.Tags.Any())
-                                        {
-                                            @foreach (var tag in _editingProblem.Tags)
-                                            {
-                                                <span class="badge bg-light text-dark me-2">
-                                                    @tag.Name 
-                                                    <button type="button" class="btn-close btn-close-dark btn-sm ms-1" @onclick="() => RemoveTag(tag)" aria-label="Remove"></button>
-                                                </span>
-                                            }
-                                        }
-                                        else
-                                        {
-                                            <span>Žiadne značky</span>
-                                        } *@
-                                    @* </div>
-                                    <div class="mt-2"> *@
-                                        @* <InputSelect id="addTag" class="form-select bg-dark text-white" @bind-Value="_selectedTagId">
-                                            <option selected disabled hidden value="">-- Vyberte značku na pridanie --</option>
-                                            @if (_availableTags != null)
-                                            {
-                                                @foreach (var tag in _availableTags.GroupBy(t => t.Name).Select(group => group.First()))
-                                                {
-                                                    <option value="@tag.Id">@tag.Name</option>
-                                                }
-                                            }
-                                        </InputSelect>
-                                        <button type="button" class="btn btn-primary mt-2" @onclick="AddTag">Pridať značku</button>
-                                    </div>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="defaultCode" class="form-label">Prednastavený kód</label>
-                                    <InputTextArea @bind-Value="_tempCode" class="form-control bg-dark" id="DefaultCode" rows="5" ></InputTextArea>
-                                    @* <ValidationMessage For="@(() => _editingProblem.Hints)" /> *@
-                                @* </div> *@
-                          @*   </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" @onclick="CloseUpdateModal">Zrušiť</button>
-                                <button type="submit" class="btn btn-primary">Uložiť zmeny</button>
-                            </div>
-                        </EditForm>
-                    </div>
-                </div>
-            </div>
-        } *@
     </Authorized>
     <NotAuthorized>
         <div align="center" style="color: ghostwhite">

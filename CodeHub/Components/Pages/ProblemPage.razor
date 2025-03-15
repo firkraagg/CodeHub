@@ -19,35 +19,39 @@
         <div class="col-md-6 p-4 text-white overflow-y-auto" style="border:3px solid #0059b3; border-radius:5px; overflow-y: auto; max-height: 85vh; background-color: #1e1e1e">
             <h2 class="font-bold">@_problem?.Title</h2>
             <div class="mb-4">
-                @if (_tags != null && _tags.Any())
-                {
-                    <div class="d-flex flex-wrap gap-2">
-                        @if (_problem != null)
+                <div class="d-flex flex-wrap gap-2">
+                    @if (_problem != null)
+                    {
+                        string difficultyText = _problem.Difficulty switch
                         {
-                            string difficultyText = _problem.Difficulty switch
-                            {
-                                1 => "Ľahká",
-                                2 => "Stredná",
-                                3 => "Ťažká"
-                            };
+                            1 => "Veľmi ľahká",
+                            2 => "Ľahká",
+                            3 => "Stredná",
+                            4 => "Ťažká",
+                            5 => "Veľmi ťažká"
+                        };
 
-                            string difficultyClass = _problem.Difficulty switch
-                            {
-                                1 => "bg-success",
-                                2 => "bg-warning",
-                                3 => "bg-danger"
-                            };
+                        string difficultyClass = _problem.Difficulty switch
+                        {
+                            1 => "badge-veryeasy",
+                            2 => "badge-easy",
+                            3 => "badge-medium",
+                            4 => "badge-hard",
+                            5 => "badge-veryhard"
+                        };
 
-                            <span class="badge @difficultyClass">
-                                @difficultyText
-                            </span>
-                        }
+                        <span class="badge @difficultyClass">
+                            @difficultyText
+                        </span>
+                    }
+                    @if (_tags != null && _tags.Any())
+                    {
                         @foreach (var tag in _tags)
                         {
                             <span class="badge bg-primary">@tag.Name</span>
                         }
-                    </div>
-                }
+                    }
+                </div>
             </div>
             @if (_problem != null)
             {

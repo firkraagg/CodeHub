@@ -56,7 +56,9 @@ html, body {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
+    padding-top: 5rem;
+    padding-bottom: 2rem;
 }
 
 .form-floating {
@@ -97,6 +99,136 @@ html, body {
 
 #accordionHint .accordion-button::after {
     filter: invert(1);
+}
+
+button.add-task-button {
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-weight: bold;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    border: none;
+    box-shadow: none;
+    font-size: 1.1rem;
+    color: white;
+    background: linear-gradient(135deg, #17a2b8, #0d6efd);
+    transition: all 0.3s ease-in-out;
+}
+
+button.add-task-button:hover {
+    background: linear-gradient(135deg, #138496, #0b5ed7);
+    transform: scale(1.05);
+    box-shadow: 0px 5px 15px rgba(13, 110, 253, 0.4);
+}
+
+button.button-custom {
+    font-size: 1.1rem;
+    font-weight: bold;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    color: white !important;
+    transition: all 0.3s ease-in-out;
+}
+
+.button-custom:hover {
+    transform: scale(1.05);
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.button-custom:active {
+    transform: scale(0.95);
+}
+
+.button-custom:disabled {
+    background: #6c757d !important;
+    color: rgba(255, 255, 255, 0.5) !important;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.button-add-bg {
+    background: linear-gradient(135deg, #17a2b8, #0d6efd);
+}
+
+.button-add-bg:hover {
+    background: linear-gradient(135deg, #138496, #0b5ed7);
+}
+
+.button-remove-bg {
+    background: linear-gradient(135deg, #fd7e14, #dc3545);
+}
+
+.button-remove-bg:hover {
+    background: linear-gradient(135deg, #e06b10, #c82333);
+}
+
+.button-warning-bg {
+    background: linear-gradient(135deg, #FFD700, #FFC107);
+}
+
+.button-warning-bg:hover {
+    background: linear-gradient(135deg, #E6C200, #D39E00);
+}
+
+.button-create-bg {
+    background: linear-gradient(135deg, #28a745, #218838);
+}
+
+.button-create-bg:hover {
+    background: linear-gradient(135deg, #23963a, #1e7e34);
+}
+
+.button-close-bg {
+    background: linear-gradient(135deg, #b0b0b0, #787878);
+}
+
+.button-close-bg:hover {
+    background: linear-gradient(135deg, #c0c0c0, #606060);
+}
+
+.badge.badge-veryeasy {
+    background: linear-gradient(135deg, #23963a, #1e7e34) !important;
+    color: white !important;
+}
+
+.badge.badge-easy {
+    background: linear-gradient(135deg, #166D3B, #0B5029) !important;
+    color: white !important;
+}
+
+.badge.badge-medium {
+    background: linear-gradient(135deg, #E6B800, #FF8C00) !important;
+    color: white !important;
+}
+
+.badge.badge-hard {
+    background: linear-gradient(135deg, #FFA500, #FF4500) !important;
+    color: white !important;
+}
+
+.badge.badge-veryhard {
+    background: linear-gradient(135deg, #e06b10, #c82333) !important;
+    color: white !important;
+}
+
+.badge.badge-bluewhite {
+    background: linear-gradient(135deg, #F8F9FA, #73B8FF);
+    font-size: 15px;
+    margin-right: 5px;
+    color: black !important;
+}
+
+.text-veryeasy {
+    color: lightgreen;
+}
+
+.text-veryhard {
+    color: darkred;
 }
 
 

@@ -36,9 +36,11 @@
                     Obťažnosť
                 </button>
                 <ul class="dropdown-menu dropdown-menu-dark">
-                    <li><a class="dropdown-item @( _selectedDifficulty == 1 ? "active bg-dark" : "")" href="#" style="color:green;" @onclick="@(() => ApplyFilter(1))">Ľahká</a></li>
-                    <li><a class="dropdown-item @( _selectedDifficulty == 2 ? "active bg-secondary" : "")" href="#" style="color:darkorange;" @onclick="@(() => ApplyFilter(2))">Stredná</a></li>
-                    <li><a class="dropdown-item @( _selectedDifficulty == 3 ? "active bg-light" : "")" href="#" style="color:red;" @onclick="@(() => ApplyFilter(3))">Ťažká</a></li>
+                    <li><a class="dropdown-item @( _selectedDifficulty == 1 ? "active bg-dark" : "")" href="#" style="color:lightgreen" @onclick="@(() => ApplyFilter(1))">Veľmi ľahká</a></li>
+                    <li><a class="dropdown-item text-success @( _selectedDifficulty == 2 ? "active bg-dark" : "")" href="#" @onclick="@(() => ApplyFilter(2))">Ľahká</a></li>
+                    <li><a class="dropdown-item text-warning @( _selectedDifficulty == 3 ? "active bg-dark" : "")" href="#" @onclick="@(() => ApplyFilter(3))">Stredná</a></li>
+                    <li><a class="dropdown-item text-danger @( _selectedDifficulty == 4 ? "active bg-dark" : "")" href="#" @onclick="@(() => ApplyFilter(4))">Ťažká</a></li>
+                    <li><a class="dropdown-item @( _selectedDifficulty == 5 ? "active bg-dark" : "")" href="#" style="color:darkred" @onclick="@(() => ApplyFilter(5))">Veľmi ťažká</a></li>
                     <li><a class="dropdown-item @( _selectedDifficulty == 0 ? "active bg-primary" : "")" href="#" @onclick="@(() => ApplyFilter(0))">Všetky</a></li>
                 </ul>
             </div>
@@ -101,15 +103,23 @@
                                 <td>
                                     @if (problem.Difficulty == 1)
                                     {
-                                        <span class="badge bg-success">Ľahká</span>
+                                        <span class="badge badge-veryeasy">Veľmi ľahká</span>
                                     }
                                     else if (problem.Difficulty == 2)
                                     {
-                                        <span class="badge bg-warning">Stredná</span>
+                                        <span class="badge badge-easy">Ľahká</span>
                                     }
                                     else if (problem.Difficulty == 3)
                                     {
-                                        <span class="badge bg-danger">Ťažká</span>
+                                        <span class="badge badge-medium">Stredná</span>
+                                    }
+                                    else if (problem.Difficulty == 4)
+                                    {
+                                        <span class="badge badge-hard">Ťažká</span>
+                                    }
+                                    else if (problem.Difficulty == 5)
+                                    {
+                                        <span class="badge badge-veryhard">Veľmi ťažká</span>
                                     }
                                     else
                                     {
@@ -156,7 +166,7 @@
                             <a class="page-link bg-dark link-primary" href="#" @onclick="() => GoToPage(1)">1</a>
                         </li>
 
-                        @if (_currentPage > 3)
+                         @if (_currentPage > 3)
                         {
                             <li class="page-item">
                                 <span class="page-link bg-dark link-secondary">...</span>
@@ -174,7 +184,7 @@
                                 </a>
                             </li>
                         }
-
+                    
                         @if (_currentPage < _totalPages - 2)
                         {
                             <li class="page-item">
