@@ -1,0 +1,49 @@
+﻿@page "/problems-guide"
+
+<PageTitle>ProblemGuide</PageTitle>
+
+<AuthorizeView>
+    <Authorized>
+        <div class="container text-center mt-4">
+            <div class="row align-items-center">
+                <div class="col-md-6 d-flex justify-content-center">
+                    <img src="images/leftside.png" class="img-fluid rounded shadow-lg" style="max-width: 90%;" />
+                </div>
+                <div class="col-md-6 text-light text-start mt-2">
+                    <div class="p-4 rounded shadow" style="background: rgba(255, 255, 255, 0.1);">
+                        <h3 class="text-center text-warning">📌 Ľavá strana – Zadanie úlohy</h3>
+                        <p class="lead">Na ľavej strane obrazovky sa nachádza zadanie úlohy, ktoré obsahuje všetky potrebné informácie na jej pochopenie.</p>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-file-alt text-primary"></i> <strong>Názov úlohy</strong> – stručne opisuje, čo je cieľom riešenia.</li>
+                            <li><i class="fas fa-signal text-danger"></i> <strong>Obťažnosť úlohy</strong> – pomáha ti odhadnúť, aká náročná je úloha.</li>
+                            <li><i class="fas fa-tags text-success"></i> <strong>Tagy (kategórie)</strong> – označujú programátorské koncepty, ktoré budeš pri riešení využívať.</li>
+                            <li><i class="fas fa-info-circle text-info"></i> <strong>Popis úlohy</strong> – podrobne vysvetľuje, čo máš naprogramovať a aké pravidlá treba dodržiavať.</li>
+                            <li><i class="fas fa-code text-warning"></i> <strong>Príklady vstupov a výstupov</strong> – ukazujú, ako by mal program správne fungovať na rôznych vstupoch.</li>
+                            <li><i class="fas fa-exclamation-triangle text-danger"></i> <strong>Obmedzenia</strong> – definujú, aké hodnoty môžu vstupné údaje nadobúdať.</li>
+                            <li><i class="fas fa-lightbulb text-warning"></i> <strong>Nápovedy</strong> – môžu obsahovať užitočné rady alebo tipy.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="row align-items-center">
+                <div class="col-md-6 text-light text-start mt-2">
+                    <div class="p-4 rounded shadow" style="background: rgba(255, 255, 255, 0.1);">
+                        <h3 class="text-center text-warning">📌 Pravá strana – Programátorský editor</h3>
+                        <p class="lead">Na pravej strane obrazovky sa nachádza programátorský editor, kde môžeš písať a testovať svoj kód.</p>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-laptop-code text-primary"></i> <strong>Programovací jazyk</strong> – jazyk, v ktorom musíš úlohu vyriešiť.</li>
+                            <li><i class="fas fa-adjust text-danger"></i> <strong>Režim editora</strong> – možnosť prepínať medzi svetlým a tmavým režimom.</li>
+                            <li><i class="fas fa-keyboard text-success"></i> <strong>Monaco Editor</strong> – poskytuje funkcie na písanie kódu.</li>
+                            <li><i class="fas fa-play text-info"></i> <strong>Spustenie kódu</strong> – umožňuje testovať tvoje riešenie priamo v prehliadači.</li>
+                            <li><i class="fas fa-paper-plane text-secondary"></i> <strong>Odovzdanie riešenia</strong> – odošle tvoj kód na vyhodnotenie a porovná ho so správnymi výstupmi.</li>
+                            <li><i class="fas fa-comment text-warning"></i> <strong>Výstup</strong> – zobrazí výsledok spusteného kódu.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-6 d-flex justify-content-center mb-5">
+                    <img src="images/rightside.png" class="img-fluid rounded shadow-lg" style="max-width: 90%;" />
+                </div>
+            </div>
+        </div>
+    </Authorized>
+</AuthorizeView>

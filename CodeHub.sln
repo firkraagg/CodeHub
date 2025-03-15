@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeHub", "CodeHub\CodeHub.
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{186C09D2-B2F7-421A-9084-5C64CD7CA4F4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkerService", "..\WorkerService\WorkerService.csproj", "{039D661A-192B-4F76-B740-25BB1D2B612E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkerService", "..\WorkerService\WorkerService.csproj", "{039D661A-192B-4F76-B740-25BB1D2B612E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

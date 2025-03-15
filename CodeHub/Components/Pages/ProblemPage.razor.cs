@@ -9,7 +9,7 @@ using static System.Net.WebRequestMethods;
 
 namespace CodeHub.Components.Pages;
 
-public partial class ProblemDetails
+public partial class ProblemPage
 {
     [Parameter] public int ProblemId { get; set; }
 
