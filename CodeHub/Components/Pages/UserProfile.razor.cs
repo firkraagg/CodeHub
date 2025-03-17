@@ -130,6 +130,7 @@ public partial class UserProfile
 
     public void ShowChangePassword()
     {
+        _showAlert = false;
         _showEditProfile = false;
         _showUserProblems = false;
         _showChangePassword = true;

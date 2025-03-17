@@ -19,7 +19,7 @@
                                 <th scope="col">Dátum vytvorenia</th>
                                 <th scope="col">Rola</th>
                                 <th scope="col">E-mail</th>
-                                <th colspan="2" scope="col">Akcie</th>
+                                <th scope="col">Akcie</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -32,8 +32,12 @@
                                         <td>@user.CreatedAt</td>
                                         <td>@user.Role</td>
                                         <td>@user.Email</td>
-                                        <td><button type="button" class="btn btn-danger container-fluid" @onclick="@(() => ShowDeleteModal(user))"><i class="fa-solid fa-trash-can"></i></button></td>
-                                        <td><button type="button" class="btn btn-primary container-fluid" @onclick="@(() => SetActualUser(user))"><i class="fa-solid fa-pen-to-square"></i></button></td>
+                                        <td>
+                                            <div style="display: flex; gap: 5px;">
+                                                <button type="button" class="btn button-custom button-remove-bg" @onclick="@(() => ShowDeleteModal(user))"><i class="fa-solid fa-trash-can"></i></button>
+                                                <button type="button" class="btn button-custom button-add-bg" @onclick="@(() => SetActualUser(user))"><i class="fa-solid fa-pen-to-square"></i></button>
+                                            </div>
+                                        </td>
                                     </tr>
                                 }
                             }
@@ -115,8 +119,8 @@
                             </div>
                         </div>
                             <div class="modal-footer text-white">
-                            <button type="button" class="btn btn-secondary" @onclick="CloseModal">Zrušiť</button>
-                            <button type="button" class="btn btn-primary" @onclick="ValidateAndEditUser">Uložiť</button>
+                            <button type="button" class="btn button-custom button-close-bg" @onclick="CloseModal">Zrušiť</button>
+                            <button type="button" class="btn button-custom button-add-bg" @onclick="ValidateAndEditUser">Uložiť</button>
                         </div>
                     </div>
                 </div>
@@ -138,8 +142,8 @@
                             </div>
                         </div>
                         <div class="modal-footer text-white">
-                            <button type="button" class="btn btn-secondary" @onclick="CloseDeleteModal">Zrušiť</button>
-                            <button type="button" class="btn btn-danger" @onclick="@(async () => await DeleteUser(_editingUser))">Odstrániť</button>
+                            <button type="button" class="btn button-custom button-close-bg" @onclick="CloseDeleteModal">Zrušiť</button>
+                            <button type="button" class="btn button-custom button-remove-bg" @onclick="@(async () => await DeleteUser(_editingUser))">Odstrániť</button>
                         </div>
                     </div>
                 </div>

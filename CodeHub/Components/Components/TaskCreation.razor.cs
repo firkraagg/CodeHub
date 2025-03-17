@@ -133,41 +133,79 @@ public partial class TaskCreation
 
     public async Task HandleEditProblemFormSubmitAsync()
     {
-        var existingTagNames = await TagService.GetTagNamesForProblemAsync(_problem.Id);
-        foreach (var selectedTag in _selectedTags)
-        {
-            if (!existingTagNames.Contains(selectedTag, StringComparer.OrdinalIgnoreCase))
-            {
-                var tag = new Tag
-                {
-                    Name = selectedTag
-                };
+        var removedHints = _problem.Hints
+            .Where(h => !_hints.Any(nh => nh.Hint == h.Hint))
+            .ToList();
 
-                _problem.Tags.Add(tag);
-            }
+        foreach (var removed in removedHints)
+        {
+            _problem.Hints.Remove(removed);
         }
 
+        var uniqueHints = new HashSet<string>(_problem.Hints.Select(h => h.Hint));
         foreach (var problemHint in _hints)
         {
-            if (!_problem.Hints.Any(h => h.Hint == problemHint.Hint))
+            if (!uniqueHints.Contains(problemHint.Hint))
             {
                 _problem.Hints.Add(problemHint);
+                uniqueHints.Add(problemHint.Hint);
             }
         }
 
+        var removedConstraints = _problem.Constraints
+            .Where(c => !_constraints.Any(nc => nc.Constraint == c.Constraint))
+            .ToList();
+
+        foreach (var removed in removedConstraints)
+        {
+            _problem.Constraints.Remove(removed);
+        }
+
+        var uniqueConstraints = new HashSet<string>(_problem.Constraints.Select(c => c.Constraint));
         foreach (var problemConstraint in _constraints)
         {
-            if (!_problem.Constraints.Any(c => c.Constraint == problemConstraint.Constraint))
+            if (!uniqueConstraints.Contains(problemConstraint.Constraint))
             {
                 _problem.Constraints.Add(problemConstraint);
+                uniqueConstraints.Add(problemConstraint.Constraint);
             }
         }
+
+        var removedExamples = _problem.Examples
+            .Where(e => !_examples.Any(ne => ne.Input == e.Input && ne.Output == e.Output && ne.Explanation == e.Explanation))
+            .ToList();
+
+        foreach (var removed in removedExamples)
+        {
+            _problem.Examples.Remove(removed);
+        }
+
+        var uniqueExamples = new HashSet<string>(_problem.Examples
+            .Select(e => $"{e.Input}|{e.Output}|{e.Explanation}"));
 
         foreach (var problemExample in _examples)
         {
-            if (!_problem.Examples.Any(e => e.Input == problemExample.Input && e.Output == problemExample.Output))
+            var exampleKey = $"{problemExample.Input}|{problemExample.Output}|{problemExample.Explanation}";
+
+            if (!uniqueExamples.Contains(exampleKey))
             {
                 _problem.Examples.Add(problemExample);
+                uniqueExamples.Add(exampleKey);
+            }
+        }
+
+        var removedTags = _problem.Tags
+            .Where(t => !_selectedTags.Contains(t.Name, StringComparer.OrdinalIgnoreCase))
+            .ToList();
+        foreach (var removed in removedTags) _problem.Tags.Remove(removed);
+
+        var existingTagNames = new HashSet<string>(_problem.Tags.Select(t => t.Name), StringComparer.OrdinalIgnoreCase);
+        foreach (var tagName in _selectedTags)
+        {
+            if (!existingTagNames.Contains(tagName))
+            {
+                _problem.Tags.Add(new Tag { Name = tagName });
+                existingTagNames.Add(tagName);
             }
         }
 

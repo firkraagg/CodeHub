@@ -25,17 +25,17 @@
                     }
                     @if (_user != null)
                     {
-                        <h2 class="pb-4 text-uppercase">@_user.Username</h2>
+                        <h2 class="pb-4">@_user.Username</h2>
                     }
                     else
                     {
                         <p class="pb-4 text-uppercase">Načítavanie...</p>
                     }
                     <div class="d-grid gap-2 w-100">
-                        <button class="btn custom-bg-profile-left btn-outline-dark text-white p-2" @onclick="ShowEditProfile">Upraviť profil</button>
-                        <button class="btn custom-bg-profile-left btn-outline-dark text-white p-2" @onclick="ShowChangePassword">Zmeniť heslo</button>
-                        <button class="btn custom-bg-profile-left btn-outline-dark text-white p-2" @onclick="LoadUserProblems">Moje úlohy</button>
-                        <button class="btn custom-bg-profile-left btn-outline-dark text-danger p-2" @onclick="ShowDeleteUserModal">Vymazať účet</button>
+                        <button class="btn profile-button button-update p-2" @onclick="ShowEditProfile">Upraviť profil</button>
+                        <button class="btn profile-button button-update p-2" @onclick="ShowChangePassword">Zmeniť heslo</button>
+                        <button class="btn profile-button button-update p-2" @onclick="LoadUserProblems">Moje úlohy</button>
+                        <button class="btn profile-button button-delete p-2" @onclick="ShowDeleteUserModal">Vymazať účet</button>
                     </div>
                 </div>
 
@@ -191,7 +191,7 @@
                                                     {
                                                         @foreach (var tag in problem.Tags)
                                                         {
-                                                            <span class="badge" style="background-color: white; color: black; margin-right: 5px;">@tag.Name</span>
+                                                            <span class="badge badge-bluewhite" style="margin-right: 5px; font-size:12px;">@tag.Name</span>
                                                         }
                                                     }
                                                     else
@@ -200,8 +200,16 @@
                                                     }
                                                 </td>
 
-                                                <td><button type="button" class="btn button-custom button-remove-bg container-fluid" @onclick="@(() => ShowDeleteProblemModal(problem))"><i class="fa-solid fa-trash-can"></i></button></td>
-                                                <td><button type="button" class="btn button-custom button-add-bg container-fluid" @onclick="@(() => NavigateToTaskCreation(problem.Id))"><i class="fa-solid fa-pen-to-square"></i></button></td>
+                                                <td colspan="2">
+                                                    <div style="display: flex; gap: 5px; justify-content:center;">
+                                                        <button type="button" class="btn button-custom button-remove-bg" @onclick="@(() => ShowDeleteProblemModal(problem))">
+                                                            <i class="fa-solid fa-trash-can"></i>
+                                                        </button>
+                                                        <button type="button" class="btn button-custom button-add-bg" @onclick="@(() => NavigateToTaskCreation(problem.Id))">
+                                                            <i class="fa-solid fa-pen-to-square"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
                                             </tr>
                                         }
                                         </tbody>

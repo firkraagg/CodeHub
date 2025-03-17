@@ -3,6 +3,7 @@ using CodeHub.Data.Entities;
 using CodeHub.Data.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
+using System.Data;
 
 namespace CodeHub.Services
 {
@@ -10,6 +11,7 @@ namespace CodeHub.Services
     {
         private readonly IDbContextFactory<DatabaseContext> _dbContextFactory;
         [Inject] TagService TagService { get; set; } = null!;
+        [Inject] private ProblemConstraintService ProblemConstraintService { get; set; } = null!;
 
         public ProblemService(IDbContextFactory<DatabaseContext> dbContextFactory)
         {
@@ -116,6 +118,10 @@ namespace CodeHub.Services
             using (var context = _dbContextFactory.CreateDbContext())
             {
                 var existingProblem = await context.Problems
+                    .Include(p => p.Constraints)
+                    .Include(p => p.Hints)
+                    .Include(p => p.Examples)
+                    .Include(p => p.Tags)
                     .FirstOrDefaultAsync(p => p.Id == problem.Id);
 
                 if (existingProblem != null)
@@ -127,18 +133,105 @@ namespace CodeHub.Services
                     existingProblem.Description = problem.Description;
                     existingProblem.DefaultCode = problem.DefaultCode;
 
-                    if (existingProblem.Tags == null)
+                    var existingConstraints = existingProblem.Constraints.ToList();
+
+                    // Remove constraints that are not in the updated problem
+                    foreach (var constraint in existingConstraints)
                     {
-                        existingProblem.Tags = new List<Tag>();
+                        if (!problem.Constraints.Any(c => c.Constraint == constraint.Constraint))
+                        {
+                            context.ProblemConstraint.Remove(constraint);
+                        }
                     }
 
-                    TagService?.DeleteAllTagsForProblemAsync(existingProblem.Id);
-                    foreach (var newTag in problem.Tags)
+                    // Add new constraints
+                    foreach (var constraint in problem.Constraints)
                     {
-                        existingProblem.Tags.Add(new Tag { Name = newTag.Name });
+                        if (!existingConstraints.Any(c => c.Constraint == constraint.Constraint))
+                        {
+                            context.ProblemConstraint.Add(new ProblemConstraint
+                            {
+                                Constraint = constraint.Constraint,
+                                ProblemId = existingProblem.Id
+                            });
+                        }
                     }
 
-                    context.Problems.Update(existingProblem);
+                    await context.SaveChangesAsync();
+
+                    var existingHints = existingProblem.Hints.ToList();
+
+                    foreach (var hint in existingHints)
+                    {
+                        if (!problem.Hints.Any(h => h.Hint == hint.Hint))
+                        {
+                            context.ProblemHint.Remove(hint);
+                        }
+                    }
+
+                    foreach (var hint in problem.Hints)
+                    {
+                        if (!existingHints.Any(h => h.Hint == hint.Hint))
+                        {
+                            context.ProblemHint.Add(new ProblemHint
+                            {
+                                Hint = hint.Hint,
+                                ProblemId = existingProblem.Id
+                            });
+                        }
+                    }
+
+                    await context.SaveChangesAsync();
+
+                    var existingExamples = existingProblem.Examples.ToList();
+
+                    foreach (var example in existingExamples)
+                    {
+                        if (!problem.Examples.Any(e => e.Input == example.Input && e.Output == example.Output && e.Explanation == example.Explanation))
+                        {
+                            context.ProblemExample.Remove(example);
+                        }
+                    }
+
+                    foreach (var example in problem.Examples)
+                    {
+                        if (!existingExamples.Any(e => e.Input == example.Input && e.Output == example.Output && e.Explanation == example.Explanation))
+                        {
+                            context.ProblemExample.Add(new ProblemExample
+                            {
+                                Input = example.Input,
+                                Output = example.Output,
+                                Explanation = example.Explanation,
+                                ProblemId = existingProblem.Id
+                            });
+                        }
+                    }
+
+                    await context.SaveChangesAsync();
+
+                    var existingTagNames = existingProblem.Tags.Select(t => t.Name).ToHashSet(StringComparer.OrdinalIgnoreCase);
+                    var selectedTagNames = problem.Tags.Select(t => t.Name).ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+                    var tagsToRemove = existingProblem.Tags
+                        .Where(t => !selectedTagNames.Contains(t.Name))
+                        .ToList();
+                    foreach (var tag in tagsToRemove)
+                    {
+                        existingProblem.Tags.Remove(tag);
+                    }
+
+                    foreach (var tagName in selectedTagNames.Except(existingTagNames))
+                    {
+                        var tag = await context.Tag.FirstOrDefaultAsync(t => t.Name == tagName);
+                        if (tag == null)
+                        {
+                            tag = new Tag { Name = tagName };
+                            context.Tag.Add(tag);
+                            await context.SaveChangesAsync();
+                        }
+                        existingProblem.Tags.Add(tag);
+                    }
+
                     await context.SaveChangesAsync();
                 }
             }

@@ -123,10 +123,10 @@ button.add-task-button:hover {
 }
 
 button.button-custom {
-    font-size: 1.1rem;
+    font-size: 1.0rem;
     font-weight: bold;
-    padding: 0.5rem 1rem;
-    border-radius: 5px;
+    padding: 0.4rem 0.9rem;
+    border-radius: 4px;
     border: none;
     display: inline-flex;
     align-items: center;
@@ -223,6 +223,10 @@ button.button-custom {
     color: black !important;
 }
 
+.badge.badge-blue {
+    background: linear-gradient(135deg, #17a2b8, #0d6efd) !important;
+}
+
 .text-veryeasy {
     color: lightgreen;
 }
@@ -231,6 +235,39 @@ button.button-custom {
     color: darkred;
 }
 
+.profile-button {
+    text-transform:uppercase;
+    border: 2px solid transparent;
+    transition: all 0.3s ease-in-out;
+    border-radius: 8px;
+    color: white !important;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.button-update {
+    background: linear-gradient(135deg, #2a2d2d, #1f2222);
+    color: white !important;
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.button-update:hover {
+    background: background: linear-gradient(135deg, #3a3d3d, #2a2d2d);
+    color: #00d9ff;
+    border-color: #00d9ff;
+    box-shadow: 0px 0px 15px rgba(0, 217, 255, 0.6);
+}
+
+.button-delete {
+    background: linear-gradient(135deg, #4a0000, #750000);
+    border-color: rgba(255, 0, 0, 0.3);
+}
+
+.button-delete:hover {
+    background: linear-gradient(135deg, #9b0000, #ff0000);
+    color: white;
+    border-color: #ff5555;
+    box-shadow: 0 0 15px rgba(255, 85, 85, 0.6);
+}
 
 /*.fixed-bottom-alert {
     position: fixed;

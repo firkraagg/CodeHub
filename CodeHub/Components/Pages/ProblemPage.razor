@@ -48,7 +48,7 @@
                     {
                         @foreach (var tag in _tags)
                         {
-                            <span class="badge bg-primary">@tag.Name</span>
+                            <span class="badge badge-blue">@tag.Name</span>
                         }
                     }
                 </div>
@@ -86,7 +86,9 @@
                     <h5 class="text-lg font-semibold">Obmedzenia:</h5>
                     @foreach (var constraint in _constraints)
                     {
-                        <p>&#9679; @constraint.Constraint</p>
+                        var html = Markdown.ToHtml(constraint.Constraint);
+                        html = System.Text.RegularExpressions.Regex.Replace(html, @"<p>(.*?)</p>", "$1");
+                        <p>&#9679; @((MarkupString)html)</p>
                     }
                 }
                 <p>@_problem?.Constraints</p>
@@ -112,7 +114,7 @@
                             <div id="@collapseId" class="accordion-collapse collapse" 
                                  aria-labelledby="@headingId" data-bs-parent="#accordionHint">
                                 <div class="accordion-body text-light">
-                                    @hint.Hint
+                                    @((MarkupString)Markdown.ToHtml(hint.Hint))
                                 </div>
                             </div>
                         </div>
@@ -153,7 +155,7 @@
             <AuthorizeView Roles="Admin,Učiteľ,Študent" Context="authContext">
                 <Authorized>
                     <div class="mt-3 d-flex gap-2 mb-2">
-                        <button class="btn btn-primary align-self-start" @onclick="SendCodeToQueue" disabled="@_isSubmitLoading">
+                        <button class="btn button-custom button-create-bg align-self-start" @onclick="SendCodeToQueue" disabled="@_isSubmitLoading">
                             @if (_isSubmitLoading)
                             {
                                 <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
@@ -165,7 +167,7 @@
                             }
                         </button>
 
-                        <button class="btn btn-success align-self-start" @onclick="SendCodeToQueue" disabled="@_isCheckLoading">
+                        <button class="btn button-custom button-add-bg align-self-start" @onclick="SendCodeToQueue" disabled="@_isCheckLoading">
                             @if (_isCheckLoading)
                             {
                                 <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
