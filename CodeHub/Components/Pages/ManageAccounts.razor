@@ -34,7 +34,7 @@
                                         <td>@user.Email</td>
                                         <td>
                                             <div style="display: flex; gap: 5px;">
-                                                <button type="button" class="btn button-custom button-remove-bg" @onclick="@(() => ShowDeleteModal(user))"><i class="fa-solid fa-trash-can"></i></button>
+                                                <button type="button" class="btn button-custom button-delete" @onclick="@(() => ShowDeleteModal(user))"><i class="fa-solid fa-trash-can"></i></button>
                                                 <button type="button" class="btn button-custom button-add-bg" @onclick="@(() => SetActualUser(user))"><i class="fa-solid fa-pen-to-square"></i></button>
                                             </div>
                                         </td>
@@ -143,7 +143,7 @@
                         </div>
                         <div class="modal-footer text-white">
                             <button type="button" class="btn button-custom button-close-bg" @onclick="CloseDeleteModal">Zrušiť</button>
-                            <button type="button" class="btn button-custom button-remove-bg" @onclick="@(async () => await DeleteUser(_editingUser))">Odstrániť</button>
+                            <button type="button" class="btn button-custom button-delete" @onclick="@(async () => await DeleteUser(_editingUser))">Odstrániť</button>
                         </div>
                     </div>
                 </div>

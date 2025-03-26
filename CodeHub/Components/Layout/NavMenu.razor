@@ -2,88 +2,86 @@
 @inject UserService UserService
 @inject NavigationManager NavigationManager
 
-<nav class="navbar navbar-expand-lg bg-body-tertiary" data-bs-theme="dark">
-    <div class="container-fluid">
-        <div>
-            <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
-                <label class="form-check-label text-light" for="flexSwitchCheckDefault">Svetlý režim</label>
+<div class="@GetThemeClass()">
+    <nav class="navbar navbar-expand-lg bg-body-tertiary" data-bs-theme="@(isLightMode ? "light" : "dark")">
+        <div class="container-fluid">
+            <div>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" @onchange="ToggleTheme">
+                    <label class="form-check-label @(isLightMode ? "text-dark" : "text-light")" for="flexSwitchCheckDefault" style="color: #9fa2a4 !important">Svetlý režim</label>
+                </div>
+            </div>
+            <a class="navbar-brand" href="#">
+                <img class="logo-image img-fluid" alt="logo" src="images/logo.png">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="#">Domov</a>
+                    </li>
+                    <AuthorizeView Roles="Učiteľ, Admin">
+                        <Authorized>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Úlohy</a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="/task-form">Pridať úlohu</a></li>
+                                    <li><a class="dropdown-item" href="/problems-guide">Ako riešiť úlohy</a></li>
+                                </ul>
+                            </li>
+                        </Authorized>
+                    </AuthorizeView>
+                    <AuthorizeView Roles="Študent">
+                        <Authorized>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Úlohy</a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="/problems-guide">Ako riešiť úlohy</a></li>
+                                </ul>
+                            </li>
+                        </Authorized>
+                    </AuthorizeView>
+                    <AuthorizeView>
+                        <Authorized>
+                            <li class="nav-item">
+                                <a class="nav-link" aria-current="page" href="/userprofile">Môj účet</a>
+                            </li>
+                        </Authorized>
+                    </AuthorizeView>
+                    <AuthorizeView Roles="Admin">
+                        <Authorized>
+                            <li class="nav-item">
+                                <a class="nav-link" aria-current="page" href="/manage-accounts">Spravovať účty</a>
+                            </li>
+                        </Authorized>
+                    </AuthorizeView>
+                </ul>
+                <AuthorizeView>
+                    <NotAuthorized>
+                        <ul class="navbar-nav ms-auto">
+                            <li class="nav-item">
+                                <a class="nav-link" aria-current="page" href="/login">Prihlásiť sa</a>
+                            </li>
+                            <li class="nav-item">
+                                <span class="nav-link" style="pointer-events: none;">alebo</span>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" aria-current="page" href="/register">Registrovať</a>
+                            </li>
+                        </ul>
+                    </NotAuthorized>
+                    <Authorized>
+                        <ul class="navbar-nav ms-auto">
+                            <li class="nav-item">
+                                <a class="nav-link" aria-current="page" href="#" @onclick="Logout">Odhlásiť sa</a>
+                            </li>
+                        </ul>
+                    </Authorized>
+                </AuthorizeView>
             </div>
         </div>
-        <a class="navbar-brand" href="#">
-            <img class="logo-image img-fluid" alt="logo" src="images/logo.png">
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="#">Domov</a>
-                </li>
-                <AuthorizeView Roles="Učiteľ, Admin">
-                    <Authorized>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Úlohy</a>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="/task-form">Pridať úlohu</a></li>
-                                <li><a class="dropdown-item" href="/problems-guide">Ako riešiť úlohy</a></li>
-                                <li><a class="dropdown-item" href="#">Pridať skúšku</a></li>
-                            </ul>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" aria-current="page" href="#">Skúšky</a>
-                        </li>
-                    </Authorized>
-                </AuthorizeView>
-                <AuthorizeView Roles="Študent">
-                    <Authorized>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Úlohy</a>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="/problems-guide">Ako riešiť úlohy</a></li>
-                            </ul>
-                        </li>
-                    </Authorized>
-                </AuthorizeView>
-                <AuthorizeView>
-                    <Authorized>
-                        <li class="nav-item">
-                            <a class="nav-link" aria-current="page" href="/userprofile">Môj účet</a>
-                        </li>
-                    </Authorized>
-                </AuthorizeView>
-                <AuthorizeView Roles="Admin">
-                    <Authorized>
-                        <li class="nav-item">
-                            <a class="nav-link" aria-current="page" href="/manage-accounts">Spravovať účty</a>
-                        </li>
-                    </Authorized>
-                </AuthorizeView>
-            </ul>
-            <AuthorizeView>
-                <NotAuthorized>
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" aria-current="page" href="/login">Prihlásiť sa</a>
-                        </li>
-                        <li class="nav-item">
-                            <span class="nav-link" style="pointer-events: none;">alebo</span>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" aria-current="page" href="/register">Registrovať</a>
-                        </li>
-                    </ul>
-                </NotAuthorized>
-                <Authorized>
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" aria-current="page" href="#" @onclick="Logout">Odhlásiť sa</a>
-                        </li>
-                    </ul>
-                </Authorized>
-            </AuthorizeView>
-        </div>
-    </div>
-</nav>
+    </nav>
+</div>
 

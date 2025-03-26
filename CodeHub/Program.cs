@@ -14,15 +14,14 @@ namespace CodeHub
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            //var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new NullReferenceException("No connection string in config!");
-
             // Add services to the container.
             builder.Services.AddRazorComponents()
                 .AddInteractiveServerComponents();
             var dbHost = Environment.GetEnvironmentVariable("DB_HOST") ?? "localhost";
             var dbName = Environment.GetEnvironmentVariable("DB_NAME");
             var dbPassword = Environment.GetEnvironmentVariable("DB_SA_PASSWORD");
-            var connectionString = $"Data Source={dbHost},1433;Initial Catalog={dbName};User ID=sa;Password={dbPassword};TrustServerCertificate=True;";
+            //var connectionString = $"Data Source={dbHost}, 1433;Initial Catalog={dbName};User ID=sa;Password={dbPassword};TrustServerCertificate=True;";
+            var connectionString = "Data Source=localhost,8002;Initial Catalog=CodeHubApp;User ID=sa;Password=CodeHub@2023;TrustServerCertificate=True;";
             builder.Services.AddDbContextFactory<DatabaseContext>((DbContextOptionsBuilder options) => options.UseSqlServer(connectionString));
             using (var scope = builder.Services.BuildServiceProvider().CreateScope())
             {
@@ -40,15 +39,27 @@ namespace CodeHub
             builder.Services.AddTransient<ProblemHintService>();
             builder.Services.AddTransient<ProblemConstraintService>();
             builder.Services.AddTransient<ProblemExampleService>();
-            builder.Services.AddTransient<CodeExecutionService>();
             builder.Services.AddSingleton<RabbitMqProducerService>();
+            builder.Services.AddTransient<TestCaseService>();
+            builder.Services.AddTransient<TipService>();
+            builder.Services.AddTransient<ProblemsAttemptService>();
             builder.Services.AddDistributedMemoryCache();
+            //builder.Services.AddDistributedSqlServerCache(options =>
+            //{
+            //    options.ConnectionString = connectionString;
+            //    options.SchemaName = "dbo";
+            //    options.TableName = "SessionData";
+            //});
+
             builder.Services.AddSession(options =>
             {
                 options.IdleTimeout = TimeSpan.FromMinutes(300);
+                options.Cookie.Name = "CodeHub.Session";
                 options.Cookie.HttpOnly = true;
                 options.Cookie.IsEssential = true;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
             });
+
             builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
             builder.Services.AddAuthorizationCore();
             builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
@@ -56,6 +67,8 @@ namespace CodeHub
             {
                 options.AddPolicy("Admin", policy => policy.RequireClaim("Role", "Admin"));
             });
+            builder.Logging.AddConsole();
+            builder.Logging.AddDebug();
 
             var app = builder.Build();
 
@@ -67,6 +80,7 @@ namespace CodeHub
                 app.UseHsts();
             }
 
+            app.UseRouting();
             app.UseSession();
 
             app.UseHttpsRedirection();

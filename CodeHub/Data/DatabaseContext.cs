@@ -18,6 +18,9 @@ namespace CodeHub.Data
         public DbSet<ProblemHint> ProblemHint { get; set; }
         public DbSet<ProblemConstraint> ProblemConstraint { get; set; }
         public DbSet<ProblemExample> ProblemExample { get; set; }
+        public DbSet<TestCase> TestCase { get; set; }
+        public DbSet<Tip> Tip { get; set; }
+        public DbSet<ProblemAttempt> ProblemAttempts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -41,6 +44,21 @@ namespace CodeHub.Data
                     j => j.HasOne<Tag>().WithMany().HasForeignKey("TagId").OnDelete(DeleteBehavior.Cascade),
                     j => j.HasOne<Problem>().WithMany().HasForeignKey("ProblemId").OnDelete(DeleteBehavior.Cascade)
                 );
+
+            modelBuilder.Entity<ProblemAttempt>()
+                .HasKey(pa => new { pa.userId, pa.problemId });
+
+            modelBuilder.Entity<ProblemAttempt>()
+                .HasOne(pa => pa.User)
+                .WithMany(u => u.SolvedProblems)
+                .HasForeignKey(pa => pa.userId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<ProblemAttempt>()
+                .HasOne(pa => pa.Problem)
+                .WithMany(p => p.SolvedByUsers)
+                .HasForeignKey(pa => pa.problemId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

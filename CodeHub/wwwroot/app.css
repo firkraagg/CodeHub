@@ -4,6 +4,16 @@ html, body {
     padding: 0 !important;
 }
 
+.light-mode {
+    background-color: #ffffff;
+    color: #000000;
+}
+
+.dark-mode {
+    background-color: #212529;
+    color: #b0cbcc !important;
+}
+
 .blockquote-footer {
     left: 0;
 }
@@ -70,8 +80,10 @@ html, body {
 }
 
 .navbar-brand .logo-image {
-    width: 2.5vw;
-    height: auto;
+    max-width: 100%; /* Ensure the image never overflows */
+    height: auto; /* Maintain aspect ratio */
+    width: 40px; /* A base size for most viewports */
+    object-fit: contain;
 }
 
 .circular--square {
@@ -151,6 +163,15 @@ button.button-custom {
     box-shadow: none;
 }
 
+.button-show-students {
+    background: linear-gradient(135deg, #6f42c1, #563d7c);
+    color: white;
+}
+
+.button-show-students:hover {
+    background: linear-gradient(135deg, #563d7c, #3d2a5b);
+}
+
 .button-add-bg {
     background: linear-gradient(135deg, #17a2b8, #0d6efd);
 }
@@ -227,6 +248,11 @@ button.button-custom {
     background: linear-gradient(135deg, #17a2b8, #0d6efd) !important;
 }
 
+.badge.badge-language {
+    background: linear-gradient(135deg, #4169E1, #C0C0C0) !important;
+    color: white !important;
+}
+
 .text-veryeasy {
     color: lightgreen;
 }
@@ -258,15 +284,36 @@ button.button-custom {
 }
 
 .button-delete {
+    background: linear-gradient(135deg, #d43f3a, #a71d2a);
+}
+
+.button-delete:hover {
+    background: linear-gradient(135deg, #c53030, #8a1720);
+}
+
+.button-delete-account {
     background: linear-gradient(135deg, #4a0000, #750000);
     border-color: rgba(255, 0, 0, 0.3);
 }
 
-.button-delete:hover {
+.button-delete-account:hover {
     background: linear-gradient(135deg, #9b0000, #ff0000);
     color: white;
     border-color: #ff5555;
     box-shadow: 0 0 15px rgba(255, 85, 85, 0.6);
+}
+
+#problem-box {
+    resize: horizontal;
+    overflow: auto;
+    min-width: 20vw;
+    max-width: 48vw;
+    border: 3px solid #0059b3;
+    border-radius: 5px;
+    overflow-y: auto;
+    min-height:85vh;
+    max-height: 85vh;
+    background-color: #1e1e1e;
 }
 
 /*.fixed-bottom-alert {

@@ -6,10 +6,12 @@ namespace CodeHub.Components.Pages;
 
 public partial class Home
 {
+    private User? _user;
     private List<Problem> _problems = new();
     private List<Problem> _filteredProblems = new();
     private List<Tag> _tags = new();
     private List<Tag> _selectedTags = new();
+    private List<int> _completedProblemIds = new();
     private int _selectedDifficulty = -1;
     private string _selectedSort = "";
     private int _selectedTagId = 0;
@@ -21,9 +23,19 @@ public partial class Home
 
     protected override async Task OnInitializedAsync()
     {
+        var userId = ((CustomAuthStateProvider)AuthenticationStateProvider).GetLoggedInUserId();
+        if (!string.IsNullOrEmpty(userId))
+        {
+            _completedProblemIds = await SolvedProblemsService.GetSolvedProblemIdsByUserIdAsync(int.Parse(userId));
+        }
         await LoadProblems();
         await LoadTags();
         _selectedTags = new List<Tag>();
+
+        foreach (var problem in _problems)
+        {
+            problem.Acceptance = await ProblemService.CalculateAcceptanceRateAsync(problem.Id);
+        }
     }
 
     public void SetProblemCount(int count)

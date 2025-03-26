@@ -4,6 +4,7 @@ using CodeHub.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CodeHub.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20250324170647_Edited_SolvedProblem_Table")]
+    partial class Edited_SolvedProblem_Table
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,31 +24,6 @@ namespace CodeHub.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("CodeHub.Data.Entities.ProblemAttempt", b =>
-                {
-                    b.Property<int>("userId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("problemId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("AttemptedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsSuccessful")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("SourceCode")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("userId", "problemId");
-
-                    b.HasIndex("problemId");
-
-                    b.ToTable("ProblemAttempts");
-                });
 
             modelBuilder.Entity("CodeHub.Data.Entities.ProblemConstraint", b =>
                 {
@@ -155,6 +133,28 @@ namespace CodeHub.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ProgrammingLanguage");
+                });
+
+            modelBuilder.Entity("CodeHub.Data.Entities.SolvedProblem", b =>
+                {
+                    b.Property<int>("userId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("problemId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("SolvedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("SourceCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("userId", "problemId");
+
+                    b.HasIndex("problemId");
+
+                    b.ToTable("SolvedProblems");
                 });
 
             modelBuilder.Entity("CodeHub.Data.Entities.Tag", b =>
@@ -320,25 +320,6 @@ namespace CodeHub.Migrations
                     b.ToTable("ProblemTag");
                 });
 
-            modelBuilder.Entity("CodeHub.Data.Entities.ProblemAttempt", b =>
-                {
-                    b.HasOne("CodeHub.Data.Models.Problem", "Problem")
-                        .WithMany("SolvedByUsers")
-                        .HasForeignKey("problemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("CodeHub.Data.Entities.User", "User")
-                        .WithMany("SolvedProblems")
-                        .HasForeignKey("userId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Problem");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("CodeHub.Data.Entities.ProblemConstraint", b =>
                 {
                     b.HasOne("CodeHub.Data.Models.Problem", "Problem")
@@ -370,6 +351,25 @@ namespace CodeHub.Migrations
                         .IsRequired();
 
                     b.Navigation("Problem");
+                });
+
+            modelBuilder.Entity("CodeHub.Data.Entities.SolvedProblem", b =>
+                {
+                    b.HasOne("CodeHub.Data.Models.Problem", "Problem")
+                        .WithMany("SolvedByUsers")
+                        .HasForeignKey("problemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CodeHub.Data.Entities.User", "User")
+                        .WithMany("SolvedProblems")
+                        .HasForeignKey("userId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Problem");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("CodeHub.Data.Entities.TestCase", b =>

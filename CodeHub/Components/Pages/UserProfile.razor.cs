@@ -21,7 +21,7 @@ public partial class UserProfile
     private bool _showAlert;
     private bool _showUserProblems = false;
     private List<Problem> _userProblems = new();
-    private Problem _editingProblem = null;
+    private Problem? _editingProblem = null;
     private string _deleteModalText = string.Empty;
     private string _actionName = string.Empty;
     private string _alertMessage = String.Empty;
@@ -30,6 +30,7 @@ public partial class UserProfile
     private bool _showUpdateModal = false;
     private int? _selectedTagId;
     private string _tempCode;
+    private Tip? _randomTip;
     private List<Tag> _availableTags = new();
     private List<ProgrammingLanguage> _languages = new();
 
@@ -40,8 +41,15 @@ public partial class UserProfile
     protected override async Task OnInitializedAsync()
     {
         var userId = ((CustomAuthStateProvider)AuthenticationStateProvider).GetLoggedInUserId();
+        if (string.IsNullOrEmpty(userId))
+        {
+            NavigationManager.NavigateTo("/login", true);
+            return;
+        }
+
         _languages = await ProgrammingLanguageService.GetProgrammingLanguagesAsync();
         _availableTags = await TagService.GetTagsAsync();
+        _randomTip = await TipService.GetRandomTipAsync();
         if (!string.IsNullOrEmpty(userId))
         {
             _user = await UserService.GetUserByIdAsync(userId);
@@ -118,7 +126,7 @@ public partial class UserProfile
             StateHasChanged();
         }
     }
-    
+
     public void ShowEditProfile()
     {
         _showAlert = false;
@@ -140,9 +148,10 @@ public partial class UserProfile
     public void CloseDeleteModal()
     {
         _showDeleteModal = false;
+        _editingProblem = null;
         StateHasChanged();
     }
-    
+
     public async Task DeleteUser()
     {
         await UserService.DeleteUserAsync(_user!);
@@ -188,13 +197,16 @@ public partial class UserProfile
         StateHasChanged();
     }
 
-
     public void ShowDeleteUserModal()
     {
         _deleteModalText = "Naozaj chcete zrušiť váš účet?";
         _actionName = "Odstrániť účet";
         _showDeleteModal = true;
         StateHasChanged();
+    }
+
+    public void ShowSuccessfullStudents(Problem problem) {
+
     }
 
     private void AddTag()
@@ -226,7 +238,6 @@ public partial class UserProfile
             .ToList();
         _editingProblem.DefaultCode = _tempCode;
         await ProblemService.EditProblemAsync(_editingProblem);
-        //_editingProblem = new();
         CloseUpdateModal();
         StateHasChanged();
     }
@@ -239,9 +250,9 @@ public partial class UserProfile
         StateHasChanged();
     }
 
-    private void NavigateToTaskCreation(int problemId)
+    private void NavigateToPage(int problemId, string name)
     {
-        NavigationManager.NavigateTo($"/task-edit/{problemId}");
+        NavigationManager.NavigateTo($"/{name}/{problemId}");
     }
 
 }

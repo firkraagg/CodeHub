@@ -33,6 +33,8 @@ namespace CodeHub.Data.Models
 
         public virtual ICollection<ProblemHint> Hints { get; set; }
 
+        public virtual ICollection<TestCase> TestCases { get; set; }
+
         [ForeignKey(nameof(ProgrammingLanguage)), Required, Range(1, Int32.MaxValue, ErrorMessage = "Vyberte programovací jazyk")]
         public int LanguageID { get; set; }
         public virtual ProgrammingLanguage ProgrammingLanguage { get; set; }
@@ -42,5 +44,6 @@ namespace CodeHub.Data.Models
         public virtual User User { get; set; }
 
         public ICollection<Tag> Tags { get; set; }
+        public ICollection<ProblemAttempt> SolvedByUsers { get; set; }
     }
 }

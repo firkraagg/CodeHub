@@ -6,22 +6,29 @@
 @inject IJSRuntime JS
 @inject ProblemService ProblemService
 @inject TagService TagService
+@inject UserService UserService
 @inject ProgrammingLanguageService ProgrammingLanguageService
 @inject ProblemHintService ProblemHintService
 @inject ProblemConstraintService ProblemConstraintService
 @inject ProblemExampleService ProblemExampleService
 @inject RabbitMqProducerService RabbitMqProducerService
+@inject TestCaseService TestCaseService
+@inject ProblemsAttemptService SolvedProblemsService
 
 <PageTitle>Problem Details</PageTitle>
 
 <div class="container-fluid h-100 p-4">
-    <div class="row h-100">
-        <div class="col-md-6 p-4 text-white overflow-y-auto" style="border:3px solid #0059b3; border-radius:5px; overflow-y: auto; max-height: 85vh; background-color: #1e1e1e">
+    <div class="row h-100 d-flex">
+        <div id="problem-box" class="resizable p-4 text-white overflow-y-auto">
             <h2 class="font-bold">@_problem?.Title</h2>
             <div class="mb-4">
                 <div class="d-flex flex-wrap gap-2">
                     @if (_problem != null)
                     {
+                        <span class="badge badge-language">
+                            @_selectedLanguage.Name
+                        </span>
+
                         string difficultyText = _problem.Difficulty switch
                         {
                             1 => "Veľmi ľahká",
@@ -123,39 +130,30 @@
                 }
             </div>
         </div>
-        <div class="col-md-6 p-0 text-white ps-3">
-            <div class="d-flex gap-2 pb-1">
-                <div class="dropdown">
-                    <button class="btn btn-dark" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="border:3px solid #0059b3;">
-                        Jazyk: @_selectedLanguage.Name
-                    </button>
-                    @* <ul class="dropdown-menu dropdown-menu-dark">
-                        @foreach (var language in _languages)
-                        {
-                            <li>
-                                <a class="dropdown-item @( _selectedLanguage.Name == language.Name ? "active" : "" )" 
-                                   @onclick="@(() => ChangeLanguage(language.Name))">
-                                    @language.Name
-                                </a>
-                            </li>
-                        }
-                    </ul> *@
-                </div>
-                <div class="dropdown">
-                    <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="border:3px solid #0059b3">
-                        Režim: @(_selectedTheme == "vs-dark" ? "Tmavý" : "Svetlý")
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-dark">
-                        <li><a class="dropdown-item @(_selectedTheme == "vs-dark" ? "active" : "")" @onclick="@(() => ChangeTheme("vs-dark"))">Tmavý režim</a></li>
-                        <li><a class="dropdown-item @(_selectedTheme == "vs" ? "active" : "")" @onclick="@(() => ChangeTheme("vs"))">Svetlý režim</a></li>
-                    </ul>
-                </div>
+        <div class="col p-0 text-white ps-2 d-flex flex-grow-1"
+             style="overflow: hidden; max-width: calc(100vw - 22vw);">
+            <div id="editorContainer" class="resizable pb-3 flex-grow-1"
+                 style="border: 3px solid #0059b3; border-radius: 5px; overflow-y: auto; max-height: 85vh">
             </div>
-            <div id="editorContainer" style="height: 65vh; border: 3px solid #0059b3;" class="pb-3"></div>
+        </div>
+    </div>
+    <div class="row h-25 d-flex justify-content-center align-items-center">
+        <div class="col-md-8 text-center">
             <AuthorizeView Roles="Admin,Učiteľ,Študent" Context="authContext">
                 <Authorized>
-                    <div class="mt-3 d-flex gap-2 mb-2">
-                        <button class="btn button-custom button-create-bg align-self-start" @onclick="SendCodeToQueue" disabled="@_isSubmitLoading">
+                    @{
+                        var borderColor = "";
+                        if (_hasExecuted)
+                        {
+                            borderColor = _noErrors ? "border-success" : "border-danger";
+                        }
+                    }
+                    <div class="p-3 border rounded bg-dark text-light mt-2 w-100 @borderColor"
+                         style="overflow-y: auto; white-space: pre-wrap; font-family: monospace; max-height: 200px;">
+                        <pre class="m-0">@_output</pre>
+                    </div>
+                    <div class="mt-3 d-flex gap-2 justify-content-center mb-2">
+                        <button class="btn button-custom button-create-bg" @onclick="() => SendCodeToQueue(true)" disabled="@_isSubmitLoading">
                             @if (_isSubmitLoading)
                             {
                                 <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
@@ -167,7 +165,7 @@
                             }
                         </button>
 
-                        <button class="btn button-custom button-add-bg align-self-start" @onclick="SendCodeToQueue" disabled="@_isCheckLoading">
+                        <button class="btn button-custom button-add-bg" @onclick="() => SendCodeToQueue(false)" disabled="@_isCheckLoading">
                             @if (_isCheckLoading)
                             {
                                 <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
@@ -179,27 +177,18 @@
                             }
                         </button>
                     </div>
-                    @{
-                        var borderColor = "";
-                        if (_hasExecuted)
-                        {
-                            borderColor = _noErrors ? "border-success" : "border-danger";
-                        }
-                    }
-
-                    <div class="p-3 border rounded bg-dark text-light w-100 @borderColor" 
-                         style="overflow-y: auto; white-space: pre-wrap; font-family: monospace;">
-                        <pre class="m-0">@_output</pre>
-                    </div>
                 </Authorized>
+
                 <NotAuthorized>
-                    <div>
+                    <div class="text-white text-center">
                         <h6>
-                            Musíte sa 
-                            <a href="/login" style="text-decoration: none; color: lightblue" onmouseover="this.style.color='dodgerblue'; this.style.textDecoration='underline';"
+                            Musíte sa
+                            <a href="/login" style="text-decoration: none; color: lightblue"
+                               onmouseover="this.style.color='dodgerblue'; this.style.textDecoration='underline';"
                                onmouseout="this.style.color='lightblue'; this.style.textDecoration='none'">prihlásiť</a>
                             /
-                            <a href="/register" style="text-decoration: none; color: lightblue" onmouseover="this.style.color='dodgerblue'; this.style.textDecoration='underline'"
+                            <a href="/register" style="text-decoration: none; color: lightblue"
+                               onmouseover="this.style.color='dodgerblue'; this.style.textDecoration='underline';"
                                onmouseout="this.style.color='lightblue'; this.style.textDecoration='none'">zaregistrovať</a>
                             pre riešenie problému
                         </h6>

@@ -1,9 +1,11 @@
 ﻿@page "/"
 @using CodeHub.Data.Models
+@using CodeHub.Services
 @inject NavigationManager NavigationManager
-@inject CodeHub.Services.ProblemService ProblemService
-@inject CodeHub.Services.TagService TagService
-
+@inject ProblemService ProblemService
+@inject TagService TagService
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject ProblemsAttemptService SolvedProblemsService
 <PageTitle>Home</PageTitle>
 
 <div class="container-fluid">
@@ -90,9 +92,15 @@
 
                         foreach (var (problem, index) in problemsToDisplay.Select((p, i) => (p, i + startIndex)))
                         {
+                            bool isCompleted = _completedProblemIds.Contains(problem.Id);
                             <tr>
                                 <th scope="row">@index</th>
-                                <td></td>
+                                <td>
+                                    @if (isCompleted)
+                                    {
+                                        <i class="fa-solid fa-calendar-check text-success fa-lg"></i>
+                                    }
+                                </td>
                                 <td>
                                     <a href=@($"/problem/{problem.Id}") style="text-decoration: none; color: white;" 
                                        onmouseover="this.style.color='lightblue'" onmouseout="this.style.color='white'">

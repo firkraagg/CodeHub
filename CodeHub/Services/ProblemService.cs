@@ -45,6 +45,7 @@ namespace CodeHub.Services
                         Constraints = new List<ProblemConstraint>(),
                         Hints = new List<ProblemHint>(),
                         Tags = problem.Tags?.Select(t => new Tag { Name = t.Name }).ToList(),
+                        TestCases = new List<TestCase>(),
                         UserID = problem.UserID
                     };
 
@@ -95,6 +96,22 @@ namespace CodeHub.Services
                         await context.SaveChangesAsync();
                     }
 
+                    if (problem.TestCases.Any())
+                    {
+                        foreach (var testCase in problem.TestCases)
+                        {
+                            var newTestCase = new TestCase
+                            {
+                                ProblemId = newProblem.Id,
+                                Arguments = testCase.Arguments,
+                                ExpectedOutput = testCase.ExpectedOutput,
+                                OutputType = testCase.OutputType
+                            };
+                            context.TestCase.Add(newTestCase);
+                        }
+                        await context.SaveChangesAsync();
+                    }
+
                     return newProblem;
                 }
             }
@@ -122,10 +139,14 @@ namespace CodeHub.Services
                     .Include(p => p.Hints)
                     .Include(p => p.Examples)
                     .Include(p => p.Tags)
+                    .Include(p => p.TestCases)
                     .FirstOrDefaultAsync(p => p.Id == problem.Id);
 
                 if (existingProblem != null)
                 {
+                    context.Attach(existingProblem);
+                    context.Entry(existingProblem).State = EntityState.Modified;
+
                     existingProblem.Title = problem.Title;
                     existingProblem.Difficulty = problem.Difficulty;
                     existingProblem.ProgrammingLanguage = problem.ProgrammingLanguage;
@@ -133,9 +154,10 @@ namespace CodeHub.Services
                     existingProblem.Description = problem.Description;
                     existingProblem.DefaultCode = problem.DefaultCode;
 
+                    await context.SaveChangesAsync();
+
                     var existingConstraints = existingProblem.Constraints.ToList();
 
-                    // Remove constraints that are not in the updated problem
                     foreach (var constraint in existingConstraints)
                     {
                         if (!problem.Constraints.Any(c => c.Constraint == constraint.Constraint))
@@ -144,7 +166,6 @@ namespace CodeHub.Services
                         }
                     }
 
-                    // Add new constraints
                     foreach (var constraint in problem.Constraints)
                     {
                         if (!existingConstraints.Any(c => c.Constraint == constraint.Constraint))
@@ -233,10 +254,40 @@ namespace CodeHub.Services
                     }
 
                     await context.SaveChangesAsync();
+
+                    var existingTestCases = existingProblem.TestCases.ToList();
+                    foreach (var testCase in existingTestCases)
+                    {
+                        if (!problem.TestCases.Any(tc =>
+                            tc.Arguments == testCase.Arguments &&
+                            tc.ExpectedOutput == testCase.ExpectedOutput &&
+                            tc.OutputType == testCase.OutputType))
+                        {
+                            context.Remove(testCase);
+                        }
+                    }
+
+                    foreach (var testCase in problem.TestCases)
+                    {
+                        if (!existingTestCases.Any(tc =>
+                            tc.Arguments == testCase.Arguments &&
+                            tc.ExpectedOutput == testCase.ExpectedOutput &&
+                            tc.OutputType == testCase.OutputType))
+                        {
+                            context.Add(new TestCase
+                            {
+                                Arguments = testCase.Arguments,
+                                ExpectedOutput = testCase.ExpectedOutput,
+                                OutputType = testCase.OutputType,
+                                ProblemId = existingProblem.Id
+                            });
+                        }
+                    }
+
+                    await context.SaveChangesAsync();
                 }
             }
         }
-
 
         public async Task DeleteProblemAsync(Problem problem)
         {
@@ -281,6 +332,24 @@ namespace CodeHub.Services
             using (var context = _dbContextFactory.CreateDbContext())
             {
                 return await context.Problems.FirstOrDefaultAsync(p => p.Title == title);
+            }
+        }
+
+        public async Task<double> CalculateAcceptanceRateAsync(int problemId)
+        {
+            using (var context = _dbContextFactory.CreateDbContext())
+            {
+                var totalAttempts = await context.ProblemAttempts
+                .Where(a => a.problemId == problemId)
+                .CountAsync();
+
+                if (totalAttempts == 0) return 0;
+
+                var successfulAttempts = await context.ProblemAttempts
+                    .Where(a => a.problemId == problemId && a.IsSuccessful)
+                    .CountAsync();
+
+                return (double)successfulAttempts / totalAttempts;
             }
         }
     }

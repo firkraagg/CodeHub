@@ -39,6 +39,9 @@ public partial class TaskCreation
     private ProblemExample _example = new();
     private List<ProblemExample> _examples = new();
     private ProblemExample _editingExample;
+    private List<TestCase> _testCases = new();
+    private TestCase _editingTestCase;
+    private bool _showModalTestCase;
     private User? _user;
     private bool _showAlert;
     private string _alertColor = "";
@@ -54,12 +57,14 @@ public partial class TaskCreation
     protected override async Task OnInitializedAsync()
     {
         var userId = ((CustomAuthStateProvider)AuthenticationStateProvider).GetLoggedInUserId();
-        _languages = await ProgrammingLanguageService.GetProgrammingLanguagesAsync();
-        _tags = await TagService.GetTagsAsync();
         if (!string.IsNullOrEmpty(userId))
         {
             _user = await UserService.GetUserByIdAsync(userId);
         }
+
+        _languages = await ProgrammingLanguageService.GetProgrammingLanguagesAsync();
+        _tags = await TagService.GetTagsAsync();
+        _problem.TestCases = [];
 
         if (ProblemToEdit != null) 
         {
@@ -68,10 +73,12 @@ public partial class TaskCreation
             _examples = await ProblemExampleService.GetExamplesForProblemAsync(_problem.Id);
             _constraints = await ProblemConstraintService.GetConstraintsForProblemAsync(_problem.Id);
             _hints = await ProblemHintService.GetHintsForProblemAsync(_problem.Id);
+            _testCases = await TestCaseService.GetTestCasesForProblemAsync(_problem.Id);
             _problem.Tags = await TagService.GetTagsForProblemAsync(_problem.Id);
             _problem.Hints = await ProblemHintService.GetHintsForProblemAsync(_problem.Id);
             _problem.Constraints = await ProblemConstraintService.GetConstraintsForProblemAsync(_problem.Id);
             _problem.Examples = await ProblemExampleService.GetExamplesForProblemAsync(_problem.Id);
+            _problem.TestCases = await TestCaseService.GetTestCasesForProblemAsync(_problem.Id);
             _isEditing = true;
         }
     }
@@ -206,6 +213,26 @@ public partial class TaskCreation
             {
                 _problem.Tags.Add(new Tag { Name = tagName });
                 existingTagNames.Add(tagName);
+            } 
+        }
+
+        var removedTestCases = _problem.TestCases
+            .Where(tc => !_testCases.Any(ntc => ntc.Arguments == tc.Arguments && ntc.ExpectedOutput == tc.ExpectedOutput && ntc.OutputType == tc.OutputType))
+            .ToList();
+
+        foreach (var removed in removedTestCases)
+        {
+            _problem.TestCases.Remove(removed);
+        }
+
+        var uniqueTestCases = new HashSet<string>(_problem.TestCases.Select(tc => $"{tc.Arguments}-{tc.ExpectedOutput}-{tc.OutputType}"));
+        foreach (var newTestCase in _testCases)
+        {
+            var testCaseKey = $"{newTestCase.Arguments}-{newTestCase.ExpectedOutput}-{newTestCase.OutputType}";
+            if (!uniqueTestCases.Contains(testCaseKey))
+            {
+                _problem.TestCases.Add(newTestCase);
+                uniqueTestCases.Add(testCaseKey);
             }
         }
 
@@ -218,7 +245,6 @@ public partial class TaskCreation
     public async Task HandleCreateProblemFormSubmitAsync()
     {
         var existingProblem = await ProblemService.GetProblemByName(_problem.Title);
-
         if (existingProblem != null)
         {
             _showAlert = true;
@@ -255,6 +281,11 @@ public partial class TaskCreation
                 _problem.Examples.Add(problemExample);
             }
 
+            foreach (var problemTestCase in _testCases)
+            {
+                _problem.TestCases.Add(problemTestCase);
+            }
+
             _problem.UserID = _user.Id;
             await ProblemService.CreateProblemAsync(_problem);
             StateHasChanged();
@@ -264,7 +295,7 @@ public partial class TaskCreation
 
     public void CancelCreation()
     {
-        NavigationManager.NavigateTo("#");
+        NavigationManager.NavigateTo("userprofile");
     }
 
     private void AddHint()
@@ -454,7 +485,6 @@ public partial class TaskCreation
         }
     }
 
-
     public void UpdateExample()
     {
         var example = _examples.FirstOrDefault(e => e.Id == _editingExample.Id);
@@ -468,10 +498,72 @@ public partial class TaskCreation
         CloseModal();
     }
 
+    private void ShowModal(TestCase testCase)
+    {
+        _editingTestCase = new TestCase
+        {
+            Id = testCase.Id,
+            Arguments = testCase.Arguments,
+            ExpectedOutput = testCase.ExpectedOutput,
+            OutputType = testCase.OutputType
+        };
+        _showModalTestCase = true;
+    }
+
+    private void ShowModalTestCase()
+    {
+        _editingTestCase = new TestCase { Id = 0 };
+        _showModalTestCase = true;
+    }
+
+    private void CreateTestCase()
+    {
+        _editingTestCase.Id = _testCases.Count + 1;
+        _testCases.Add(_editingTestCase);
+        CloseModal();
+    }
+
+    private void UpdateTestCase()
+    {
+        var index = _testCases.FindIndex(tc => tc.Id == _editingTestCase.Id);
+        if (index >= 0)
+        {
+            _testCases[index] = _editingTestCase;
+        }
+        CloseModal();
+    }
+
+    private void HandleValidSubmit()
+    {
+        if (_editingTestCase.Id == 0)
+            CreateTestCase();
+        else
+            UpdateTestCase();
+
+        CloseModal();
+    }
+
+    private void RemoveTestCase()
+    {
+        if (_testCases.Any())
+        {
+            _testCases.RemoveAt(_testCases.Count - 1);
+        }
+    }
+
+    private void RemoveTestCase(TestCase testCase)
+    {
+        if (_testCases.Contains(testCase))
+        {
+            _testCases.Remove(testCase);
+        }
+    }
+
     public void CloseModal()
     {
         _showModalHint = false;
         _showModalConstraint = false;
         _showModalExample = false;
+        _showModalTestCase = false;
     }
 }

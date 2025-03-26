@@ -7,6 +7,7 @@
 @inject ProblemService ProblemService
 @inject ProgrammingLanguageService ProgrammingLanguageService
 @inject TagService TagService
+@inject TipService TipService
 
 <PageTitle>User Profile</PageTitle>
 
@@ -34,12 +35,21 @@
                     <div class="d-grid gap-2 w-100">
                         <button class="btn profile-button button-update p-2" @onclick="ShowEditProfile">Upraviť profil</button>
                         <button class="btn profile-button button-update p-2" @onclick="ShowChangePassword">Zmeniť heslo</button>
-                        <button class="btn profile-button button-update p-2" @onclick="LoadUserProblems">Moje úlohy</button>
-                        <button class="btn profile-button button-delete p-2" @onclick="ShowDeleteUserModal">Vymazať účet</button>
+                        <AuthorizeView Roles="Admin,Učiteľ" Context="myProblemsAuthContext">
+                            <button class="btn profile-button button-update p-2" @onclick="LoadUserProblems">Moje úlohy</button>
+                        </AuthorizeView>
+                        <button class="btn profile-button button-delete-account p-2" @onclick="ShowDeleteUserModal">Vymazať účet</button>
                     </div>
                 </div>
 
                 <div class="col-lg-9 col-md-8 col-sm-12 custom-bg-profile-right p-4 d-flex justify-content-center align-items-center">
+                    @if (!_showEditProfile && !_showChangePassword && !_showUserProblems)
+                    {
+                        <div class="d-flex align-items-center justify-content-center text-center">
+                            <i class="fa-solid fa-lightbulb fa-lg text-warning me-2"></i>
+                            <p class="text-white mb-0">@(_randomTip != null ? _randomTip.Text : "Načítavam tip...")</p>
+                        </div>
+                    }
                     @if (_showEditProfile)
                     {
                         <div class="user-auth mb-4 w-100">
@@ -202,11 +212,14 @@
 
                                                 <td colspan="2">
                                                     <div style="display: flex; gap: 5px; justify-content:center;">
-                                                        <button type="button" class="btn button-custom button-remove-bg" @onclick="@(() => ShowDeleteProblemModal(problem))">
+                                                        <button type="button" class="btn button-custom button-delete" @onclick="@(() => ShowDeleteProblemModal(problem))">
                                                             <i class="fa-solid fa-trash-can"></i>
                                                         </button>
-                                                        <button type="button" class="btn button-custom button-add-bg" @onclick="@(() => NavigateToTaskCreation(problem.Id))">
+                                                        <button type="button" class="btn button-custom button-add-bg" @onclick="@(() => NavigateToPage(problem.Id, "task-edit"))">
                                                             <i class="fa-solid fa-pen-to-square"></i>
+                                                        </button>
+                                                            <button type="button" class="btn button-custom button-show-students" @onclick="@(() => NavigateToPage(problem.Id, "successful-solvers"))">
+                                                            <i class="fa-solid fa-trophy text-warning"></i>
                                                         </button>
                                                     </div>
                                                 </td>
@@ -235,19 +248,20 @@
                             <button type="button" class="btn-close btn-close-white" @onclick="CloseDeleteModal" aria-label="Zatvoriť"></button>
                         </div>
                         <div class="modal-body text-white">
-                            <div class="mb-3 mt-3 text-center text-danger">
-                                <label for="UsernameDescription" class="form-label">@_deleteModalText</label>
+                            <div class="mb-3 mt-3 d-flex align-items-center justify-content-center text-danger">
+                                <i class="fa-solid fa-triangle-exclamation fa-2x me-3"></i>
+                                <p class="fw-bold fs-5 mb-0">@_deleteModalText</p>
                             </div>
                         </div>
                         <div class="modal-footer text-white">
                             <button type="button" class="btn button-custom button-close-bg" @onclick="CloseDeleteModal">Zrušiť</button>
                             @if (_editingProblem != null)
                             {
-                                <button type="button" class="btn button-custom button-remove-bg" @onclick="DeleteProblem">Zrušiť úlohu</button>
+                                <button type="button" class="btn button-custom button-delete" @onclick="DeleteProblem">Odstrániť úlohu</button>
                             }
                             else
                             {
-                                <button type="button" class="btn button-custom button-remove-bg" @onclick="DeleteUser">Zrušiť účet</button>
+                                <button type="button" class="btn button-custom button-delete" @onclick="DeleteUser">Zrušiť účet</button>
                             }
                         </div>
                     </div>
@@ -256,9 +270,6 @@
         }
     </Authorized>
     <NotAuthorized>
-        <div align="center" style="color: ghostwhite">
-            <h1>Prístup zamietnutý</h1>
-            <p>Nemáte oprávnenie na zobrazenie tejto stránky.</p>
-        </div>
+
     </NotAuthorized>
 </AuthorizeView>

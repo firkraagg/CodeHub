@@ -23,5 +23,7 @@ namespace CodeHub.Data.Entities
         public string Role { get; set; } = "Študent";
         public byte[] ProfileImage { get; set; } = null!;
         public List<Problem> Problems { get; set; } = new();
+        public ICollection<ProblemAttempt> SolvedProblems { get; set; }
+
     }
 }

@@ -8,6 +8,7 @@
 @inject ProblemHintService ProblemHintService
 @inject ProblemExampleService ProblemExampleService
 @inject ProblemConstraintService ProblemConstraintService
+@inject TestCaseService TestCaseService
 
 @page "/task-creation/{problemId:int}"
 
@@ -220,26 +221,10 @@
                                             </button>
                                         </span>
                                         i++;
-                                        @* <span class="badge mb-1 pb-2" style="background-color: #042549; color: white; margin-right: 5px; font-size:15px; display:inline-block">
-                                            <div class="mb-2">
-                                                Obmedzenie @i
-                                            </div>
-                                            <div class="mb-2">
-                                                <InputTextArea @bind-Value="constraint.Constraint" class="form-control bg-dark" rows="4"></InputTextArea>
-                                            </div>
-                                            <button type="button" class="btn btn-sm ms-1 bg-warning" @onclick="() => ShowModal(constraint)">
-                                                <i class="fa-solid fa-pen-to-square"></i>
-                                            </button>
-                                            <button type="button" class="btn btn-sm ms-1 bg-danger" @onclick="() => RemoveConstraint(constraint)" aria-label="Remove">
-                                                <i class="fa-solid fa-xmark"></i>
-                                            </button>
-                                        </span>
-                                        i++; *@
                                     }
                                 }
                             </div>
                         </div>
-                        @* <ValidationMessage For="@(() => _problem.Constraints)"/> *@
                     </div>
                 </div>
                 @if (_showModalConstraint)
@@ -306,21 +291,6 @@
                                             </button>
                                         </span>
                                         i++;
-                                        @* <span class="badge mb-1 pb-2" style="background-color: #042549; color: white; margin-right: 5px; font-size:15px; display:inline-block">
-                                            <div class="mb-2">
-                                                Nápoveda @i
-                                            </div>
-                                            <div class="mb-2">
-                                                <InputTextArea @bind-Value="hint.Hint" class="form-control bg-dark" rows="4"></InputTextArea>
-                                            </div>
-                                            <button type="button" class="btn btn-sm ms-1 bg-warning" @onclick="() => ShowModal(hint)">
-                                                <i class="fa-solid fa-pen-to-square"></i>
-                                            </button>
-                                            <button type="button" class="btn btn-sm ms-1 bg-danger" @onclick="() => RemoveHint(hint)" aria-label="Remove">
-                                                <i class="fa-solid fa-xmark"></i>
-                                            </button>
-                                        </span>
-                                        i++; *@
                                     }
                                 }
                             </div>
@@ -371,10 +341,9 @@
                     </div>
                     <div class="mb-3 col-12 col-md-6">
                         <InputTextArea @bind-Value="_problem.DefaultCode" class="form-control bg-dark" id="DefaultCode" rows="10" 
-                                       @oninput="OnCodeInput" placeholder="class HelloWorld {
-    public static void main(String[] args) {
-        int number = 10;
-        System.out.println(number); 
+                                       @oninput="OnCodeInput" placeholder="class Code {
+    public static int sumOfTwoNumbers(int a, int b) {
+        return a + b;
     }
 }"></InputTextArea>
                         <ValidationMessage For="@(() => _problem.DefaultCode)" />
@@ -382,9 +351,91 @@
                 </div>
 
                 <div class="row">
+                    <div class="col-12 col-md-6 text-start my-2">
+                        Testovacie prípady
+                    </div>
+                    <div class="col-12 col-md-6 d-flex flex-wrap justify-content-end gap-2">
+                        @if (_testCases.Any())
+                        {
+                            int i = 1;
+                            @foreach (var testCase in _testCases)
+                            {
+                                <span class="badge badge-bluewhite">
+                                    Test case @i
+                                    <button type="button" class="btn ms-1 button-custom button-warning-bg" @onclick="() => ShowModal(testCase)">
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                    </button>
+                                    <button type="button" class="btn button-custom button-remove-bg" @onclick="() => RemoveTestCase(testCase)" aria-label="Remove">
+                                        <i class="fa-solid fa-xmark"></i>
+                                    </button>
+                                </span>
+                                i++;
+                            }
+                        }
+                    </div>
+                </div>
+                <div class="row mb-5">
+                    <div class="mt-3 text-end pb-4 d-flex justify-content-end">
+                        <button class="btn button-custom button-add-bg me-2" type="button" @onclick="ShowModalTestCase">
+                            Vytvor testovací prípad
+                        </button>
+                        <button class="btn button-custom button-remove-bg" type="button" @onclick="RemoveTestCase" disabled="@(!_testCases.Any())">
+                            Odstráň testovací prípad
+                        </button>
+                    </div>
+                </div>
+
+                @if (_showModalTestCase)
+                {
+                    <div class="modal d-block" style="background-color: rgba(0,0,0.1,0.7);" tabindex="-1">
+                        <div class="modal-dialog modal-dialog-centered" style="max-width: 75%">
+                            <div class="modal-content background-custom text-start">
+                                <div class="modal-header text-white">
+                                    <h5 class="modal-title">@(_editingTestCase.Id == 0 ? "Vytvoriť test case" : "Upraviť test case")</h5>
+                                    <button type="button" class="btn-close btn-close-white" @onclick="CloseModal" aria-label="Zatvoriť"></button>
+                                </div>
+                                <div class="modal-body text-white">
+                                    <EditForm Model="_editingTestCase" OnValidSubmit="HandleValidSubmit" Context="TestCaseContext">
+                                        <DataAnnotationsValidator />
+
+                                        <div class="mb-3">
+                                            <label for="Arguments" class="form-label">Argumenty (oddelené čiarkou)</label>
+                                            <InputTextArea @bind-Value="_editingTestCase.Arguments" class="form-control bg-dark text-white" rows="2" />
+                                            <ValidationMessage For="@(() => _editingTestCase.Arguments)" Context="argsContext" />
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="ExpectedOutput" class="form-label">Očakávaný výstup</label>
+                                            <InputText @bind-Value="_editingTestCase.ExpectedOutput" class="form-control bg-dark text-white" />
+                                            <ValidationMessage For="@(() => _editingTestCase.ExpectedOutput)" Context="outputContext" />
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="OutputType" class="form-label">Dátový typ výstupu</label>
+                                            <select @bind="_editingTestCase.OutputType" class="form-select bg-dark text-white">
+                                                <option value="int">int</option>
+                                                <option value="string">string</option>
+                                                <option value="bool">bool</option>
+                                                <option value="double">double</option>
+                                            </select>
+                                            <ValidationMessage For="@(() => _editingTestCase.OutputType)" Context="typeContext" />
+                                        </div>
+
+                                        <div class="modal-footer text-white">
+                                            <button type="button" class="btn button-custom button-close-bg" @onclick="CloseModal">Zrušiť</button>
+                                            <button type="submit" class="btn button-custom button-add-bg">Uložiť</button>
+                                        </div>
+                                    </EditForm>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                <div class="row">
                     <div class="col my-3">
                         <button class="btn button-custom button-create-bg me-2" type="submit">@(_isEditing ? "Upraviť" : "Vytvoriť")</button>
-                        <button class="btn button-custom button-remove-bg" @onclick="CancelCreation">Zrušiť</button>
+                        <button class="btn button-custom button-delete" type="button" @onclick="CancelCreation">Zrušiť</button>
                     </div>
                 </div>
             </div>

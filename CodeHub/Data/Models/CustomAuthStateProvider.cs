@@ -15,20 +15,9 @@ namespace CodeHub.Data.Models
 
         public override Task<AuthenticationState> GetAuthenticationStateAsync()
         {
-            //var httpContext = _httpContextAccessor.HttpContext;
-            //var identity = new ClaimsIdentity();
-
-            //if (httpContext != null && httpContext.Request.Cookies.TryGetValue("authToken", out string? token))
-            //{
-            //    var tokenHandler = new JwtSecurityTokenHandler();
-            //    var jwtToken = tokenHandler.ReadJwtToken(token);
-            //    identity = new ClaimsIdentity(jwtToken.Claims, "jwt");
-            //}
-
-            //var user = new ClaimsPrincipal(identity);
-            //return Task.FromResult(new AuthenticationState(user));
-            var session = _httpContextAccessor.HttpContext?.Session;
+             var session = _httpContextAccessor.HttpContext?.Session;
             string token = session?.GetString("authToken");
+            Console.WriteLine("Session Token Retrieved: " + token);
 
             ClaimsIdentity identity;
             if (!string.IsNullOrEmpty(token))
@@ -44,6 +33,7 @@ namespace CodeHub.Data.Models
             }
             else
             {
+                Console.WriteLine("Token is null or empty.");
                 identity = new ClaimsIdentity();
             }
 

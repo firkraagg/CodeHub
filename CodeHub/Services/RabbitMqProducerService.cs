@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using System.Diagnostics;
+using System.Text;
+using CodeHub.Data.Entities;
 using CodeHub.Services;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
@@ -7,7 +9,8 @@ using RabbitMQ.Client.Events;
 public class RabbitMqProducerService
 {
     public static event Action<string>? ResultReceived;
-    public async Task SendToRabbitMq(string code, string language)
+
+    public async Task SendToRabbitMq(string code, string language, List<TestCase> testCases, bool isEvaluation)
     {
         var factory = new ConnectionFactory { Uri = new Uri("amqp://guest:guest@host.docker.internal:5672") };
         factory.ClientProvidedName = "RabbitMqProducer";
@@ -15,14 +18,29 @@ public class RabbitMqProducerService
         using var connection = await factory.CreateConnectionAsync();
         using var channel = await connection.CreateChannelAsync();
 
-        await channel.QueueDeclareAsync(queue: "codeQueue", durable: true, exclusive: false, autoDelete: false,
+        string queueName = language switch
+        {
+            "Java" => "javaQueue",
+            "C#" => "csharpQueue",
+            _ => "javaQueue"
+        };
+
+        await channel.QueueDeclareAsync(queue: queueName, durable: true, exclusive: false, autoDelete: false,
             arguments: null);
 
+        List<TestCaseDto> testCaseDtos = testCases.Select(tc => new TestCaseDto
+        {
+            Arguments = tc.Arguments,
+            ExpectedOutput = tc.ExpectedOutput
+        }).ToList();
+
+        var correlationId = Guid.NewGuid().ToString();
         var message = new CodeExecutionRequest
         {
-            Guid = Guid.NewGuid().ToString(),
             SourceCode = code,
-            Language = language
+            Language = language,
+            IsEvaluation = isEvaluation,
+            TestCases = testCaseDtos
         };
 
         var jsonMessage = JsonConvert.SerializeObject(message);
@@ -30,10 +48,12 @@ public class RabbitMqProducerService
 
         var properties = new BasicProperties
         {
-            Persistent = true
+            Persistent = true,
+            CorrelationId = correlationId,
+            ReplyTo = "resultsQueue"
         };
 
-        await channel.BasicPublishAsync(exchange: string.Empty, routingKey: "codeQueue", mandatory: true, basicProperties: properties, body: body);
+        await channel.BasicPublishAsync(exchange: string.Empty, routingKey: queueName, mandatory: true, basicProperties: properties, body: body);
     }
 
     public async Task ListenForResults()
@@ -71,13 +91,19 @@ public class RabbitMqProducerService
 
 public class CodeExecutionRequest
 {
-    public string Guid { get; set; }
     public string SourceCode { get; set; }
     public string Language { get; set; }
+    public bool IsEvaluation { get; set; }
+    public List<TestCaseDto> TestCases { get; set;}
 }
 
 public class CodeExecutionResult
 {
-    public string Guid { get; set; }
     public string Output { get; set; }
+}
+
+public class TestCaseDto
+{
+    public string Arguments { get; set; }
+    public string ExpectedOutput { get; set; }
 }

@@ -48,5 +48,5 @@
 
     getValue: function () {
         return window.monacoInterop.editorInstance ? window.monacoInterop.editorInstance.getValue() : "";
-    }
+    },
 };

@@ -1,0 +1,80 @@
+﻿@page "/successful-solvers/{problemId:int}"
+@using CodeHub.Data.Entities
+@using CodeHub.Data.Models
+@using CodeHub.Services
+@inject ProblemsAttemptService ProblemsAttemptService
+
+<PageTitle>Úspešní riešitelia</PageTitle>
+
+<div class="d-flex justify-content-center mt-4">
+    <div class="table-responsive" style="width: 75%;">
+        <table class="table table-striped table-dark">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Prezývka</th>
+                    <th scope="col">E-mail</th>
+                    <th scope="col">Dátum</th>
+                    <th scope="col">Úspech</th>
+                    <th scope="col">Akcie</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (_users.Any())
+                {
+                    int index = 1;
+                    foreach (var user in _users)
+                    {
+                        <tr>
+                            <td>@index</td>
+                            <td>@user.Username</td>
+                            <td>@user.Email</td>
+                            <td>@_solvedDates[index - 1]?.ToString("yyyy-MM-dd HH:mm")</td>
+                            <td>
+                                @if (_isSolvedSuccessfully[index - 1])
+                                {
+                                    <span style="color: green;">Áno</span>
+                                }
+                                else
+                                {
+                                    <span style="color: red;">Nie</span>
+                                }
+                            </td>
+                            <td>
+                                <button type="button" class="btn button-custom button-add-bg" @onclick="() => ShowSourceCode(user.Id)">Zobraziť kód</button>
+                            </td>
+                        </tr>
+                        index++;
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="5" class="text-center">Nikomu sa nepodarilo danú úlohu vyriešiť.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        @if (_showSourceCode)
+        {
+            <div class="modal d-block" style="background-color: rgba(0,0,0.1,0.7);" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered" style="max-width: 75%">
+                    <div class="modal-content background-custom">
+                        <div class="modal-header text-white">
+                            <h5 class="modal-title">Zdrojový kód </h5>
+                            <button type="button" class="btn-close btn-close-white" @onclick="CloseModal" aria-label="Zatvoriť"></button>
+                        </div>
+                        <div class="modal-body text-white">
+                            <div class="mb-3">
+                                <textarea class="form-control text-white bg-dark" rows="8">@_sourceCode</textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer text-white">
+                            <button type="button" class="btn button-custom button-close-bg" @onclick="CloseModal">Zavrieť</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
