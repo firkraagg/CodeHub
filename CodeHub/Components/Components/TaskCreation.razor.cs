@@ -239,7 +239,7 @@ public partial class TaskCreation
         _problem.UserID = _user.Id;
         await ProblemService.EditProblemAsync(_problem);
         StateHasChanged();
-        NavigationManager.NavigateTo("userprofile");
+        NavigationManager.NavigateTo("user-profile/problems");
     }
 
     public async Task HandleCreateProblemFormSubmitAsync()
@@ -295,7 +295,7 @@ public partial class TaskCreation
 
     public void CancelCreation()
     {
-        NavigationManager.NavigateTo("userprofile");
+        NavigationManager.NavigateTo("user-profile/problems");
     }
 
     private void AddHint()

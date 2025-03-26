@@ -35,6 +35,7 @@ public partial class UserProfile
     private List<ProgrammingLanguage> _languages = new();
 
     [Inject] private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = null!;
+    [Parameter] public string? section { get; set; }
     [SupplyParameterFromForm] private EditModel em { get; set; } = new();
     [SupplyParameterFromForm] private ChangePasswordModel cpm { get; set; } = new();
 
@@ -57,6 +58,15 @@ public partial class UserProfile
             em.Username = _user!.Username;
             em.Email = _user.Email;
         }
+    }
+
+    protected override void OnParametersSet()
+    {
+        _showAlert = false;
+        _showEditProfile = section == "edit";
+        _showChangePassword = section == "change-password";
+        _showUserProblems = section == "problems";
+        StateHasChanged();
     }
 
     public async Task HandleEditProfileFormSubmitAsync(EditContext editContext)
@@ -127,23 +137,23 @@ public partial class UserProfile
         }
     }
 
-    public void ShowEditProfile()
-    {
-        _showAlert = false;
-        _showChangePassword = false;
-        _showUserProblems = false;
-        _showEditProfile = true;
-        StateHasChanged();
-    }
+    //public void ShowEditProfile()
+    //{
+    //    _showAlert = false;
+    //    _showChangePassword = false;
+    //    _showUserProblems = false;
+    //    _showEditProfile = true;
+    //    StateHasChanged();
+    //}
 
-    public void ShowChangePassword()
-    {
-        _showAlert = false;
-        _showEditProfile = false;
-        _showUserProblems = false;
-        _showChangePassword = true;
-        StateHasChanged();
-    }
+    //public void ShowChangePassword()
+    //{
+    //    _showAlert = false;
+    //    _showEditProfile = false;
+    //    _showUserProblems = false;
+    //    _showChangePassword = true;
+    //    StateHasChanged();
+    //}
 
     public void CloseDeleteModal()
     {
@@ -169,10 +179,7 @@ public partial class UserProfile
             : new List<Problem>();
 
         _isLoading = false;
-        _showChangePassword = false;
-        _showEditProfile = false;
-        _showUserProblems = true;
-        StateHasChanged();
+        NavigateToProfileSection("problems");
     }
 
     public async Task DeleteProblem()
@@ -203,10 +210,6 @@ public partial class UserProfile
         _actionName = "Odstrániť účet";
         _showDeleteModal = true;
         StateHasChanged();
-    }
-
-    public void ShowSuccessfullStudents(Problem problem) {
-
     }
 
     private void AddTag()
@@ -255,4 +258,8 @@ public partial class UserProfile
         NavigationManager.NavigateTo($"/{name}/{problemId}");
     }
 
+    private void NavigateToProfileSection(string section)
+    {
+        NavigationManager.NavigateTo($"/user-profile/{section}");
+    }
 }

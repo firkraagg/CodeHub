@@ -11,7 +11,7 @@
                     <label class="form-check-label @(isLightMode ? "text-dark" : "text-light")" for="flexSwitchCheckDefault" style="color: #9fa2a4 !important">Svetlý režim</label>
                 </div>
             </div>
-            <a class="navbar-brand" href="#">
+            <a class="navbar-brand" href="/">
                 <img class="logo-image img-fluid" alt="logo" src="images/logo.png">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -20,15 +20,15 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="#">Domov</a>
+                        <a class="nav-link" aria-current="page" href="/">Domov</a>
                     </li>
                     <AuthorizeView Roles="Učiteľ, Admin">
                         <Authorized>
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Úlohy</a>
+                                <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">Úlohy</a>
                                 <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="/task-form">Pridať úlohu</a></li>
-                                    <li><a class="dropdown-item" href="/problems-guide">Ako riešiť úlohy</a></li>
+                                    <li><a class="dropdown-item" href="/new-problem">Pridať úlohu</a></li>
+                                    <li><a class="dropdown-item" href="/problem-solving-guide">Ako riešiť úlohy</a></li>
                                 </ul>
                             </li>
                         </Authorized>
@@ -36,17 +36,24 @@
                     <AuthorizeView Roles="Študent">
                         <Authorized>
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Úlohy</a>
+                                <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">Úlohy</a>
                                 <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="/problems-guide">Ako riešiť úlohy</a></li>
+                                    <li><a class="dropdown-item" href="/problem-solving-guide">Ako riešiť úlohy</a></li>
                                 </ul>
                             </li>
                         </Authorized>
                     </AuthorizeView>
-                    <AuthorizeView>
+                    <AuthorizeView Context="profileContext">
                         <Authorized>
-                            <li class="nav-item">
-                                <a class="nav-link" aria-current="page" href="/userprofile">Môj účet</a>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">Môj účet</a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="/user-profile/edit">Upraviť profil</a></li>
+                                    <li><a class="dropdown-item" href="/user-profile/change-password">Zmeniť heslo</a></li>
+                                    <AuthorizeView Roles="Admin, Učiteľ">
+                                        <li><a class="dropdown-item" href="/user-profile/problems">Moje úlohy</a></li>
+                                    </AuthorizeView>
+                                </ul>
                             </li>
                         </Authorized>
                     </AuthorizeView>
@@ -75,7 +82,7 @@
                     <Authorized>
                         <ul class="navbar-nav ms-auto">
                             <li class="nav-item">
-                                <a class="nav-link" aria-current="page" href="#" @onclick="Logout">Odhlásiť sa</a>
+                                <a class="nav-link" aria-current="page" href="/" @onclick="Logout">Odhlásiť sa</a>
                             </li>
                         </ul>
                     </Authorized>

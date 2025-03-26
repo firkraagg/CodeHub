@@ -1,4 +1,4 @@
-﻿@page "/userprofile"
+﻿@page "/user-profile/{section}"
 @using CodeHub.Services
 @using CodeHub.Data.Models
 
@@ -11,7 +11,7 @@
 
 <PageTitle>User Profile</PageTitle>
 
-<AuthorizeView Roles="Admin,Učiteľ,Študent" Context="authContext">
+<AuthorizeView Roles="Admin,Učiteľ,Študent" Context="OuterContent">
     <Authorized>
         <div class="container-fluid text-center p-0 m-0 min-vh-100 d-flex flex-column">
             <div class="row text-white flex-grow-1 m-0 gx-0">
@@ -20,23 +20,19 @@
                     {
                         <img class="circular--square mt-4 mb-4" src="data:image/png;base64,@Convert.ToBase64String(_user.ProfileImage)" alt="Profile Image" />
                     }
-                    else
-                    {
-                        <p class="pb-4 text-uppercase">Načítavanie obrázka...</p>
-                    }
+
                     @if (_user != null)
                     {
                         <h2 class="pb-4">@_user.Username</h2>
                     }
-                    else
-                    {
-                        <p class="pb-4 text-uppercase">Načítavanie...</p>
-                    }
+
                     <div class="d-grid gap-2 w-100">
-                        <button class="btn profile-button button-update p-2" @onclick="ShowEditProfile">Upraviť profil</button>
-                        <button class="btn profile-button button-update p-2" @onclick="ShowChangePassword">Zmeniť heslo</button>
+                        <button class="btn profile-button button-update p-2" @onclick="@(() => NavigateToProfileSection("edit"))">Upraviť profil</button>
+                        <button class="btn profile-button button-update p-2" @onclick="@(() => NavigateToProfileSection("change-password"))">Zmeniť heslo</button>
                         <AuthorizeView Roles="Admin,Učiteľ" Context="myProblemsAuthContext">
-                            <button class="btn profile-button button-update p-2" @onclick="LoadUserProblems">Moje úlohy</button>
+                            <Authorized>
+                                <button class="btn profile-button button-update p-2" @onclick="LoadUserProblems">Moje úlohy</button>
+                            </Authorized>
                         </AuthorizeView>
                         <button class="btn profile-button button-delete-account p-2" @onclick="ShowDeleteUserModal">Vymazať účet</button>
                     </div>
@@ -139,101 +135,105 @@
                     }
                     else if (_showUserProblems)
                     {
-                        <div class="w-100 d-flex flex-column position-relative" style="min-height: 100vh;">
-                            <div class="position-relative mb-2">
-                                <button type="button" class="btn add-task-button" onclick="window.location.href='task-form'">
-                                    ➕ Pridať úlohu
-                                </button>
-                            </div>
+                        <AuthorizeView Roles="Admin, Učiteľ">
+                            <Authorized>
+                            <div class="w-100 d-flex flex-column position-relative" style="min-height: 100vh;">
+                                <div class="position-relative mb-2">
+                                    <button type="button" class="btn add-task-button" onclick="window.location.href='new-problem'">
+                                        ➕ Pridať úlohu
+                                    </button>
+                                </div>
 
-                            <h3 class="text-center text-white">Moje Úlohy</h3>
-                            @if (_isLoading)
-                            {
-                                <div class="text-center text-white">
-                                    <p>Načítavanie úloh...</p>
-                                    <div class="spinner-border text-light" role="status">
-                                        <span class="visually-hidden">Loading...</span>
+                                <h3 class="text-center text-white">Moje Úlohy</h3>
+                                @if (_isLoading)
+                                {
+                                    <div class="text-center text-white">
+                                        <p>Načítavanie úloh...</p>
+                                        <div class="spinner-border text-light" role="status">
+                                            <span class="visually-hidden">Loading...</span>
+                                        </div>
                                     </div>
-                                </div>
-                            }
-                            else if (_userProblems != null && _userProblems.Any())
-                            {
-                                <div class="table-responsive">
-                                    <table class="table table-dark table-striped">
-                                        <thead>
-                                        <tr>
-                                            <th>Názov</th>
-                                            <th>Obťažnosť</th>
-                                            <th>Značky</th>
-                                            <th colspan="2" scope="col">Akcie</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        @foreach (var problem in _userProblems)
-                                        {
-                                            <tr>
-                                                <td>@problem.Title</td>
-                                                <td>
-                                                    @switch (problem.Difficulty)
-                                                    {
-                                                        case 1:
-                                                            <span class="badge badge-veryeasy">Veľmi ľahká</span>
-                                                            break;
-                                                        case 2:
-                                                                <span class="badge badge-easy">Ľahká</span>
-                                                            break;
-                                                        case 3:
-                                                                <span class="badge badge-medium">Stredná</span>
-                                                            break;
-                                                        case 4:
-                                                                <span class="badge badge-hard">Ťažká</span>
-                                                            break;
-                                                        case 5:
-                                                                <span class="badge badge-veryhard">Veľmi ťažká</span>
-                                                            break;
-                                                        default:
-                                                            @:Neznáma
-                                                            break;
-                                                    }
-                                                </td>
-                                                <td>
-                                                    @if (problem.Tags != null && problem.Tags.Any())
-                                                    {
-                                                        @foreach (var tag in problem.Tags)
-                                                        {
-                                                            <span class="badge badge-bluewhite" style="margin-right: 5px; font-size:12px;">@tag.Name</span>
-                                                        }
-                                                    }
-                                                    else
-                                                    {
-                                                        <span>Žiadne značky</span>
-                                                    }
-                                                </td>
+                                }
+                                else if (_userProblems != null && _userProblems.Any())
+                                {
+                                    <div class="table-responsive">
+                                        <table class="table table-dark table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>Názov</th>
+                                                    <th>Obťažnosť</th>
+                                                    <th>Značky</th>
+                                                    <th colspan="2" scope="col">Akcie</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var problem in _userProblems)
+                                                {
+                                                    <tr>
+                                                        <td>@problem.Title</td>
+                                                        <td>
+                                                            @switch (problem.Difficulty)
+                                                            {
+                                                                case 1:
+                                                                    <span class="badge badge-veryeasy">Veľmi ľahká</span>
+                                                                    break;
+                                                                case 2:
+                                                                    <span class="badge badge-easy">Ľahká</span>
+                                                                    break;
+                                                                case 3:
+                                                                    <span class="badge badge-medium">Stredná</span>
+                                                                    break;
+                                                                case 4:
+                                                                    <span class="badge badge-hard">Ťažká</span>
+                                                                    break;
+                                                                case 5:
+                                                                    <span class="badge badge-veryhard">Veľmi ťažká</span>
+                                                                    break;
+                                                                default:
+                                                                    @:Neznáma
+                                                                    break;
+                                                            }
+                                                        </td>
+                                                        <td>
+                                                            @if (problem.Tags != null && problem.Tags.Any())
+                                                            {
+                                                                @foreach (var tag in problem.Tags)
+                                                                {
+                                                                    <span class="badge badge-bluewhite" style="margin-right: 5px; font-size:12px;">@tag.Name</span>
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                <span>Žiadne značky</span>
+                                                            }
+                                                        </td>
 
-                                                <td colspan="2">
-                                                    <div style="display: flex; gap: 5px; justify-content:center;">
-                                                        <button type="button" class="btn button-custom button-delete" @onclick="@(() => ShowDeleteProblemModal(problem))">
-                                                            <i class="fa-solid fa-trash-can"></i>
-                                                        </button>
-                                                        <button type="button" class="btn button-custom button-add-bg" @onclick="@(() => NavigateToPage(problem.Id, "task-edit"))">
-                                                            <i class="fa-solid fa-pen-to-square"></i>
-                                                        </button>
-                                                            <button type="button" class="btn button-custom button-show-students" @onclick="@(() => NavigateToPage(problem.Id, "successful-solvers"))">
-                                                            <i class="fa-solid fa-trophy text-warning"></i>
-                                                        </button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        }
-                                        </tbody>
-                                    </table>
-                                </div>
-                            }
-                            else
-                            {
-                                <p class="text-white text-center">Nemáte žiadne úlohy.</p>
-                            }
-                        </div>
+                                                        <td colspan="2">
+                                                            <div style="display: flex; gap: 5px; justify-content:center;">
+                                                                <button type="button" class="btn button-custom button-delete" @onclick="@(() => ShowDeleteProblemModal(problem))">
+                                                                    <i class="fa-solid fa-trash-can"></i>
+                                                                </button>
+                                                                <button type="button" class="btn button-custom button-add-bg" @onclick="@(() => NavigateToPage(problem.Id, "edit-problem"))">
+                                                                    <i class="fa-solid fa-pen-to-square"></i>
+                                                                </button>
+                                                                <button type="button" class="btn button-custom button-show-students" @onclick="@(() => NavigateToPage(problem.Id, "student-attempts"))">
+                                                                    <i class="fa-solid fa-trophy text-warning"></i>
+                                                                </button>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <p class="text-white text-center">Nemáte žiadne úlohy.</p>
+                                }
+                            </div>
+                            </Authorized>
+                        </AuthorizeView>
                     }
                 </div>
             </div>
@@ -270,6 +270,5 @@
         }
     </Authorized>
     <NotAuthorized>
-
     </NotAuthorized>
 </AuthorizeView>

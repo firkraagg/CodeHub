@@ -114,8 +114,8 @@ public partial class Home
         {
             "newest" => _filteredProblems.OrderByDescending(p => p.CreatedAt).ToList(),
             "oldest" => _filteredProblems.OrderBy(p => p.CreatedAt).ToList(),
-            "easiest" => _filteredProblems.OrderBy(p => p.Acceptance).ToList(),
-            "hardest" => _filteredProblems.OrderByDescending(p => p.Acceptance).ToList(),
+            "easiest" => _filteredProblems.OrderByDescending(p => p.Acceptance).ToList(),
+            "hardest" => _filteredProblems.OrderBy(p => p.Acceptance).ToList(),
             _ => _filteredProblems
         };
 

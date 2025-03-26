@@ -16,9 +16,9 @@
                     Počet otázok
                 </button>
                 <ul class="dropdown-menu dropdown-menu-dark">
-                    <li><a class="dropdown-item @(_maxProblemsToShow == 10 ? "active bg-warning text-dark" : "")" href="#" @onclick="() => SetProblemCount(10)">zobraziť 10 otázok </a></li>
-                    <li><a class="dropdown-item @(_maxProblemsToShow == 20 ? "active bg-warning text-dark" : "")" href="#" @onclick="() => SetProblemCount(20)">zobraziť 20 otázok</a></li>
-                    <li><a class="dropdown-item @(_maxProblemsToShow == 30 ? "active bg-warning text-dark" : "")" href="#" @onclick="() => SetProblemCount(30)">zobraziť 30 otázok</a></li>
+                    <li><a class="dropdown-item @(_maxProblemsToShow == 10 ? "active bg-warning text-dark" : "")" @onclick="() => SetProblemCount(10)">zobraziť 10 otázok </a></li>
+                    <li><a class="dropdown-item @(_maxProblemsToShow == 20 ? "active bg-warning text-dark" : "")" @onclick="() => SetProblemCount(20)">zobraziť 20 otázok</a></li>
+                    <li><a class="dropdown-item @(_maxProblemsToShow == 30 ? "active bg-warning text-dark" : "")" @onclick="() => SetProblemCount(30)">zobraziť 30 otázok</a></li>
                 </ul>
             </div>
             <div class="dropdown">
@@ -26,10 +26,10 @@
                     Zoradiť podľa
                 </button>
                 <ul class="dropdown-menu dropdown-menu-dark">
-                    <li><a class="dropdown-item @( _selectedSort == "newest" ? "active bg-warning text-dark" : "")" href="#" @onclick="@(() => ApplySorting("newest"))">Najnovšie</a></li>
-                    <li><a class="dropdown-item @( _selectedSort == "oldest" ? "active bg-warning text-dark" : "")" href="#" @onclick="@(() => ApplySorting("oldest"))">Najstaršie</a></li>
-                    <li><a class="dropdown-item @( _selectedSort == "easiest" ? "active bg-warning text-dark" : "")" href="#" @onclick="@(() => ApplySorting("easiest"))">Najľahšie</a></li>
-                    <li><a class="dropdown-item @( _selectedSort == "hardest" ? "active bg-warning text-dark" : "")" href="#" @onclick="@(() => ApplySorting("hardest"))">Najťažšie</a></li>
+                    <li><a class="dropdown-item @( _selectedSort == "newest" ? "active bg-warning text-dark" : "")" @onclick="@(() => ApplySorting("newest"))">Najnovšie</a></li>
+                    <li><a class="dropdown-item @( _selectedSort == "oldest" ? "active bg-warning text-dark" : "")" @onclick="@(() => ApplySorting("oldest"))">Najstaršie</a></li>
+                    <li><a class="dropdown-item @( _selectedSort == "easiest" ? "active bg-warning text-dark" : "")" @onclick="@(() => ApplySorting("easiest"))">Najľahšie</a></li>
+                    <li><a class="dropdown-item @( _selectedSort == "hardest" ? "active bg-warning text-dark" : "")" @onclick="@(() => ApplySorting("hardest"))">Najťažšie</a></li>
                 </ul>
             </div>
 
@@ -38,12 +38,12 @@
                     Obťažnosť
                 </button>
                 <ul class="dropdown-menu dropdown-menu-dark">
-                    <li><a class="dropdown-item @( _selectedDifficulty == 1 ? "active bg-dark" : "")" href="#" style="color:lightgreen" @onclick="@(() => ApplyFilter(1))">Veľmi ľahká</a></li>
-                    <li><a class="dropdown-item text-success @( _selectedDifficulty == 2 ? "active bg-dark" : "")" href="#" @onclick="@(() => ApplyFilter(2))">Ľahká</a></li>
-                    <li><a class="dropdown-item text-warning @( _selectedDifficulty == 3 ? "active bg-dark" : "")" href="#" @onclick="@(() => ApplyFilter(3))">Stredná</a></li>
-                    <li><a class="dropdown-item text-danger @( _selectedDifficulty == 4 ? "active bg-dark" : "")" href="#" @onclick="@(() => ApplyFilter(4))">Ťažká</a></li>
-                    <li><a class="dropdown-item @( _selectedDifficulty == 5 ? "active bg-dark" : "")" href="#" style="color:darkred" @onclick="@(() => ApplyFilter(5))">Veľmi ťažká</a></li>
-                    <li><a class="dropdown-item @( _selectedDifficulty == 0 ? "active bg-primary" : "")" href="#" @onclick="@(() => ApplyFilter(0))">Všetky</a></li>
+                    <li><a class="dropdown-item @( _selectedDifficulty == 1 ? "active bg-dark" : "")" style="color:lightgreen" @onclick="@(() => ApplyFilter(1))">Veľmi ľahká</a></li>
+                    <li><a class="dropdown-item text-success @( _selectedDifficulty == 2 ? "active bg-dark" : "")" @onclick="@(() => ApplyFilter(2))">Ľahká</a></li>
+                    <li><a class="dropdown-item text-warning @( _selectedDifficulty == 3 ? "active bg-dark" : "")" @onclick="@(() => ApplyFilter(3))">Stredná</a></li>
+                    <li><a class="dropdown-item text-danger @( _selectedDifficulty == 4 ? "active bg-dark" : "")" @onclick="@(() => ApplyFilter(4))">Ťažká</a></li>
+                    <li><a class="dropdown-item @( _selectedDifficulty == 5 ? "active bg-dark" : "")" style="color:darkred" @onclick="@(() => ApplyFilter(5))">Veľmi ťažká</a></li>
+                    <li><a class="dropdown-item @( _selectedDifficulty == 0 ? "active bg-primary" : "")" @onclick="@(() => ApplyFilter(0))">Všetky</a></li>
                 </ul>
             </div>
             <div class="dropdown">
@@ -151,7 +151,7 @@
             <nav aria-label="Page navigation example" class="d-flex justify-content-around">
                 <ul class="pagination bg-dark d-flex flex-wrap">
                     <li class="page-item @(_currentPage == 1 ? "disabled" : "")">
-                        <a class="page-link bg-dark link-primary" href="#" @onclick="() => GoToPage(_currentPage - 1)">
+                        <a class="page-link bg-dark link-primary" @onclick="() => GoToPage(_currentPage - 1)">
                             &lt;
                         </a>
                     </li>
@@ -162,7 +162,7 @@
                         {
                             var page = i;
                             <li class="page-item @(i == _currentPage ? "active" : "")">
-                                <a class="page-link bg-dark link-primary" href="#" @onclick="() => GoToPage(page)">
+                                <a class="page-link bg-dark link-primary" @onclick="() => GoToPage(page)">
                                     @i
                                 </a>
                             </li>
@@ -171,7 +171,7 @@
                     else
                     {
                         <li class="page-item @(1 == _currentPage ? "active" : "")">
-                            <a class="page-link bg-dark link-primary" href="#" @onclick="() => GoToPage(1)">1</a>
+                            <a class="page-link bg-dark link-primary" @onclick="() => GoToPage(1)">1</a>
                         </li>
 
                          @if (_currentPage > 3)
@@ -187,7 +187,7 @@
                         {
                             var page = i;
                             <li class="page-item @(page == _currentPage ? "active" : "")">
-                                <a class="page-link bg-dark link-primary" href="#" @onclick="() => GoToPage(page)">
+                                <a class="page-link bg-dark link-primary" @onclick="() => GoToPage(page)">
                                     @i
                                 </a>
                             </li>
@@ -201,12 +201,12 @@
                         }
 
                         <li class="page-item @(_totalPages == _currentPage ? "active" : "")">
-                            <a class="page-link bg-dark link-primary" href="#" @onclick="() => GoToPage(_totalPages)">@_totalPages</a>
+                            <a class="page-link bg-dark link-primary" @onclick="() => GoToPage(_totalPages)">@_totalPages</a>
                         </li>
                     }
                     
                     <li class="page-item @(_currentPage == _totalPages ? "disabled" : "")">
-                        <a class="page-link bg-dark link-primary" href="#" @onclick="() => GoToPage(_currentPage + 1)">
+                        <a class="page-link bg-dark link-primary" @onclick="() => GoToPage(_currentPage + 1)">
                             &gt;
                         </a>
                     </li>

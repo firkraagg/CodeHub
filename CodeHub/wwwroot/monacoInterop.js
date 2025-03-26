@@ -13,12 +13,29 @@
                 theme: 'vs-dark',
                 automaticLayout: true,
                 quickSuggestions: { other: true, comments: false, strings: true },
-                smoothScrolling: true
+                smoothScrolling: true,
+                mouseWheelZoom: true,
+                contextmenu: false,
+                formatOnType: true,
+                wordWrap: "on",
             });
 
             if (defaultCode) {
                 window.monacoInterop.editorInstance.setValue(defaultCode);
             }
+
+
+            //window.monacoInterop.editorInstance.onKeyDown((event) => {
+            //    const { keyCode, ctrlKey, metaKey } = event;
+
+            //    // KeyCode 67 = 'C' | KeyCode 86 = 'V'
+            //    if ((keyCode === 67 || keyCode === 86) && (ctrlKey || metaKey)) {
+            //        event.preventDefault();
+            //        console.log(`Blocked ${ctrlKey ? 'Ctrl' : 'Cmd'} + ${String.fromCharCode(keyCode)}`);
+            //    }
+            //});
+
+            };
         });
     },
 
