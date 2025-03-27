@@ -4,9 +4,6 @@ using CodeHub.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Microsoft.IdentityModel.Tokens;
-using System.Text.Json;
 
 namespace CodeHub.Components.Pages;
 
@@ -42,12 +39,6 @@ public partial class UserProfile
     protected override async Task OnInitializedAsync()
     {
         var userId = ((CustomAuthStateProvider)AuthenticationStateProvider).GetLoggedInUserId();
-        if (string.IsNullOrEmpty(userId))
-        {
-            NavigationManager.NavigateTo("/login", true);
-            return;
-        }
-
         _languages = await ProgrammingLanguageService.GetProgrammingLanguagesAsync();
         _availableTags = await TagService.GetTagsAsync();
         _randomTip = await TipService.GetRandomTipAsync();
@@ -79,12 +70,14 @@ public partial class UserProfile
             _alertColor = "alert-danger";
             _alertMessage = "Používateľ s touto prezývkou už existuje.";
             _showAlert = true;
-        } else if (userEmail != null && userEmail.Email != _user!.Email)
+        }
+        else if (userEmail != null && userEmail.Email != _user!.Email)
         {
             _alertColor = "alert-danger";
             _alertMessage = "Používateľ s touto e-mailovou adresou už existuje.";
             _showAlert = true;
-        } else
+        }
+        else
         {
             _user!.Username = em.Username;
             _user.Email = em.Email;
@@ -106,7 +99,8 @@ public partial class UserProfile
             _alertColor = "alert-danger";
             _alertMessage = "Zadané staré heslo je nesprávne.";
             _showAlert = true;
-        } else if (BCrypt.Net.BCrypt.EnhancedVerify(cpm.NewPassword, _user!.PasswordHash))
+        }
+        else if (BCrypt.Net.BCrypt.EnhancedVerify(cpm.NewPassword, _user!.PasswordHash))
         {
             _alertColor = "alert-danger";
             _alertMessage = "Vaše nové heslo nemôže byť rovnaké ako vaše staré heslo.";

@@ -1,5 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
-using CodeHub.Data.Models;
+﻿using CodeHub.Data.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace CodeHub.Data.Entities
 {

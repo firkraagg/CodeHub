@@ -4,9 +4,6 @@ using CodeHub.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.JSInterop;
-using System.Text.Json;
-using System.Threading;
-using static System.Net.WebRequestMethods;
 
 namespace CodeHub.Components.Pages;
 
@@ -26,7 +23,7 @@ public partial class ProblemPage
     private string _selectedTheme = "vs-dark";
     private string _userCode;
     private string _output;
-    private bool _isSubmitLoading;  
+    private bool _isSubmitLoading;
     private bool _isCheckLoading;
     private bool _noErrors;
     private TaskCompletionSource<bool> _executionCompletion = new();
@@ -86,12 +83,12 @@ public partial class ProblemPage
         if (isEvaluation)
         {
             _isSubmitLoading = true;
-        } 
+        }
         else
         {
             _isCheckLoading = true;
         }
-        
+
         _executionCompletion = new TaskCompletionSource<bool>();
         string codeToSend = await JS.InvokeAsync<string>("monacoInterop.getValue");
         try

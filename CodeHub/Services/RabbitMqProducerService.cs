@@ -1,10 +1,8 @@
-﻿using System.Diagnostics;
-using System.Text;
-using CodeHub.Data.Entities;
-using CodeHub.Services;
+﻿using CodeHub.Data.Entities;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using System.Text;
 
 public class RabbitMqProducerService
 {
@@ -94,7 +92,7 @@ public class CodeExecutionRequest
     public string SourceCode { get; set; }
     public string Language { get; set; }
     public bool IsEvaluation { get; set; }
-    public List<TestCaseDto> TestCases { get; set;}
+    public List<TestCaseDto> TestCases { get; set; }
 }
 
 public class CodeExecutionResult

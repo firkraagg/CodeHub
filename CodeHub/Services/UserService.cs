@@ -1,11 +1,11 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using Microsoft.EntityFrameworkCore;
-using CodeHub.Data;
+﻿using CodeHub.Data;
 using CodeHub.Data.Entities;
 using CodeHub.Data.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace CodeHub.Services
 {
@@ -146,12 +146,12 @@ namespace CodeHub.Services
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Role, user.Role)
             };
-            
+
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:Token").Value!));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
             var token = new JwtSecurityToken(
                 claims: claims,
-                expires: DateTime.Now.AddDays(1), 
+                expires: DateTime.Now.AddDays(1),
                 signingCredentials: credentials
             );
 

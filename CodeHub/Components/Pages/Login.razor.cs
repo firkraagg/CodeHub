@@ -1,6 +1,4 @@
-﻿using System.Security.Claims;
-using CodeHub.Data.Entities;
-using CodeHub.Data.Models;
+﻿using CodeHub.Data.Models;
 using CodeHub.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -43,7 +41,7 @@ public partial class Login
         }
         else
         {
-            _alertColor = "alert-success";  
+            _alertColor = "alert-success";
             bool isPasswordValid = BCrypt.Net.BCrypt.EnhancedVerify(lm.Password, storedUser.PasswordHash);
             if (isPasswordValid)
             {

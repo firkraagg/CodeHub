@@ -1,6 +1,5 @@
 ﻿using CodeHub.Data;
 using CodeHub.Data.Entities;
-using CodeHub.Data.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace CodeHub.Services

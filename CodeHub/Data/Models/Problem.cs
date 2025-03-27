@@ -1,6 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using CodeHub.Data.Entities;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using CodeHub.Data.Entities;
 
 namespace CodeHub.Data.Models
 {

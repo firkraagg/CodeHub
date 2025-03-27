@@ -1,7 +1,6 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+﻿using Microsoft.AspNetCore.Components.Authorization;
 using System.Security.Claims;
 using System.Text.Json;
-using Microsoft.AspNetCore.Components.Authorization;
 
 namespace CodeHub.Data.Models
 {
@@ -15,7 +14,7 @@ namespace CodeHub.Data.Models
 
         public override Task<AuthenticationState> GetAuthenticationStateAsync()
         {
-             var session = _httpContextAccessor.HttpContext?.Session;
+            var session = _httpContextAccessor.HttpContext?.Session;
             string token = session?.GetString("authToken");
             Console.WriteLine("Session Token Retrieved: " + token);
 

@@ -19,15 +19,19 @@ public partial class Home
     private int _currentPage = 1;
     private int _totalPages => (int)Math.Ceiling((double)(_isFiltered ? _filteredProblems.Count : _problems.Count) / _maxProblemsToShow);
     private bool _isFiltered => _selectedDifficulty > -1;
-
+    private bool _problemsAreLoading;
+    private bool _isFiltering;
 
     protected override async Task OnInitializedAsync()
     {
+        _problemsAreLoading = true;
+
         var userId = ((CustomAuthStateProvider)AuthenticationStateProvider).GetLoggedInUserId();
         if (!string.IsNullOrEmpty(userId))
         {
             _completedProblemIds = await SolvedProblemsService.GetSolvedProblemIdsByUserIdAsync(int.Parse(userId));
         }
+
         await LoadProblems();
         await LoadTags();
         _selectedTags = new List<Tag>();
@@ -36,6 +40,8 @@ public partial class Home
         {
             problem.Acceptance = await ProblemService.CalculateAcceptanceRateAsync(problem.Id);
         }
+
+        _problemsAreLoading = false;
     }
 
     public void SetProblemCount(int count)
@@ -60,23 +66,23 @@ public partial class Home
         _tags = await TagService.GetTagsAsync();
     }
 
-    private void ApplyFilter(int difficulty)
+    private async Task ApplyFilter(int difficulty)
     {
         _selectedDifficulty = difficulty;
-        FilterProblems();
+        await FilterProblems();
     }
 
-    private void ApplySorting(string sort)
+    private async Task ApplySorting(string sort)
     {
         if (_selectedDifficulty < 0)
         {
             _selectedDifficulty = 0;
         }
         _selectedSort = sort;
-        FilterProblems();
+        await FilterProblems();
     }
 
-    private void ToggleTagSelection(Tag tag)
+    private async Task ToggleTagSelection(Tag tag)
     {
         if (_selectedTags.Contains(tag))
         {
@@ -89,36 +95,40 @@ public partial class Home
 
         if (!(_selectedDifficulty > 0))
         {
-            ApplyFilter(0);
+            await ApplyFilter(0);
         }
-        
-        FilterProblems();
+
+        await FilterProblems();
     }
 
     private async Task FilterProblems()
     {
-        _filteredProblems = _problems;
+        _isFiltering = true;
+        StateHasChanged();
+        List<Problem> filtered = _problems;
 
         if (_selectedTags.Any())
         {
             var selectedTagNames = _selectedTags.Select(tag => tag.Name).ToList();
-            _filteredProblems = await TagService.GetProblemsByTagsAsync(selectedTagNames);
+            filtered = await TagService.GetProblemsByTagsAsync(selectedTagNames);
         }
 
         if (_selectedDifficulty > 0)
         {
-            _filteredProblems = _filteredProblems.Where(p => p.Difficulty == _selectedDifficulty).ToList();
+            filtered = filtered.Where(p => p.Difficulty == _selectedDifficulty).ToList();
         }
 
-        _filteredProblems = _selectedSort switch
+        filtered = _selectedSort switch
         {
-            "newest" => _filteredProblems.OrderByDescending(p => p.CreatedAt).ToList(),
-            "oldest" => _filteredProblems.OrderBy(p => p.CreatedAt).ToList(),
-            "easiest" => _filteredProblems.OrderByDescending(p => p.Acceptance).ToList(),
-            "hardest" => _filteredProblems.OrderBy(p => p.Acceptance).ToList(),
-            _ => _filteredProblems
+            "newest" => filtered.OrderByDescending(p => p.CreatedAt).ToList(),
+            "oldest" => filtered.OrderBy(p => p.CreatedAt).ToList(),
+            "easiest" => filtered.OrderByDescending(p => p.Acceptance).ToList(),
+            "hardest" => filtered.OrderBy(p => p.Acceptance).ToList(),
+            _ => filtered
         };
 
+        _filteredProblems = filtered;
+        _isFiltering = false;
         _currentPage = 1;
         StateHasChanged();
     }

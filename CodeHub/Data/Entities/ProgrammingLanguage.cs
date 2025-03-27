@@ -13,7 +13,7 @@ namespace CodeHub.Data.Entities
         [Required, MaxLength(50)]
         public string MonacoName { get; set; } = string.Empty;
 
-        [Required, MaxLength(50)] 
+        [Required, MaxLength(50)]
         public string Version { get; set; } = string.Empty;
 
         [Required]

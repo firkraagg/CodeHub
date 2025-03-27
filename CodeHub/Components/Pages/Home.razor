@@ -83,71 +83,83 @@
                     </tr>
                     </thead>
                     <tbody>
-                    @if ((_isFiltered ? _filteredProblems : _problems).Any())
-                    {
-                        int startIndex = (_currentPage - 1) * _maxProblemsToShow + 1;
-                        var problemsToDisplay = (_isFiltered ? _filteredProblems : _problems)
-                            .Skip((_currentPage - 1) * _maxProblemsToShow)
-                            .Take(_maxProblemsToShow);
-
-                        foreach (var (problem, index) in problemsToDisplay.Select((p, i) => (p, i + startIndex)))
+                        @if (_problemsAreLoading)
                         {
-                            bool isCompleted = _completedProblemIds.Contains(problem.Id);
                             <tr>
-                                <th scope="row">@index</th>
-                                <td>
-                                    @if (isCompleted)
-                                    {
-                                        <i class="fa-solid fa-calendar-check text-success fa-lg"></i>
-                                    }
-                                </td>
-                                <td>
-                                    <a href=@($"/problem/{problem.Id}") style="text-decoration: none; color: white;" 
-                                       onmouseover="this.style.color='lightblue'" onmouseout="this.style.color='white'">
-                                        @problem.Title
-                                    </a>
-                                </td>
-                                <td>@($"{problem.Acceptance:P}")</td>
-                                <td>
-                                    @if (problem.Difficulty == 1)
-                                    {
-                                        <span class="badge badge-veryeasy">Veľmi ľahká</span>
-                                    }
-                                    else if (problem.Difficulty == 2)
-                                    {
-                                        <span class="badge badge-easy">Ľahká</span>
-                                    }
-                                    else if (problem.Difficulty == 3)
-                                    {
-                                        <span class="badge badge-medium">Stredná</span>
-                                    }
-                                    else if (problem.Difficulty == 4)
-                                    {
-                                        <span class="badge badge-hard">Ťažká</span>
-                                    }
-                                    else if (problem.Difficulty == 5)
-                                    {
-                                        <span class="badge badge-veryhard">Veľmi ťažká</span>
-                                    }
-                                    else
-                                    {
-                                        <span>Neznáma</span>
-                                    }
+                                <td colspan="5" class="text-center">
+                                    <div class="spinner-border text-light" role="status">
+                                        <span class="sr-only">Načítava sa...</span>
+                                    </div>
                                 </td>
                             </tr>
                         }
-                    }
-                    else
-                    {
-                        <tr>
-                            <td colspan="5" class="text-center">Žiadne úlohy.</td>
-                        </tr>
-                    }
+                        else if ((_isFiltered ? _filteredProblems : _problems).Any())
+                        {
+                            int startIndex = (_currentPage - 1) * _maxProblemsToShow + 1;
+                            var problemsToDisplay = (_isFiltered ? _filteredProblems : _problems)
+                                .Skip((_currentPage - 1) * _maxProblemsToShow)
+                                .Take(_maxProblemsToShow);
+
+                            foreach (var (problem, index) in problemsToDisplay.Select((p, i) => (p, i + startIndex)))
+                            {
+                                bool isCompleted = _completedProblemIds.Contains(problem.Id);
+                                    <tr>
+                                    <th scope="row">@index</th>
+                                    <td>
+                                        @if (isCompleted)
+                                        {
+                                            <i class="fa-solid fa-calendar-check text-success fa-lg"></i>
+                                        }
+                                    </td>
+                                    <td>
+                                        <a href=@($"/problem/{problem.Id}") style="text-decoration: none; color: white;" 
+                                           onmouseover="this.style.color='lightblue'" onmouseout="this.style.color='white'">
+                                            @problem.Title
+                                        </a>
+                                    </td>
+                                    <td>@($"{problem.Acceptance:P}")</td>
+                                    <td>
+                                        @if (problem.Difficulty == 1)
+                                        {
+                                            <span class="badge badge-veryeasy">Veľmi ľahká</span>
+                                        }
+                                        else if (problem.Difficulty == 2)
+                                        {
+                                            <span class="badge badge-easy">Ľahká</span>
+                                        }
+                                        else if (problem.Difficulty == 3)
+                                        {
+                                            <span class="badge badge-medium">Stredná</span>
+                                        }
+                                        else if (problem.Difficulty == 4)
+                                        {
+                                            <span class="badge badge-hard">Ťažká</span>
+                                        }
+                                        else if (problem.Difficulty == 5)
+                                        {
+                                            <span class="badge badge-veryhard">Veľmi ťažká</span>
+                                        }
+                                        else
+                                        {
+                                            <span>Neznáma</span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="5" class="text-center">Žiadne úlohy</td>
+                            </tr>
+                        }
                     </tbody>
                 </table>
             </div>
         </div>
-        <div class="navigation mb-2 w-100">
+        @if ((!_problemsAreLoading && ((_isFiltered && _filteredProblems.Count > 0) || (!_isFiltered && _problems.Count > 0)))) 
+        {
+            <div class="navigation mb-2 w-100">
             <nav aria-label="Page navigation example" class="d-flex justify-content-around">
                 <ul class="pagination bg-dark d-flex flex-wrap">
                     <li class="page-item @(_currentPage == 1 ? "disabled" : "")">
@@ -213,5 +225,6 @@
                 </ul>
             </nav>
         </div>
+        }
     </div>
 </div>

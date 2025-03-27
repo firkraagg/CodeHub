@@ -1,14 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Net;
-using System.Reflection.Metadata;
-using CodeHub.Data.Entities;
+﻿using CodeHub.Data.Entities;
 using CodeHub.Data.Models;
 using CodeHub.Services;
-using Markdig;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Components.Forms;
+using System.Reflection.Metadata;
 
 namespace CodeHub.Components.Components;
 
@@ -66,7 +61,7 @@ public partial class TaskCreation
         _tags = await TagService.GetTagsAsync();
         _problem.TestCases = [];
 
-        if (ProblemToEdit != null) 
+        if (ProblemToEdit != null)
         {
             _problem = ProblemToEdit;
             _selectedTags = await TagService.GetTagNamesForProblemAsync(_problem.Id);
@@ -88,7 +83,7 @@ public partial class TaskCreation
         if (!string.IsNullOrEmpty(_selectedTag) && !_selectedTags.Contains(_selectedTag))
         {
             _selectedTags.Add(_selectedTag);
-        } 
+        }
         else if (!string.IsNullOrEmpty(_customTag) && !_selectedTags.Contains(_customTag))
         {
             _selectedTags.Add(_customTag);
@@ -213,7 +208,7 @@ public partial class TaskCreation
             {
                 _problem.Tags.Add(new Tag { Name = tagName });
                 existingTagNames.Add(tagName);
-            } 
+            }
         }
 
         var removedTestCases = _problem.TestCases
@@ -262,7 +257,7 @@ public partial class TaskCreation
                 {
                     Name = selectedTag
                 };
-                
+
                 _problem.Tags.Add(tag);
             }
 
@@ -476,7 +471,7 @@ public partial class TaskCreation
                 Input = _editingExample.Input,
                 Output = _editingExample.Output,
                 Explanation = _editingExample.Explanation,
-                ProblemId = _problem.Id,  
+                ProblemId = _problem.Id,
                 Problem = _problem
             };
 

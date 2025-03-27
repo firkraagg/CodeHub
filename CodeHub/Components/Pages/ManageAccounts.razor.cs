@@ -56,7 +56,7 @@ public partial class ManageAccounts
             }
         }
 
-        if(string.IsNullOrWhiteSpace(_editingUser.Email))
+        if (string.IsNullOrWhiteSpace(_editingUser.Email))
         {
             _emailError = "E-mail nemôže byť prázdny";
             StateHasChanged();

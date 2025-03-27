@@ -6,7 +6,7 @@ namespace CodeHub.Data.Models
     {
         [Required(ErrorMessage = "Zadajte prezývku.")]
         [MaxLength(50, ErrorMessage = "Prezývka je príliš dlhá. Nemôže presiahnuť viac ako 50 znakov.")]
-        public string Username { get; set; } = string.Empty; 
+        public string Username { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Zadajte e-mailovú adresu.")]
         [RegularExpression(@"^[a-zA-Z0-9]+@[a-zA-Z]+\.[a-zA-Z]+$", ErrorMessage = "Zlý formát e-mailu.")]
