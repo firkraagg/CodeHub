@@ -16,27 +16,23 @@
                 smoothScrolling: true,
                 mouseWheelZoom: true,
                 contextmenu: false,
-                formatOnType: true,
-                wordWrap: "on",
+                wordWrap: 'on',
+                suggest: { snippetsPreventQuickSuggestions: false },
+                scrollBeyondLastLine: false
             });
 
             if (defaultCode) {
                 window.monacoInterop.editorInstance.setValue(defaultCode);
             }
 
-
-            //window.monacoInterop.editorInstance.onKeyDown((event) => {
-            //    const { keyCode, ctrlKey, metaKey } = event;
-
-            //    // KeyCode 67 = 'C' | KeyCode 86 = 'V'
-            //    if ((keyCode === 67 || keyCode === 86) && (ctrlKey || metaKey)) {
-            //        event.preventDefault();
-            //        console.log(`Blocked ${ctrlKey ? 'Ctrl' : 'Cmd'} + ${String.fromCharCode(keyCode)}`);
-            //    }
-            //});
-
-            };
+            window.monacoInterop.disableCopyPaste();
         });
+    },
+
+    disableCopyPaste: function () {
+        const editor = window.monacoInterop.editorInstance;
+        editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyC, () => null);
+        editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyV, () => null);
     },
 
     setTheme: (theme) => {

@@ -30,6 +30,7 @@ public partial class ProblemPage
     private bool _hasExecuted;
     private bool _isEditorInitialized = false;
     private CancellationTokenSource _cts = new();
+    private bool _isLoading = true;
 
     protected override async Task OnInitializedAsync()
     {
