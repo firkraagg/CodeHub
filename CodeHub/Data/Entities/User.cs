@@ -12,9 +12,16 @@ namespace CodeHub.Data.Entities
         [MaxLength(50)]
         public string Username { get; set; } = string.Empty;
 
+        [MaxLength(150)]
+        public string? DisplayName { get; set; }
+
         [Required]
         [EmailAddress]
+        [MaxLength(100)]
         public string Email { get; set; } = string.Empty;
+
+        [MaxLength(20)]
+        public string? Group { get; set; }
 
         [Required]
         public string PasswordHash { get; set; } = string.Empty;

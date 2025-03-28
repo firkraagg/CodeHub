@@ -3,6 +3,7 @@ using CodeHub.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Forms;
+using System.Text;
 
 namespace CodeHub.Components.Pages;
 
@@ -32,16 +33,10 @@ public partial class Login
 
     public async Task HandleFormSubmitAsync(EditContext editContext)
     {
-        var storedUser = await userService.FindByEmailAsync(lm.Email);
-        if (storedUser == null)
+        var storedUser = await userService.FindByUsernameAsync(lm.Nickname);
+
+        if (storedUser != null)
         {
-            _alertColor = "alert-danger";
-            _alertMessage = "Používateľ s touto e-mailovou adresou neexistuje. Skontrolujte zadaný e-mail alebo sa zaregistrujte.";
-            _showAlert = true;
-        }
-        else
-        {
-            _alertColor = "alert-success";
             bool isPasswordValid = BCrypt.Net.BCrypt.EnhancedVerify(lm.Password, storedUser.PasswordHash);
             if (isPasswordValid)
             {
@@ -51,13 +46,34 @@ public partial class Login
                 var claims = ((CustomAuthStateProvider)AuthenticationStateProvider).GetClaimsFromToken(token);
                 ((CustomAuthStateProvider)AuthenticationStateProvider).TriggerAuthenticationStateChanged();
 
-
                 NavigationManager.NavigateTo("/");
             }
             else
             {
                 _alertColor = "alert-danger";
-                _alertMessage = "Zadané heslo je nesprávne. Skúste to znova.";
+                _alertMessage = "Zadané heslo je nesprávne.";
+                _showAlert = true;
+            }
+        }
+        else
+        {
+            var ldapUser = await LdapService.AuthenticateUserAsync(lm.Nickname, lm.Password);
+
+            if (ldapUser != null)
+            {
+                var entry = await LdapService.FindUser(lm.Nickname);
+                var email = entry?.DirectoryAttributes["mail"].GetValue<string>();
+                var group = entry?.DirectoryAttributes["physicalDeliveryOfficeName"].GetValue<string>();
+                var username = entry?.DirectoryAttributes["uid"].GetValue<string>();
+                var displayName = entry?.DirectoryAttributes["displayName"].GetValue<string>();
+                _alertMessage = $"Email: {email}, Group: {group}, Username: {username}, DisplayName: {displayName}";
+                _alertColor = "alert-danger";
+                _showAlert = true;
+            }
+            else
+            {
+                _alertMessage = "Nesprávne prihlasovacie údaje.";
+                _alertColor = "alert-danger";
                 _showAlert = true;
             }
         }

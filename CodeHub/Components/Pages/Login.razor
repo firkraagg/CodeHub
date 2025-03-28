@@ -1,6 +1,8 @@
 ﻿@page "/login"
 @using CodeHub.Components.Components
 
+@inject LdapService LdapService;
+
 <PageTitle>Login</PageTitle>
 
 @using CodeHub.Services
@@ -22,9 +24,9 @@
         <EditForm Model="@lm" OnValidSubmit="HandleFormSubmitAsync" FormName="Login">
             <DataAnnotationsValidator />
             <div class="form-floating">
-                <InputText id="EmailInput" type="text" @bind-Value="@lm.Email" class="form-control" placeholder="meno@example.com" />
-                <label for="EmailInput">E-mailová adresa</label>
-                <ValidationMessage For="@(() => lm.Email)" />
+                <InputText id="NicknameInput" type="text" @bind-Value="@lm.Nickname" class="form-control" placeholder="Meno" />
+                <label for="NicknameInput">Meno</label>
+                <ValidationMessage For="@(() => lm.Nickname)" />
             </div>
             <div class="form-floating">
                 <InputText id="PasswordInput" type="password" @bind-Value="@lm.Password" class="form-control" placeholder="Heslo" />

@@ -23,8 +23,8 @@ namespace CodeHub.Data.Models
 
     public class LoginModel
     {
-        [Required(ErrorMessage = "Zadajte e-mailovú adresu.")]
-        public string Email { get; set; } = string.Empty;
+        [Required(ErrorMessage = "Zadajte meno.")]
+        public string Nickname { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Zadajte heslo.")]
         public string Password { get; set; } = string.Empty;

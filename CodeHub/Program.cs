@@ -43,13 +43,8 @@ namespace CodeHub
             builder.Services.AddTransient<TestCaseService>();
             builder.Services.AddTransient<TipService>();
             builder.Services.AddTransient<ProblemsAttemptService>();
+            builder.Services.AddSingleton<LdapService>(new LdapService("fri.uniza.sk", 389));
             builder.Services.AddDistributedMemoryCache();
-            //builder.Services.AddDistributedSqlServerCache(options =>
-            //{
-            //    options.ConnectionString = connectionString;
-            //    options.SchemaName = "dbo";
-            //    options.TableName = "SessionData";
-            //});
 
             builder.Services.AddSession(options =>
             {
