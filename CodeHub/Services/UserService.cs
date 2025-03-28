@@ -97,6 +97,27 @@ namespace CodeHub.Services
             }
         }
 
+        public async Task<User?> CreateUserFromLdapAsync(string username, string email, string password, string displayName, string group)
+        {
+            using (var context = _dbContextFactory.CreateDbContext())
+            {
+                var user = new User()
+                {
+                    Username = username,
+                    Email = email,
+                    PasswordHash = BCrypt.Net.BCrypt.EnhancedHashPassword(password),
+                    CreatedAt = DateTime.Now,
+                    Role = "Študent",
+                    ProfileImage = GetDefaultProfileImage(),
+                    DisplayName = displayName,
+                    Group = group
+                };
+
+                await AddUserAsync(user);
+                return user;
+            }
+        }
+
         public async Task<User?> LoginUser(User storedUser)
         {
             string token = CreateToken(storedUser);

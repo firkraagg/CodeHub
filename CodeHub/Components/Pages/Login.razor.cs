@@ -1,4 +1,5 @@
-﻿using CodeHub.Data.Models;
+﻿using CodeHub.Data.Entities;
+using CodeHub.Data.Models;
 using CodeHub.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -58,7 +59,6 @@ public partial class Login
         else
         {
             var ldapUser = await LdapService.AuthenticateUserAsync(lm.Nickname, lm.Password);
-
             if (ldapUser != null)
             {
                 var entry = await LdapService.FindUser(lm.Nickname);
@@ -66,9 +66,18 @@ public partial class Login
                 var group = entry?.DirectoryAttributes["physicalDeliveryOfficeName"].GetValue<string>();
                 var username = entry?.DirectoryAttributes["uid"].GetValue<string>();
                 var displayName = entry?.DirectoryAttributes["displayName"].GetValue<string>();
-                _alertMessage = $"Email: {email}, Group: {group}, Username: {username}, DisplayName: {displayName}";
-                _alertColor = "alert-danger";
-                _showAlert = true;
+
+                var newUser = await UserService.CreateUserFromLdapAsync(username!, email!, lm.Password, displayName!, group!);
+                if (newUser != null)
+                {
+                    string token = userService.CreateToken(newUser);
+                    await userService.LoginUser(newUser);
+
+                    var claims = ((CustomAuthStateProvider)AuthenticationStateProvider).GetClaimsFromToken(token);
+                    ((CustomAuthStateProvider)AuthenticationStateProvider).TriggerAuthenticationStateChanged();
+
+                    NavigationManager.NavigateTo("/");
+                }
             }
             else
             {
