@@ -32,13 +32,19 @@ namespace CodeHub.Data.Models
 
     public class EditModel
     {
+        [MaxLength(50, ErrorMessage = "Celé meno nemôže byť dlhšie ako 50 znakov.")]
+        public string DisplayName { get; set; } = string.Empty;
+
         [Required(ErrorMessage = "Zadajte prezývku.")]
         [MaxLength(50, ErrorMessage = "Prezývka je príliš dlhá. Nemôže presiahnuť viac ako 50 znakov.")]
         public string Username { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Zadajte e-mailovú adresu.")]
-        [RegularExpression(@"^[a-zA-Z0-9]+@[a-zA-Z]+\.[a-zA-Z]+$", ErrorMessage = "Zlý formát e-mailu.")]
+        [RegularExpression(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", ErrorMessage = "Zlý formát e-mailu.")]
         public string Email { get; set; } = string.Empty;
+
+        [MaxLength(20, ErrorMessage = "Študijná skupina môže mať maximálne 10 znakov.")]
+        public string Group { get; set; } = string.Empty;
     }
     public class ChangePasswordModel
     {

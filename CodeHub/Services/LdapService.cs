@@ -34,7 +34,7 @@ namespace CodeHub.Services
                     : await CreateLdapConnectionAsync("zuzcak4", "Skunizavyskask8");
 
                 if (connection == null) return null;
-
+                
                 var entries = await connection.SearchAsync("dc=fri,dc=uniza,dc=sk", $"(uid={username})");
                 return entries.FirstOrDefault();
             }

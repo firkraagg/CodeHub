@@ -8,6 +8,7 @@
 @inject ProgrammingLanguageService ProgrammingLanguageService
 @inject TagService TagService
 @inject TipService TipService
+@inject IJSRuntime JSRuntime
 
 <PageTitle>User Profile</PageTitle>
 
@@ -23,15 +24,15 @@
 
                     @if (_user != null)
                     {
-                        <h2 class="pb-4">@_user.Username</h2>
+                        <h2 class="pb-4">@(_user.DisplayName ?? _user.Username)</h2>
                     }
 
                     <div class="d-grid gap-2 w-100">
-                        <button class="btn profile-button button-update p-2" @onclick="@(() => NavigateToProfileSection("edit"))">Upraviť profil</button>
+                        <button class="btn profile-button button-update p-2" @onclick="@(() => NavigateToProfileSection("my-profile"))">Zobraziť profil</button>
                         <button class="btn profile-button button-update p-2" @onclick="@(() => NavigateToProfileSection("change-password"))">Zmeniť heslo</button>
                         <AuthorizeView Roles="Admin,Učiteľ" Context="myProblemsAuthContext">
                             <Authorized>
-                                <button class="btn profile-button button-update p-2" @onclick="LoadUserProblems">Moje úlohy</button>
+                                <button class="btn profile-button button-update p-2" @onclick="LoadUserProblems">Spravovať úlohy</button>
                             </Authorized>
                         </AuthorizeView>
 @*                         <button class="btn profile-button button-delete-account p-2" @onclick="ShowDeleteUserModal">Vymazať účet</button>
@@ -53,8 +54,16 @@
                                 <DataAnnotationsValidator/>
                                 <div class="card p-4 mx-auto col-12 col-md-10 col-lg-6" style="max-width: 80vw; min-width: 30vw;" data-bs-theme="dark">
                                     <div class="text-center mb-4">
-                                        <h4 class="mb-2">Upraviť Profil</h4>
+                                        <h4 class="mb-2">Môj profil</h4>
+                                        @if (_user!.LdapUser)
+                                        {
+                                            <div class="tooltip-wrapper">
+                                                <span class="tooltip-icon">?</span>
+                                                <CodeHub.Components.Components.Tooltip Text="Ako LDAP používateľ nemáte možnosť meniť žiadne profilové informácie okrem vášho profilového obrázka. "> </CodeHub.Components.Components.Tooltip>
+                                            </div>
+                                        }
                                     </div>
+
                                     @if (_showAlert)
                                     {
                                         <div class="alert @_alertColor" role="alert">
@@ -62,14 +71,24 @@
                                         </div>
                                     }
                                     <div class="form-floating mb-3">
-                                        <InputText id="nickname" @bind-Value="em.Username" class="form-control bg-dark text-white" placeholder="Prezývka"/>
+                                        <InputText id="nickname" @bind-Value="em.DisplayName" class="form-control bg-dark text-white" readonly="@(_user.LdapUser)" placeholder="Meno a priezvisko" />
+                                        <label for="nickname">Meno a priezvisko</label>
+                                        <ValidationMessage For="@(() => em.DisplayName)" />
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <InputText id="displayName" @bind-Value="em.Username" class="form-control bg-dark text-white" readonly="@(_user.LdapUser)" placeholder="Prezývka" />
                                         <label for="nickname">Prezývka</label>
                                         <ValidationMessage For="@(() => em.Username)"/>
                                     </div>
                                     <div class="form-floating mb-3">
-                                        <InputText id="email" @bind-Value="em.Email" class="form-control bg-dark text-white" placeholder="E-mailová adresa"/>
+                                        <InputText id="email" @bind-Value="em.Email" class="form-control bg-dark text-white" readonly="@(_user.LdapUser)" placeholder=" E-mailová adresa" />
                                         <label for="email">E-mailová adresa</label>
                                         <ValidationMessage For="@(() => em.Email)"/>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <InputText id="group" @bind-Value="em.Group" class="form-control bg-dark text-white" readonly="@(_user.LdapUser)" placeholder="Študijná skupina" />
+                                        <label for="email">Študijná skupina</label>
+                                        <ValidationMessage For="@(() => em.Group)" />
                                     </div>
                                     <div class="form-floating text-start">
                                         <h5 class="mb-3">Vybrať profilovú fotku</h5>
@@ -85,7 +104,7 @@
                                         }
                                     </div>
                                      <div class="col my-2 mt-4 text-center">
-                                         <button class="btn button-custom button-create-bg btn-sm" type="submit">Aktualizovať</button>
+                                        <button class="btn button-custom button-create-bg btn-sm" type="submit">Aktualizovať</button>
                                      </div>
                                 </div>
                             </EditForm>

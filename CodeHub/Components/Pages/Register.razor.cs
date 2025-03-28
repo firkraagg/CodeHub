@@ -34,7 +34,7 @@ namespace CodeHub.Components.Pages
             {
                 _alertColor = "alert-success";
                 var newUser = (RegistrationModel)editContext.Model;
-                await userService.CreateUserFromRegistrationModelAsync(newUser);
+                await userService.CreateUserAsync(newUser.Username, newUser.Email, newUser.Password);
                 NavigationManager.NavigateTo("/login?message=registered");
             }
         }

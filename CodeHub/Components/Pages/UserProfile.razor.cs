@@ -46,15 +46,17 @@ public partial class UserProfile
         {
             _user = await UserService.GetUserByIdAsync(userId);
             _userProblems = await ProblemService.GetProblemsByUserIdAsync(_user!.Id);
+            em.DisplayName = _user.DisplayName ?? "";
             em.Username = _user!.Username;
             em.Email = _user.Email;
+            em.Group = _user.Group ?? "";
         }
     }
 
     protected override void OnParametersSet()
     {
         _showAlert = false;
-        _showEditProfile = section == "edit";
+        _showEditProfile = section == "my-profile";
         _showChangePassword = section == "change-password";
         _showUserProblems = section == "problems";
         StateHasChanged();
@@ -63,9 +65,16 @@ public partial class UserProfile
     public async Task HandleEditProfileFormSubmitAsync(EditContext editContext)
     {
         _showAlert = false;
+        var userDisplayName = await UserService.FindByDisplayNameAsync(em.DisplayName);
         var userUsername = await UserService.FindByUsernameAsync(em.Username);
         var userEmail = await UserService.FindByEmailAsync(em.Email);
-        if (userUsername != null && userUsername.Username != _user!.Username)
+        if (userDisplayName != null && userDisplayName.DisplayName != _user!.DisplayName)
+        {
+            _alertColor = "alert-danger";
+            _alertMessage = "Používateľ s týmto menom už existuje.";
+            _showAlert = true;
+        }
+        else if (userUsername != null && userUsername.Username != _user!.Username)
         {
             _alertColor = "alert-danger";
             _alertMessage = "Používateľ s touto prezývkou už existuje.";
@@ -79,8 +88,10 @@ public partial class UserProfile
         }
         else
         {
-            _user!.Username = em.Username;
+            _user!.DisplayName = em.DisplayName;
+            _user.Username = em.Username;
             _user.Email = em.Email;
+            _user.Group = em.Group;
             _user.ProfileImage = _uploadedImage != null ? Convert.FromBase64String(_uploadedImage.Split(",")[1]) : _user.ProfileImage;
             await UserService.EditUserAsync(_user!);
             _alertColor = "alert-success";

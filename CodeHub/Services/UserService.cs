@@ -54,6 +54,14 @@ namespace CodeHub.Services
             }
         }
 
+        public async Task<User?> FindByDisplayNameAsync(string displayName)
+        {
+            using (var context = _dbContextFactory.CreateDbContext())
+            {
+                return await context.Users.FirstOrDefaultAsync(u => u.DisplayName == displayName);
+            }
+        }
+
         public async Task<User?> FindByUsernameAsync(string username)
         {
             using (var context = _dbContextFactory.CreateDbContext())
@@ -78,26 +86,7 @@ namespace CodeHub.Services
             }
         }
 
-        public async Task<User?> CreateUserFromRegistrationModelAsync(RegistrationModel rm)
-        {
-            using (var context = _dbContextFactory.CreateDbContext())
-            {
-                var user = new User()
-                {
-                    Username = rm.Username,
-                    Email = rm.Email,
-                    PasswordHash = BCrypt.Net.BCrypt.EnhancedHashPassword(rm.Password),
-                    CreatedAt = DateTime.Now,
-                    Role = "Študent",
-                    ProfileImage = GetDefaultProfileImage()
-                };
-
-                await AddUserAsync(user);
-                return user;
-            }
-        }
-
-        public async Task<User?> CreateUserFromLdapAsync(string username, string email, string password, string displayName, string group)
+        public async Task<User?> CreateUserAsync(string username, string email, string password, bool isLdapUser = false, string displayName = "", string group = "")
         {
             using (var context = _dbContextFactory.CreateDbContext())
             {
@@ -106,6 +95,7 @@ namespace CodeHub.Services
                     Username = username,
                     Email = email,
                     PasswordHash = BCrypt.Net.BCrypt.EnhancedHashPassword(password),
+                    LdapUser = isLdapUser,
                     CreatedAt = DateTime.Now,
                     Role = "Študent",
                     ProfileImage = GetDefaultProfileImage(),

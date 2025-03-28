@@ -67,7 +67,7 @@ public partial class Login
                 var username = entry?.DirectoryAttributes["uid"].GetValue<string>();
                 var displayName = entry?.DirectoryAttributes["displayName"].GetValue<string>();
 
-                var newUser = await UserService.CreateUserFromLdapAsync(username!, email!, lm.Password, displayName!, group!);
+                var newUser = await UserService.CreateUserAsync(username!, email!, lm.Password, true, displayName!, group!);
                 if (newUser != null)
                 {
                     string token = userService.CreateToken(newUser);

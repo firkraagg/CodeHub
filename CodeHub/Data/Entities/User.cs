@@ -26,6 +26,7 @@ namespace CodeHub.Data.Entities
         [Required]
         public string PasswordHash { get; set; } = string.Empty;
 
+        public bool LdapUser { get; set; } = false;
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public string Role { get; set; } = "Študent";
         public byte[] ProfileImage { get; set; } = null!;
