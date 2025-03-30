@@ -17,9 +17,9 @@
 
 <PageTitle>Problem Details</PageTitle>
 
-<div class="container-fluid h-100 p-4">
-    <div class="row h-100 d-flex">
-        <div id="problem-box" class="resizable p-4 text-white overflow-y-auto">
+<div class="container-fluid h-100 p-4 d-flex flex-column">
+    <div class="row h-100 d-flex align-items-stretch">
+        <div id="problem-box" class="resizable p-4 text-white overflow-y-auto d-flex flex-column">
             <h2 class="font-bold">@_problem?.Title</h2>
             <div class="mb-4">
                 <div class="d-flex flex-wrap gap-2">
@@ -107,14 +107,14 @@
 
                         <div class="accordion-item bg-dark border border-secondary">
                             <h2 class="accordion-header" id="@headingId">
-                                <button class="accordion-button collapsed bg-dark text-light" 
-                                        type="button" data-bs-toggle="collapse" 
+                                <button class="accordion-button collapsed bg-dark text-light"
+                                        type="button" data-bs-toggle="collapse"
                                         data-bs-target="#@collapseId"
                                         aria-expanded="false" aria-controls="@collapseId">
                                     Nápoveda @(index + 1)
                                 </button>
                             </h2>
-                            <div id="@collapseId" class="accordion-collapse collapse" 
+                            <div id="@collapseId" class="accordion-collapse collapse"
                                  aria-labelledby="@headingId" data-bs-parent="#accordionHint">
                                 <div class="accordion-body text-light">
                                     @((MarkupString)Markdown.ToHtml(hint.Hint))
@@ -126,15 +126,12 @@
                 }
             </div>
         </div>
-        <div class="col p-0 text-white ps-2 d-flex flex-grow-1"
+        <div class="col p-0 text-white ps-2 d-flex flex-column flex-grow-1"
              style="overflow: hidden; max-width: calc(100vw - 22vw);">
-            <div id="editorContainer" class="resizable pb-3 flex-grow-1"
+            <div id="editorContainer" class="resizable pb-1 flex-grow-1"
                  style="border: 3px solid #0059b3; border-radius: 5px; overflow-y: auto; max-height: 85vh">
             </div>
-        </div>
-    </div>
-    <div class="row h-25 d-flex justify-content-center align-items-center">
-        <div class="col-md-8 text-center">
+
             <AuthorizeView Roles="Admin,Učiteľ,Študent" Context="authContext">
                 <Authorized>
                     @{
@@ -144,11 +141,15 @@
                             borderColor = _noErrors ? "border-success" : "border-danger";
                         }
                     }
-                    <div class="p-3 border rounded bg-dark text-light mt-2 w-100 @borderColor"
-                         style="overflow-y: auto; white-space: pre-wrap; font-family: monospace; max-height: 200px;">
-                        <pre class="m-0">@_output</pre>
-                    </div>
-                    <div class="mt-3 d-flex gap-2 justify-content-center mb-2">
+
+                    @if (_output != null)
+                    {
+                        <div class="p-3 border rounded bg-dark text-light mt-2 w-100 flex-grow-0 @borderColor"
+                             style="overflow-y: auto; white-space: pre-wrap; font-family: monospace; height: 20vh; max-height: 30vh;">
+                            <pre class="m-0">@_output</pre>
+                        </div>
+                    }
+                    <div class="mt-1 d-flex gap-2 justify-content-start mb-2">
                         <button class="btn button-custom button-create-bg" @onclick="() => SendCodeToQueue(true)" disabled="@_isSubmitLoading">
                             @if (_isSubmitLoading)
                             {
