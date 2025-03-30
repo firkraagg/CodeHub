@@ -142,13 +142,10 @@
                         }
                     }
 
-                    @if (_output != null)
-                    {
-                        <div class="p-3 border rounded bg-dark text-light mt-2 w-100 flex-grow-0 @borderColor"
-                             style="overflow-y: auto; white-space: pre-wrap; font-family: monospace; height: 20vh; max-height: 30vh;">
-                            <pre class="m-0">@_output</pre>
-                        </div>
-                    }
+                    <div class="p-3 border rounded bg-dark text-light mt-2 w-100 flex-grow-0  @borderColor"
+                         style="overflow-y: auto; overflow-x: hidden; white-space: pre-wrap; word-wrap: break-word; overflow-wrap: break-word; font-family: monospace; height: 20vh; max-height: 30vh;">
+                        <pre class="m-0 @((_allTestsPassed ? "text-success" : "text-danger") + (_noErrors ? " text-success" : " text-danger"))" style="white-space: pre-wrap; word-wrap: break-word; overflow-wrap: break-word;">@_output</pre>
+                    </div>
                     <div class="mt-1 d-flex gap-2 justify-content-start mb-2">
                         <button class="btn button-custom button-create-bg" @onclick="() => SendCodeToQueue(true)" disabled="@_isSubmitLoading">
                             @if (_isSubmitLoading)

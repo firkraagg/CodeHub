@@ -23,6 +23,7 @@ public partial class ProblemPage
     private string _selectedTheme = "vs-dark";
     private string _userCode;
     private string _output;
+    private bool _allTestsPassed;
     private bool _isSubmitLoading;
     private bool _isCheckLoading;
     private bool _noErrors;
@@ -37,6 +38,7 @@ public partial class ProblemPage
         _problem = await ProblemService.GetProblemByIdAsync(ProblemId);
         _tags = await TagService.GetTagsForProblemAsync(_problem.Id);
         _languages = await ProgrammingLanguageService.GetProgrammingLanguagesAsync();
+        _output = "Kód ešte nebol spustený. Kliknite na \"Skontroluj\" pre zobrazenie výstupu kódu.";
         if (_problem.LanguageID != 0)
         {
             _selectedLanguage = _languages.FirstOrDefault(lang => lang.Id == _problem.LanguageID);
@@ -64,11 +66,12 @@ public partial class ProblemPage
 
     }
 
-    private void HandleResultReceived(string output)
+    private void HandleResultReceived(string output, bool allTestsPassed)
     {
         InvokeAsync(() =>
         {
             _output = output;
+            _allTestsPassed = allTestsPassed;
             _executionCompletion.TrySetResult(true);
             StateHasChanged();
         });
@@ -113,13 +116,13 @@ public partial class ProblemPage
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            _noErrors = false;
             throw;
         }
         finally
         {
             _noErrors = !_output.ToLower().Contains("error") && !_output.ToLower().Contains("exception") && !_output.ToLower().Contains("failed") && !_output.ToLower().Contains("timed out")
-                && !_output.ToLower().Contains("nebola") && !_output.ToLower().Contains("invalid"); ;
+                && !_output.ToLower().Contains("invalid") && !_output.ToLower().Contains("Časový limit") && _allTestsPassed;
             _isCheckLoading = false;
             _isSubmitLoading = false;
             _hasExecuted = true;
@@ -138,7 +141,7 @@ public partial class ProblemPage
                 userId = int.Parse(userId),
                 AttemptedAt = DateTime.Now,
                 SourceCode = codeToSend,
-                IsSuccessful = _output == "Úloha bola vypracovaná správne."
+                IsSuccessful = _allTestsPassed
             };
 
             await SolvedProblemsService.AddSolvedProblemAsync(solvedProblem);

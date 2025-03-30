@@ -6,7 +6,7 @@ using System.Text;
 
 public class RabbitMqProducerService
 {
-    public static event Action<string>? ResultReceived;
+    public static event Action<string, bool>? ResultReceived;
 
     public async Task SendToRabbitMq(string code, string language, List<TestCase> testCases, bool isEvaluation)
     {
@@ -73,7 +73,7 @@ public class RabbitMqProducerService
 
             if (result != null)
             {
-                ResultReceived?.Invoke(result.Output);
+                ResultReceived?.Invoke(result.Output, result.AllTestsPassed);
                 await channel.BasicAckAsync(ea.DeliveryTag, multiple: false);
             }
             else
@@ -98,6 +98,7 @@ public class CodeExecutionRequest
 public class CodeExecutionResult
 {
     public string Output { get; set; }
+    public bool AllTestsPassed { get; set; }
 }
 
 public class TestCaseDto
