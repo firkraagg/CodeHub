@@ -19,7 +19,6 @@ namespace CodeHub.Data
         public DbSet<ProblemConstraint> ProblemConstraint { get; set; }
         public DbSet<ProblemExample> ProblemExample { get; set; }
         public DbSet<TestCase> TestCase { get; set; }
-        public DbSet<Tip> Tip { get; set; }
         public DbSet<ProblemAttempt> ProblemAttempts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -27,7 +27,6 @@ public partial class UserProfile
     private bool _showUpdateModal = false;
     private int? _selectedTagId;
     private string _tempCode;
-    private Tip? _randomTip;
     private List<Tag> _availableTags = new();
     private List<ProgrammingLanguage> _languages = new();
 
@@ -41,7 +40,6 @@ public partial class UserProfile
         var userId = ((CustomAuthStateProvider)AuthenticationStateProvider).GetLoggedInUserId();
         _languages = await ProgrammingLanguageService.GetProgrammingLanguagesAsync();
         _availableTags = await TagService.GetTagsAsync();
-        _randomTip = await TipService.GetRandomTipAsync();
         if (!string.IsNullOrEmpty(userId))
         {
             _user = await UserService.GetUserByIdAsync(userId);

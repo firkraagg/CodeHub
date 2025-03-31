@@ -7,7 +7,6 @@
 @inject ProblemService ProblemService
 @inject ProgrammingLanguageService ProgrammingLanguageService
 @inject TagService TagService
-@inject TipService TipService
 @inject IJSRuntime JSRuntime
 
 <PageTitle>User Profile</PageTitle>
@@ -40,13 +39,6 @@
                 </div>
 
                 <div class="col-lg-9 col-md-8 col-sm-12 custom-bg-profile-right p-4 d-flex justify-content-center align-items-center">
-                    @if (!_showEditProfile && !_showChangePassword && !_showUserProblems)
-                    {
-                        <div class="d-flex align-items-center justify-content-center text-center">
-                            <i class="fa-solid fa-lightbulb fa-lg text-warning me-2"></i>
-                            <p class="text-white mb-0">@(_randomTip != null ? _randomTip.Text : "Načítavam tip...")</p>
-                        </div>
-                    }
                     @if (_showEditProfile)
                     {
                         <div class="user-auth mb-4 w-100">
