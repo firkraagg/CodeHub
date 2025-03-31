@@ -316,6 +316,10 @@ button.button-custom {
     background-color: #1e1e1e;
 }
 
+.table-solvers {
+    text-align: center;
+}
+
 /*.fixed-bottom-alert {
     position: fixed;
     bottom: 0;

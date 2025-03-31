@@ -133,13 +133,11 @@ public partial class ProblemPage
                 _user = await UserService.GetUserByIdAsync(userId);
             }
 
-            await SolvedProblemsService.DeleteSolvedProblemAsync(int.Parse(userId), _problem.Id);
-
             var solvedProblem = new ProblemAttempt
             {
                 problemId = _problem.Id,
                 userId = int.Parse(userId),
-                AttemptedAt = DateTime.Now,
+                AttemptedAt = DateTime.UtcNow.AddHours(2),
                 SourceCode = codeToSend,
                 IsSuccessful = _allTestsPassed
             };

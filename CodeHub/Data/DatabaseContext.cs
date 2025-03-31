@@ -46,7 +46,7 @@ namespace CodeHub.Data
                 );
 
             modelBuilder.Entity<ProblemAttempt>()
-                .HasKey(pa => new { pa.userId, pa.problemId });
+                .HasKey(pa => pa.Id);
 
             modelBuilder.Entity<ProblemAttempt>()
                 .HasOne(pa => pa.User)

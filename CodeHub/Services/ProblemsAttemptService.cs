@@ -33,12 +33,22 @@ namespace CodeHub.Services
             }
         }
 
-        public async Task<List<int>> GetSolvedProblemIdsByUserIdAsync(int userId)
+        public async Task<ProblemAttempt?> GetSolvedProblemByProblemIdAsync(int problemId)
         {
             using (var context = _dbContextFactory.CreateDbContext())
             {
                 return await context.ProblemAttempts
-                    .Where(sp => sp.userId == userId && sp.IsSuccessful == true)
+                    .Where(sp => sp.problemId == problemId)
+                    .FirstOrDefaultAsync();
+            }
+        }
+
+        public async Task<List<int>> GetProblemIdsByUserIdAsync(int userId)
+        {
+            using (var context = _dbContextFactory.CreateDbContext())
+            {
+                return await context.ProblemAttempts
+                    .Where(sp => sp.userId == userId)
                     .Select(sp => sp.problemId)
                     .ToListAsync();
             }
@@ -60,6 +70,7 @@ namespace CodeHub.Services
                 return await context.ProblemAttempts
                     .Where(sp => sp.problemId == problemId)
                     .Select(sp => sp.User)
+                    .Distinct()
                     .ToListAsync();
             }
         }
@@ -85,6 +96,17 @@ namespace CodeHub.Services
                     context.ProblemAttempts.Remove(solvedProblem);
                     await context.SaveChangesAsync();
                 }
+            }
+        }
+
+        public async Task<List<ProblemAttempt>> GetProblemsByUserIdAndProblemIdAsync(int userId, int problemId)
+        {
+            using (var context = _dbContextFactory.CreateDbContext())
+            {
+                return await context.ProblemAttempts
+                    .Where(pa => pa.userId == userId && pa.problemId == problemId)
+                    .OrderByDescending(pa => pa.AttemptedAt)
+                    .ToListAsync();
             }
         }
     }

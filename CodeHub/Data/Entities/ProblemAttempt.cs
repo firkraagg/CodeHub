@@ -1,10 +1,14 @@
 ﻿using CodeHub.Data.Models;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CodeHub.Data.Entities
 {
     public class ProblemAttempt
     {
+        [Key]
+        public int Id { get; set; }
+
         [ForeignKey(nameof(Problem))]
         public int problemId { get; set; }
 

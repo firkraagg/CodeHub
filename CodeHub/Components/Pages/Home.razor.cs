@@ -29,7 +29,7 @@ public partial class Home
         var userId = ((CustomAuthStateProvider)AuthenticationStateProvider).GetLoggedInUserId();
         if (!string.IsNullOrEmpty(userId))
         {
-            _completedProblemIds = await SolvedProblemsService.GetSolvedProblemIdsByUserIdAsync(int.Parse(userId));
+            _completedProblemIds = await SolvedProblemsService.GetProblemIdsByUserIdAsync(int.Parse(userId));
         }
 
         await LoadProblems();
