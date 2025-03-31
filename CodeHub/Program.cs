@@ -62,7 +62,7 @@ namespace CodeHub
             builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             builder.Services.AddAuthorization(options =>
             {
-                options.AddPolicy("Admin", policy => policy.RequireClaim("Role", "Admin"));
+                options.AddPolicy("admin", policy => policy.RequireClaim("Role", "admin"));
             });
             builder.Logging.AddConsole();
             builder.Logging.AddDebug();

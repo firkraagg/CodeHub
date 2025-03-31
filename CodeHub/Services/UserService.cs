@@ -97,7 +97,7 @@ namespace CodeHub.Services
                     PasswordHash = BCrypt.Net.BCrypt.EnhancedHashPassword(password),
                     LdapUser = isLdapUser,
                     CreatedAt = DateTime.Now,
-                    Role = "Študent",
+                    Role = "student",
                     ProfileImage = GetDefaultProfileImage(),
                     DisplayName = displayName,
                     Group = group

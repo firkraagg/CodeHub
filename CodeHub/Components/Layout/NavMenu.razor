@@ -22,7 +22,7 @@
                     <li class="nav-item">
                         <a class="nav-link" aria-current="page" href="/">Domov</a>
                     </li>
-                    <AuthorizeView Roles="Učiteľ, Admin">
+                    <AuthorizeView Roles="teacher, admin">
                         <Authorized>
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">Úlohy</a>
@@ -33,7 +33,7 @@
                             </li>
                         </Authorized>
                     </AuthorizeView>
-                    <AuthorizeView Roles="Študent">
+                    <AuthorizeView Roles="student">
                         <Authorized>
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">Úlohy</a>
@@ -50,14 +50,14 @@
                                 <ul class="dropdown-menu">
                                     <li><a class="dropdown-item" href="/user-profile/my-profile">Zobraziť profil</a></li>
                                     <li><a class="dropdown-item" href="/user-profile/change-password">Zmeniť heslo</a></li>
-                                    <AuthorizeView Roles="Admin, Učiteľ">
+                                    <AuthorizeView Roles="admin, teacher">
                                         <li><a class="dropdown-item" href="/user-profile/problems">Spravovať úlohy</a></li>
                                     </AuthorizeView>
                                 </ul>
                             </li>
                         </Authorized>
                     </AuthorizeView>
-                    <AuthorizeView Roles="Admin">
+                    <AuthorizeView Roles="admin">
                         <Authorized>
                             <li class="nav-item">
                                 <a class="nav-link" aria-current="page" href="/manage-accounts">Spravovať účty</a>

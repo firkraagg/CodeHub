@@ -28,7 +28,7 @@ namespace CodeHub.Data.Entities
 
         public bool LdapUser { get; set; } = false;
         public DateTime CreatedAt { get; set; } = DateTime.Now;
-        public string Role { get; set; } = "Študent";
+        public string Role { get; set; } = "student";
         public byte[] ProfileImage { get; set; } = null!;
         public List<Problem> Problems { get; set; } = new();
         public ICollection<ProblemAttempt> SolvedProblems { get; set; }

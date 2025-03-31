@@ -12,7 +12,7 @@
 
 @page "/task-creation/{problemId:int}"
 
-<AuthorizeView Roles="Admin,Učiteľ,Študent" Context="authContext">
+<AuthorizeView Roles="admin,teacher,student" Context="authContext">
     <Authorized>
         <EditForm Model="@_problem" OnValidSubmit="HandleFormSubmitAsync" FormName="CreateProblem">
             <DataAnnotationsValidator />

@@ -11,7 +11,7 @@
 
 <PageTitle>User Profile</PageTitle>
 
-<AuthorizeView Roles="Admin,Učiteľ,Študent" Context="OuterContent">
+<AuthorizeView Roles="admin,teacher,student" Context="OuterContent">
     <Authorized>
         <div class="container-fluid text-center p-0 m-0 min-vh-100 d-flex flex-column">
             <div class="row text-white flex-grow-1 m-0 gx-0">
@@ -29,7 +29,7 @@
                     <div class="d-grid gap-2 w-100">
                         <button class="btn profile-button button-update p-2" @onclick="@(() => NavigateToProfileSection("my-profile"))">Zobraziť profil</button>
                         <button class="btn profile-button button-update p-2" @onclick="@(() => NavigateToProfileSection("change-password"))">Zmeniť heslo</button>
-                        <AuthorizeView Roles="Admin,Učiteľ" Context="myProblemsAuthContext">
+                        <AuthorizeView Roles="admin,teacher" Context="myProblemsAuthContext">
                             <Authorized>
                                 <button class="btn profile-button button-update p-2" @onclick="LoadUserProblems">Spravovať úlohy</button>
                             </Authorized>
@@ -144,7 +144,7 @@
                     }
                     else if (_showUserProblems)
                     {
-                        <AuthorizeView Roles="Admin, Učiteľ">
+                        <AuthorizeView Roles="admin, teacher">
                             <Authorized>
                             <div class="w-100 d-flex flex-column position-relative" style="min-height: 100vh;">
                                 <div class="position-relative mb-2">

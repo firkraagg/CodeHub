@@ -6,7 +6,7 @@
 
 <PageTitle>Manage Accounts</PageTitle>
 
-<AuthorizeView Roles="Admin">
+<AuthorizeView Roles="admin">
     <Authorized>
         <div class="container-fluid px-4 pt-3">
             <div class="row">
@@ -104,9 +104,9 @@
                             <div class="mb-3">
                                 <label for="RoleSelect" class="form-label">Rola:</label>
                                 <select class="form-select bg-dark text-white" id="RoleSelect" @bind="_editingUser.Role">
-                                    <option value="Admin">Admin</option>
-                                    <option value="Učiteľ">Učiteľ</option>
-                                    <option value="Študent">Študent</option>
+                                    <option value="admin">admin</option>
+                                    <option value="teacher">teacher</option>
+                                    <option value="student">student</option>
                                 </select>
                             </div>
                             <div class="mb-3">
