@@ -2,14 +2,21 @@
 @using CodeHub.Data.Entities
 @using CodeHub.Data.Models
 @using CodeHub.Services
+@using BlazorDownloadFile
 @inject ProblemsAttemptService ProblemsAttemptService
 @inject ProblemService ProblemService
 @inject TestCaseService TestCaseService
+@inject IBlazorDownloadFileService DownloadFileService
 
 <PageTitle>Úspešní riešitelia</PageTitle>
 
 <div class="d-flex justify-content-center mt-4">
     <div class="table-responsive" style="width: 75%;">
+        <div class="d-flex justify-content-start mb-2">
+            <button type="button" class="btn button-custom button-create-bg" @onclick="ExportToExcel">
+                <i class="fa-solid fa-file-excel me-1"></i> Exportovať výsledky do Excelu
+            </button>
+        </div>
         <table class="table table-striped table-dark table-solvers">
             <thead>
                 <tr>

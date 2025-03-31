@@ -1,3 +1,4 @@
+using BlazorDownloadFile;
 using CodeHub.Components;
 using CodeHub.Data;
 using CodeHub.Data.Models;
@@ -32,6 +33,7 @@ namespace CodeHub
             builder.Services.AddDataProtection()
                 .PersistKeysToFileSystem(new DirectoryInfo("/app/keys"))
                 .SetApplicationName("CodeHubApp");
+            builder.Services.AddBlazorDownloadFile();
             builder.Services.AddTransient<UserService>();
             builder.Services.AddTransient<ProblemService>();
             builder.Services.AddTransient<ProgrammingLanguageService>();
