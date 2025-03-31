@@ -38,6 +38,7 @@ namespace CodeHub.Services
                         Description = problem.Description,
                         Acceptance = 0.0,
                         Difficulty = problem.Difficulty,
+                        Points = problem.Points,
                         LanguageID = problem.LanguageID,
                         DefaultCode = problem.DefaultCode,
                         CreatedAt = DateTime.Now,
@@ -149,6 +150,7 @@ namespace CodeHub.Services
 
                     existingProblem.Title = problem.Title;
                     existingProblem.Difficulty = problem.Difficulty;
+                    existingProblem.Points = problem.Points;
                     existingProblem.ProgrammingLanguage = problem.ProgrammingLanguage;
                     existingProblem.LanguageID = problem.LanguageID;
                     existingProblem.Description = problem.Description;

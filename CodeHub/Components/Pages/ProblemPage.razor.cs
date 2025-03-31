@@ -23,6 +23,7 @@ public partial class ProblemPage
     private string _selectedTheme = "vs-dark";
     private string _userCode;
     private string _output;
+    private int _numberOfPassedTests;
     private bool _allTestsPassed;
     private bool _isSubmitLoading;
     private bool _isCheckLoading;
@@ -66,12 +67,13 @@ public partial class ProblemPage
 
     }
 
-    private void HandleResultReceived(string output, bool allTestsPassed)
+    private void HandleResultReceived(string output, int NumberOfPassedTests, bool allTestsPassed)
     {
         InvokeAsync(() =>
         {
             _output = output;
             _allTestsPassed = allTestsPassed;
+            _numberOfPassedTests = NumberOfPassedTests;
             _executionCompletion.TrySetResult(true);
             StateHasChanged();
         });
@@ -84,6 +86,7 @@ public partial class ProblemPage
 
     private async Task SendCodeToQueue(bool isEvaluation)
     {
+        var numberOfTestCases = 0;
         if (isEvaluation)
         {
             _isSubmitLoading = true;
@@ -110,6 +113,7 @@ public partial class ProblemPage
             var language = await ProgrammingLanguageService.GetProgrammingLanguageByIdAsync(_problem!.LanguageID);
             var languageName = language.Name;
             var testCases = await TestCaseService.GetTestCasesForProblemAsync(_problem.Id);
+            numberOfTestCases = testCases.Count;
 
             await rabbitMqProducer.SendToRabbitMq(codeToSend, languageName, testCases, isEvaluation);
             await _executionCompletion.Task;
@@ -133,12 +137,15 @@ public partial class ProblemPage
                 _user = await UserService.GetUserByIdAsync(userId);
             }
 
+            var points = (_numberOfPassedTests / numberOfTestCases) * _problem!.Points;
             var solvedProblem = new ProblemAttempt
             {
                 problemId = _problem.Id,
                 userId = int.Parse(userId),
                 AttemptedAt = DateTime.UtcNow.AddHours(2),
                 SourceCode = codeToSend,
+                PassedTestCases = _numberOfPassedTests,
+                Points = points,
                 IsSuccessful = _allTestsPassed
             };
 

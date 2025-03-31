@@ -16,27 +16,20 @@ namespace CodeHub.Components.Pages
         private ProblemAttempt? _actualProblemAttempt;
         private string? _sourceCode;
         private bool _showSourceCode;
+        private int _testCasesNumber;
 
         protected override async Task OnInitializedAsync()
         {
             _users = await ProblemsAttemptService.GetUsersBySolvedProblemIdAsync(ProblemId);
             _problem = await ProblemService.GetProblemByIdAsync(ProblemId);
+            var testCases = await TestCaseService.GetTestCasesForProblemAsync(_problem.Id);
+            _testCasesNumber = testCases.Count;
             foreach (var user in _users)
             {
                 var problems = await ProblemsAttemptService.GetProblemsByUserIdAndProblemIdAsync(user.Id, ProblemId);
                 _userAttempts[user.Id] = problems
-                            .GroupBy(p => new { p.AttemptedAt, p.SourceCode }) // Grouping by Attempt date and SourceCode (or other fields)
-                            .Select(g => g.First())  // Take the first one from each group
-                            .ToList();                //if (problems.Any())
-                //{
-                //    _solvedDates.Add(problems.Last().AttemptedAt);
-                //    _isSolvedSuccessfully.Add(problems.Any(p => p.IsSuccessful));
-                //}
-                //else
-                //{
-                //    _solvedDates.Add(null);
-                //    _isSolvedSuccessfully.Add(false);
-                //}
+                    .OrderBy(p => p.AttemptedAt)
+                    .ToList();
             }
         }
 

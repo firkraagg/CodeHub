@@ -32,7 +32,17 @@ public partial class Home
             _completedProblemIds = await SolvedProblemsService.GetProblemIdsByUserIdAsync(int.Parse(userId));
         }
 
-        await LoadProblems();
+        // Check if problems are already loaded
+        if (!ProblemCacheService.IsLoaded)
+        {
+            await LoadProblems();
+            ProblemCacheService.SetProblems(_problems);
+        }
+        else
+        {
+            _problems = ProblemCacheService.GetProblems();
+        }
+
         await LoadTags();
         _selectedTags = new List<Tag>();
 

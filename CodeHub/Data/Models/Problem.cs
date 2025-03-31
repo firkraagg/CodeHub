@@ -21,6 +21,9 @@ namespace CodeHub.Data.Models
         [Required, Range(1, 5, ErrorMessage = "Vyberte obťažnosť")]
         public int Difficulty { get; set; }
 
+        [Required(ErrorMessage = "Musíte zadať počet bodov")]
+        public double Points { get; set; }
+
         [MaxLength(1500)]
         public string? DefaultCode { get; set; }
 

@@ -65,6 +65,17 @@
                 </div>
                 <div class="row">
                     <div class="col-12 col-md-6 text-start my-2">
+                        Počet bodov
+                    </div>
+                    <div class="col-12 col-md-6 mb-5">
+                        <InputNumber @bind-Value="_problem.Points" class="form-control bg-dark text-white"
+                                     step="0.1" min="0" max="100" id="pointsInput"
+                                     oninput="formatDecimalInput(event)" />
+                        <ValidationMessage For="@(() => _problem.Points)" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-md-6 text-start my-2">
                         Popis úlohy
                     </div>
                     <div class="mb-3 col-12 col-md-6">

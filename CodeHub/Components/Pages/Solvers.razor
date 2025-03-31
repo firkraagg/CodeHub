@@ -4,24 +4,20 @@
 @using CodeHub.Services
 @inject ProblemsAttemptService ProblemsAttemptService
 @inject ProblemService ProblemService
+@inject TestCaseService TestCaseService
 
 <PageTitle>Úspešní riešitelia</PageTitle>
 
 <div class="d-flex justify-content-center mt-4">
-    <div class="table-responsive" style="width: 90%;">
+    <div class="table-responsive" style="width: 75%;">
         <table class="table table-striped table-dark table-solvers">
             <thead>
                 <tr>
                     <th scope="col">#</th>
                     <th scope="col">Meno a priezvisko</th>
                     <th scope="col">Prezývka</th>
-                    <th scope="col">E-mail</th>
-                    <th scope="col">Študijná skupina</th>
-                    <th scope="col">LDAP používateľ</th>
                     <th scope="col">Dátum</th>
                     <th scope="col">Úspešný</th>
-                    <th scope="col">Úspešné testy</th>
-                    <th scope="col">Počet bodov</th>
                     <th scope="col">Akcie</th>
                 </tr>
             </thead>
@@ -31,24 +27,22 @@
                     int index = 1;
                     foreach (var user in _users)
                     {
-                        var isLdapUser = @user.LdapUser ? "Áno" : "Nie";
+                        var isLdapUser = user.LdapUser ? "Áno" : "Nie";
 
                         foreach (var attempt in _userAttempts[user.Id])
                         {
+                            var collapseId = $"collapse-{index}";
+
                             <tr>
                                 <td>@index</td>
                                 <td>@user.DisplayName</td>
                                 <td>@user.Username</td>
-                                <td>@user.Email</td>
-                                <td>@user.Group</td>
-                                <td>@isLdapUser</td>
-
                                 <td>@attempt.AttemptedAt.ToString("yyyy-MM-dd HH:mm:ss")</td>
 
                                 <td>
                                     @if (attempt.IsSuccessful)
                                     {
-                                        <span style="color: green;"><i class="fa-regular fa-square-check fa-lg"></i></span>
+                                        <span style="color: green;"><i class="fa-solid fa-square-check fa-lg"></i></span>
                                     }
                                     else
                                     {
@@ -56,11 +50,24 @@
                                     }
                                 </td>
 
-                                <td></td>
-                                <td>pocet bodov</td>
-
                                 <td>
-                                    <button type="button" class="btn button-custom button-add-bg" @onclick="() => ShowSourceCode(attempt)">Zobraziť kód</button>
+                                    <button type="button" class="btn button-custom button-add-bg me-1" @onclick="() => ShowSourceCode(attempt)">Zobraziť kód</button>
+                                    <button type="button" class="btn button-custom button-warning-bg fw-bold px-3"
+                                            data-bs-toggle="collapse" style="color:black !important" data-bs-target="#@collapseId">
+                                        <i class="fa-solid fa-info-circle me-1"></i> Info
+                                    </button>
+                                </td>
+                            </tr>
+
+                            <tr id="@collapseId" class="collapse">
+                                <td colspan="7" class="expanded-content">
+                                    <div class="p-3 bg-dark text-light">
+                                        <p><strong>📌 E-mail:</strong> @user.Email</p>
+                                        <p><strong>📌 Študijná skupina:</strong> @user.Group</p>
+                                        <p><strong>📌 LDAP účet:</strong> @isLdapUser</p>
+                                        <p><strong>📌 Počet úspešných testov:</strong> @attempt.PassedTestCases / @_testCasesNumber</p>
+                                        <p><strong>📌 Body:</strong> @attempt.Points / @_problem.Points</p>
+                                    </div>
                                 </td>
                             </tr>
 
@@ -71,7 +78,7 @@
                 else
                 {
                     <tr>
-                        <td colspan="11" class="text-center">Úloha ešte nebola riešená</td>
+                        <td colspan="7" class="text-center">Úloha ešte nebola riešená</td>
                     </tr>
                 }
             </tbody>

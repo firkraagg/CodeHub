@@ -253,6 +253,11 @@ button.button-custom {
     color: white !important;
 }
 
+.badge.badge-points {
+    background: linear-gradient(135deg, #6f42c1, #5a2d8c) !important;
+    color: white !important;
+}
+
 .text-veryeasy {
     color: lightgreen;
 }
@@ -318,6 +323,16 @@ button.button-custom {
 
 .table-solvers {
     text-align: center;
+}
+
+.expanded-content {
+    text-align: left;
+    padding-left: 20px;  Adds a bit of spacing for a clean look 
+}
+
+ Ensure the expanded row has no extra padding/margins 
+.expanded-row td {
+    padding: 10px !important;
 }
 
 /*.fixed-bottom-alert {
