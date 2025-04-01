@@ -64,14 +64,38 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-12 col-md-6 text-start my-2">
+                    <div class="col-12 col-md-6 text-start">
                         Počet bodov
                     </div>
-                    <div class="col-12 col-md-6 mb-5">
+                    <div class="col-12 col-md-6">
                         <InputNumber @bind-Value="_problem.Points" class="form-control bg-dark text-white"
                                      step="0.1" min="0" max="100" id="pointsInput"
                                      oninput="formatDecimalInput(event)" />
                         <ValidationMessage For="@(() => _problem.Points)" />
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-12 col-md-6 text-start">
+                        Výber týždňa
+                    </div>
+                    <div class="mb-3 col-12 col-md-6">
+                        <InputSelect @bind-Value="_problem.Week" class="form-select bg-dark" aria-label="Vyber týždeň">
+                            <option selected disabled hidden value="0" class="color:white !important;">-- Vyber týždeň --</option>
+                            @for (int i = 1; i <= 13; i++)
+                            {
+                                <option value="@i">Týždeň @i</option>
+                            }
+                        </InputSelect>
+                        <ValidationMessage For="@(() => _selectedWeek)" />
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-12 col-md-6 text-start">
+                        Výber dátumu zverejnenia
+                    </div>
+                    <div class="mb-3 col-12 col-md-6">
+                        <InputDate @bind-Value="_problem.ReleaseDate" class="form-control bg-dark text-white" aria-label="Vyber dátum" />
+                        <ValidationMessage For="@(() => _problem.ReleaseDate)" />
                     </div>
                 </div>
                 <div class="row">

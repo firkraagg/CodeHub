@@ -42,6 +42,8 @@ namespace CodeHub.Services
                         LanguageID = problem.LanguageID,
                         DefaultCode = problem.DefaultCode,
                         CreatedAt = DateTime.Now,
+                        ReleaseDate = problem.ReleaseDate,
+                        Week = problem.Week,
                         Examples = new List<ProblemExample>(),
                         Constraints = new List<ProblemConstraint>(),
                         Hints = new List<ProblemHint>(),
@@ -155,6 +157,8 @@ namespace CodeHub.Services
                     existingProblem.LanguageID = problem.LanguageID;
                     existingProblem.Description = problem.Description;
                     existingProblem.DefaultCode = problem.DefaultCode;
+                    existingProblem.Week = problem.Week;
+                    existingProblem.ReleaseDate = problem.ReleaseDate;
 
                     await context.SaveChangesAsync();
 
@@ -304,7 +308,8 @@ namespace CodeHub.Services
         {
             using (var context = _dbContextFactory.CreateDbContext())
             {
-                return await context.Problems.ToListAsync();
+                var problems = await context.Problems.ToListAsync();
+                return problems.Where(p => p.IsVisible).ToList();
             }
         }
 

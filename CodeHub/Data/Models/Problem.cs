@@ -30,6 +30,11 @@ namespace CodeHub.Data.Models
         [Required]
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
+        [Required(ErrorMessage = "Musíte vybrať týždeň")]
+        public int Week { get; set; }
+
+        public DateTime? ReleaseDate { get; set; }
+
         public virtual ICollection<ProblemExample> Examples { get; set; }
 
         public virtual ICollection<ProblemConstraint> Constraints { get; set; }
@@ -48,5 +53,7 @@ namespace CodeHub.Data.Models
 
         public ICollection<Tag> Tags { get; set; }
         public ICollection<ProblemAttempt> SolvedByUsers { get; set; }
+        public bool IsVisible => ReleaseDate == null || ReleaseDate <= DateTime.Now;
+
     }
 }

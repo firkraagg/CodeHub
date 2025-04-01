@@ -45,6 +45,7 @@ public partial class TaskCreation
     private bool _showModalConstraint;
     private bool _showModalExample;
     private bool _isEditing;
+    private int _selectedWeek;
 
     [Inject] private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = null!;
     [Parameter] public Problem? ProblemToEdit { get; set; }

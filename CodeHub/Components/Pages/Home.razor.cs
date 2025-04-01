@@ -1,6 +1,7 @@
 ﻿using CodeHub.Data.Entities;
 using CodeHub.Data.Models;
 using CodeHub.Services;
+using Microsoft.AspNetCore.Components.Routing;
 
 namespace CodeHub.Components.Pages;
 
@@ -12,6 +13,8 @@ public partial class Home
     private List<Tag> _tags = new();
     private List<Tag> _selectedTags = new();
     private List<int> _completedProblemIds = new();
+    private List<int> _availableWeeks = new();
+    private HashSet<int> _selectedWeeks = new();
     private int _selectedDifficulty = -1;
     private string _selectedSort = "";
     private int _selectedTagId = 0;
@@ -32,17 +35,11 @@ public partial class Home
             _completedProblemIds = await SolvedProblemsService.GetProblemIdsByUserIdAsync(int.Parse(userId));
         }
 
-        if (!ProblemCacheService.IsLoaded)
-        {
-            await LoadProblems();
-            ProblemCacheService.SetProblems(_problems);
-        }
-        else
-        {
-            _problems = ProblemCacheService.GetProblems();
-        }
+        await LoadProblems();
+        ProblemCacheService.SetProblems(_problems);
 
         await LoadTags();
+        UpdateAvailableWeeks();
         _selectedTags = new List<Tag>();
 
         foreach (var problem in _problems)
@@ -51,6 +48,33 @@ public partial class Home
         }
 
         _problemsAreLoading = false;
+    }
+
+    private void UpdateAvailableWeeks()
+    {
+        _availableWeeks = _problems
+            .Select(p => p.Week)
+            .Distinct()
+            .OrderBy(w => w)
+            .ToList();
+    }
+
+    private async Task ToggleWeekSelection(int week)
+    {
+        if (_selectedWeeks.Contains(week))
+        {
+            _selectedWeeks.Remove(week);
+        }
+        else
+        {
+            _selectedWeeks.Add(week);
+        }
+
+        if (!(_selectedDifficulty > 0))
+        {
+            await ApplyFilter(0);
+        }
+        await FilterProblems();
     }
 
     public void SetProblemCount(int count)
@@ -115,6 +139,11 @@ public partial class Home
         _isFiltering = true;
         StateHasChanged();
         List<Problem> filtered = _problems;
+
+        if (_selectedWeeks.Any())
+        {
+            filtered = filtered.Where(p => _selectedWeeks.Contains(p.Week)).ToList();
+        }
 
         if (_selectedTags.Any())
         {
