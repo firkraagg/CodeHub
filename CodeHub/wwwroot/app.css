@@ -80,9 +80,9 @@ html, body {
 }
 
 .navbar-brand .logo-image {
-    max-width: 100%; /* Ensure the image never overflows */
-    height: auto; /* Maintain aspect ratio */
-    width: 40px; /* A base size for most viewports */
+    max-width: 100%;
+    height: auto;
+    width: 40px;
     object-fit: contain;
 }
 
@@ -325,23 +325,20 @@ button.button-custom {
     text-align: center;
 }
 
+.completed-row td, .completed-row th {
+    background-color: #28a745 !important;
+    color: white;
+}
+
 .expanded-content {
     text-align: left;
     padding-left: 20px;  Adds a bit of spacing for a clean look 
 }
 
- Ensure the expanded row has no extra padding/margins 
 .expanded-row td {
     padding: 10px !important;
 }
 
-/*.fixed-bottom-alert {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    z-index: 1050;
-}*/
-/*Pod tymto nie su moje pravidla*/
 a, .btn-link {
     color: #006bb7;
 }

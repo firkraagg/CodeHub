@@ -8,246 +8,247 @@
 @inject ProblemsAttemptService SolvedProblemsService
 @inject ProblemCacheService ProblemCacheService
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Domov</PageTitle>
 
-<div class="container-fluid">
-    <div class="d-flex justify-content-center mt-5 gap-2 flex-wrap">
-        <div class="sorting_buttons mt-3 gap-2 w-50 w-md-50">
-            <div class="dropdown">
-                <button class="btn btn-secondary dropdown-toggle bg-dark" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    Počet otázok
-                </button>
-                <ul class="dropdown-menu dropdown-menu-dark">
-                    <li><a class="dropdown-item @(_maxProblemsToShow == 10 ? "active bg-warning text-dark" : "")" @onclick="() => SetProblemCount(10)">zobraziť 10 otázok </a></li>
-                    <li><a class="dropdown-item @(_maxProblemsToShow == 20 ? "active bg-warning text-dark" : "")" @onclick="() => SetProblemCount(20)">zobraziť 20 otázok</a></li>
-                    <li><a class="dropdown-item @(_maxProblemsToShow == 30 ? "active bg-warning text-dark" : "")" @onclick="() => SetProblemCount(30)">zobraziť 30 otázok</a></li>
-                </ul>
-            </div>
-             <div class="dropdown">
-                <button class="btn btn-secondary dropdown-toggle bg-dark" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    Týždne
-                </button>
-                <ul class="dropdown-menu dropdown-menu-dark overflow-auto" style="max-height:20vh">
-                    @if (_availableWeeks.Any())
-                    {
-                        @foreach (var week in _availableWeeks)
-                        {
-                            <li>
-                                <input type="checkbox" class="form-check-input me-2 ms-2"
-                                       checked="@_selectedWeeks.Contains(week)"
-                                       @onchange="() => ToggleWeekSelection(week)" />
-                                <label class="form-check-label">Týždeň @week</label>
-                            </li>
-                        }
-                    }
-                </ul>
-            </div>
-            <div class="dropdown">
-                <button class="btn btn-secondary dropdown-toggle bg-dark" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    Zoradiť podľa
-                </button>
-                <ul class="dropdown-menu dropdown-menu-dark">
-                    <li><a class="dropdown-item @( _selectedSort == "newest" ? "active bg-warning text-dark" : "")" @onclick="@(() => ApplySorting("newest"))">Najnovšie</a></li>
-                    <li><a class="dropdown-item @( _selectedSort == "oldest" ? "active bg-warning text-dark" : "")" @onclick="@(() => ApplySorting("oldest"))">Najstaršie</a></li>
-                    <li><a class="dropdown-item @( _selectedSort == "easiest" ? "active bg-warning text-dark" : "")" @onclick="@(() => ApplySorting("easiest"))">Najľahšie</a></li>
-                    <li><a class="dropdown-item @( _selectedSort == "hardest" ? "active bg-warning text-dark" : "")" @onclick="@(() => ApplySorting("hardest"))">Najťažšie</a></li>
-                </ul>
-            </div>
-
-            <div class="dropdown">
-                <button class="btn btn-secondary dropdown-toggle bg-dark" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    Obťažnosť
-                </button>
-                <ul class="dropdown-menu dropdown-menu-dark">
-                    <li><a class="dropdown-item @( _selectedDifficulty == 1 ? "active bg-dark" : "")" style="color:lightgreen" @onclick="@(() => ApplyFilter(1))">Veľmi ľahká</a></li>
-                    <li><a class="dropdown-item text-success @( _selectedDifficulty == 2 ? "active bg-dark" : "")" @onclick="@(() => ApplyFilter(2))">Ľahká</a></li>
-                    <li><a class="dropdown-item text-warning @( _selectedDifficulty == 3 ? "active bg-dark" : "")" @onclick="@(() => ApplyFilter(3))">Stredná</a></li>
-                    <li><a class="dropdown-item text-danger @( _selectedDifficulty == 4 ? "active bg-dark" : "")" @onclick="@(() => ApplyFilter(4))">Ťažká</a></li>
-                    <li><a class="dropdown-item @( _selectedDifficulty == 5 ? "active bg-dark" : "")" style="color:darkred" @onclick="@(() => ApplyFilter(5))">Veľmi ťažká</a></li>
-                    <li><a class="dropdown-item @( _selectedDifficulty == 0 ? "active bg-primary" : "")" @onclick="@(() => ApplyFilter(0))">Všetky</a></li>
-                </ul>
-            </div>
-            <div class="dropdown">
-                <button class="btn btn-secondary dropdown-toggle bg-dark" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    Značky
-                </button>
-                <ul class="dropdown-menu dropdown-menu-dark overflow-auto" style="max-height:20vh">
-                    @if (_tags.Any())
-                    {
-                        @foreach (var tag in _tags.GroupBy(t => t.Name).Select(group => group.First()))
-                        {
-                            <li>
-                                <input type="checkbox" class="form-check-input me-2 ms-2"
-                                       checked="@_selectedTags.Contains(tag)"
-                                       @onchange="() => ToggleTagSelection(tag)" />
-                                <label class="form-check-label">@tag.Name</label>
-                            </li>
-                        }
-                    }
-                    else
-                    {
-                        <li><span class="dropdown-item disabled">Načítavam značky...</span></li>
-                    }
-                </ul>
-            </div>
-        </div>
-        <div class="custom-table">
-            <div class="table-responsive">
-                <table class="table table-striped table-dark">
-                    <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Týždeň</th>
-                        <th scope="col">Stav</th>
-                        <th scope="col">Názov</th>
-                        <th scope="col">Prijatie</th>
-                        <th scope="col">Náročnosť</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                        @if (_problemsAreLoading)
-                        {
-                            <tr>
-                                <td colspan="5" class="text-center">
-                                    <div class="spinner-border text-light" role="status">
-                                        <span class="sr-only">Načítava sa...</span>
-                                    </div>
-                                </td>
-                            </tr>
-                        }
-                        else if ((_isFiltered ? _filteredProblems : _problems).Any())
-                        {
-                            int startIndex = (_currentPage - 1) * _maxProblemsToShow + 1;
-                            var problemsToDisplay = (_isFiltered ? _filteredProblems : _problems)
-                                .Skip((_currentPage - 1) * _maxProblemsToShow)
-                                .Take(_maxProblemsToShow);
-
-                            foreach (var (problem, index) in problemsToDisplay.Select((p, i) => (p, i + startIndex)))
+<AuthorizeView>
+    <Authorized>
+        <div class="container-fluid">
+            <div class="d-flex justify-content-center mt-5 gap-2 flex-wrap">
+                <div class="sorting_buttons mt-3 gap-2 w-50 w-md-50">
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle bg-dark" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Počet otázok
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-dark">
+                            <li><a class="dropdown-item @(_maxProblemsToShow == 10 ? "active bg-warning text-dark" : "")" @onclick="() => SetProblemCount(10)">zobraziť 10 otázok </a></li>
+                            <li><a class="dropdown-item @(_maxProblemsToShow == 20 ? "active bg-warning text-dark" : "")" @onclick="() => SetProblemCount(20)">zobraziť 20 otázok</a></li>
+                            <li><a class="dropdown-item @(_maxProblemsToShow == 30 ? "active bg-warning text-dark" : "")" @onclick="() => SetProblemCount(30)">zobraziť 30 otázok</a></li>
+                        </ul>
+                    </div>
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle bg-dark" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Týždne
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-dark overflow-auto" style="max-height:20vh">
+                            @if (_availableWeeks.Any())
                             {
-                                bool isCompleted = _completedProblemIds.Contains(problem.Id);
-                                    <tr>
-                                    <th scope="row">@index</th>
-                                    <th class="text-center">@problem.Week</th>
-                                    <td>
-                                        @if (isCompleted)
-                                        {
-                                            <i class="fa-solid fa-calendar-check text-success fa-lg"></i>
-                                        }
-                                    </td>
-                                    <td>
-                                        <a href=@($"/problem/{problem.Id}") style="text-decoration: none; color: white;" 
-                                           onmouseover="this.style.color='lightblue'" onmouseout="this.style.color='white'">
-                                            @problem.Title
-                                        </a>
-                                    </td>
-                                    <td>@($"{problem.Acceptance:P}")</td>
-                                    <td>
-                                        @if (problem.Difficulty == 1)
-                                        {
-                                            <span class="badge badge-veryeasy">Veľmi ľahká</span>
-                                        }
-                                        else if (problem.Difficulty == 2)
-                                        {
-                                            <span class="badge badge-easy">Ľahká</span>
-                                        }
-                                        else if (problem.Difficulty == 3)
-                                        {
-                                            <span class="badge badge-medium">Stredná</span>
-                                        }
-                                        else if (problem.Difficulty == 4)
-                                        {
-                                            <span class="badge badge-hard">Ťažká</span>
-                                        }
-                                        else if (problem.Difficulty == 5)
-                                        {
-                                            <span class="badge badge-veryhard">Veľmi ťažká</span>
-                                        }
-                                        else
-                                        {
-                                            <span>Neznáma</span>
-                                        }
-                                    </td>
-                                </tr>
+                                @foreach (var week in _availableWeeks)
+                                {
+                                    <li>
+                                        <input type="checkbox" class="form-check-input me-2 ms-2"
+                                               checked="@_selectedWeeks.Contains(week)"
+                                               @onchange="() => ToggleWeekSelection(week)" />
+                                        <label class="form-check-label">Týždeň @week</label>
+                                    </li>
+                                }
                             }
-                        }
-                        else
-                        {
-                            <tr>
-                                <td colspan="5" class="text-center">Žiadne úlohy</td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
+                        </ul>
+                    </div>
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle bg-dark" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Zoradiť podľa
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-dark">
+                            <li><a class="dropdown-item @( _selectedSort == "newest" ? "active bg-warning text-dark" : "")" @onclick="@(() => ApplySorting("newest"))">Najnovšie</a></li>
+                            <li><a class="dropdown-item @( _selectedSort == "oldest" ? "active bg-warning text-dark" : "")" @onclick="@(() => ApplySorting("oldest"))">Najstaršie</a></li>
+                            <li><a class="dropdown-item @( _selectedSort == "easiest" ? "active bg-warning text-dark" : "")" @onclick="@(() => ApplySorting("easiest"))">Najľahšie</a></li>
+                            <li><a class="dropdown-item @( _selectedSort == "hardest" ? "active bg-warning text-dark" : "")" @onclick="@(() => ApplySorting("hardest"))">Najťažšie</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle bg-dark" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Obťažnosť
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-dark">
+                            <li><a class="dropdown-item @( _selectedDifficulty == 1 ? "active bg-dark" : "")" style="color:lightgreen" @onclick="@(() => ApplyFilter(1))">Veľmi ľahká</a></li>
+                            <li><a class="dropdown-item text-success @( _selectedDifficulty == 2 ? "active bg-dark" : "")" @onclick="@(() => ApplyFilter(2))">Ľahká</a></li>
+                            <li><a class="dropdown-item text-warning @( _selectedDifficulty == 3 ? "active bg-dark" : "")" @onclick="@(() => ApplyFilter(3))">Stredná</a></li>
+                            <li><a class="dropdown-item text-danger @( _selectedDifficulty == 4 ? "active bg-dark" : "")" @onclick="@(() => ApplyFilter(4))">Ťažká</a></li>
+                            <li><a class="dropdown-item @( _selectedDifficulty == 5 ? "active bg-dark" : "")" style="color:darkred" @onclick="@(() => ApplyFilter(5))">Veľmi ťažká</a></li>
+                            <li><a class="dropdown-item @( _selectedDifficulty == 0 ? "active bg-primary" : "")" @onclick="@(() => ApplyFilter(0))">Všetky</a></li>
+                        </ul>
+                    </div>
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle bg-dark" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Značky
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-dark overflow-auto" style="max-height:20vh">
+                            @if (_tags.Any())
+                            {
+                                @foreach (var tag in _tags.GroupBy(t => t.Name).Select(group => group.First()))
+                                {
+                                    <li>
+                                        <input type="checkbox" class="form-check-input me-2 ms-2"
+                                               checked="@_selectedTags.Contains(tag)"
+                                               @onchange="() => ToggleTagSelection(tag)" />
+                                        <label class="form-check-label">@tag.Name</label>
+                                    </li>
+                                }
+                            }
+                            else
+                            {
+                                <li><span class="dropdown-item disabled">Načítavam značky...</span></li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+                <div class="custom-table">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-dark">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Týždeň</th>
+                                    <th scope="col">Názov</th>
+                                    <th scope="col">Prijatie</th>
+                                    <th scope="col">Náročnosť</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (_problemsAreLoading)
+                                {
+                                    <tr>
+                                        <td colspan="5" class="text-center">
+                                            <div class="spinner-border text-light" role="status">
+                                                <span class="sr-only">Načítava sa...</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                                else if ((_isFiltered ? _filteredProblems : _problems).Any())
+                                {
+                                    int startIndex = (_currentPage - 1) * _maxProblemsToShow + 1;
+                                    var problemsToDisplay = (_isFiltered ? _filteredProblems : _problems)
+                                    .Skip((_currentPage - 1) * _maxProblemsToShow)
+                                    .Take(_maxProblemsToShow);
+
+                                    foreach (var (problem, index) in problemsToDisplay.Select((p, i) => (p, i + startIndex)))
+                                    {
+                                        bool isCompleted = _completedProblemIds.Contains(problem.Id);
+                                        var rowClass = isCompleted ? "completed-row" : "";
+                                        <tr class="@rowClass">
+                                            <th scope="row">@index</th>
+                                            <th class="text-center">@problem.Week</th>
+                                            <td>
+                                                <a href=@($"/problem/{problem.Id}") style="text-decoration: none; color: white;"
+                                                   onmouseover="this.style.color='lightblue'" onmouseout="this.style.color='white'">
+                                                    @problem.Title
+                                                </a>
+                                            </td>
+                                            <td>@($"{problem.Acceptance:P}")</td>
+                                            <td>
+                                                @if (problem.Difficulty == 1)
+                                                {
+                                                    <span class="badge badge-veryeasy">Veľmi ľahká</span>
+                                                }
+                                                else if (problem.Difficulty == 2)
+                                                {
+                                                    <span class="badge badge-easy">Ľahká</span>
+                                                }
+                                                else if (problem.Difficulty == 3)
+                                                {
+                                                    <span class="badge badge-medium">Stredná</span>
+                                                }
+                                                else if (problem.Difficulty == 4)
+                                                {
+                                                    <span class="badge badge-hard">Ťažká</span>
+                                                }
+                                                else if (problem.Difficulty == 5)
+                                                {
+                                                    <span class="badge badge-veryhard">Veľmi ťažká</span>
+                                                }
+                                                else
+                                                {
+                                                    <span>Neznáma</span>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="5" class="text-center">Žiadne úlohy</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                @if ((!_problemsAreLoading && ((_isFiltered && _filteredProblems.Count > 0) || (!_isFiltered && _problems.Count > 0))))
+                {
+                    <div class="navigation mb-2 w-100">
+                        <nav aria-label="Page navigation example" class="d-flex justify-content-around">
+                            <ul class="pagination bg-dark d-flex flex-wrap">
+                                <li class="page-item @(_currentPage == 1 ? "disabled" : "")">
+                                    <a class="page-link bg-dark link-primary" @onclick="() => GoToPage(_currentPage - 1)">
+                                        &lt;
+                                    </a>
+                                </li>
+
+                                @if (_totalPages <= 5)
+                                {
+                                    @for (int i = 1; i <= _totalPages; i++)
+                                    {
+                                        var page = i;
+                                        <li class="page-item @(i == _currentPage ? "active" : "")">
+                                            <a class="page-link bg-dark link-primary" @onclick="() => GoToPage(page)">
+                                                @i
+                                            </a>
+                                        </li>
+                                    }
+                                }
+                                else
+                                {
+                                    <li class="page-item @(1 == _currentPage ? "active" : "")">
+                                        <a class="page-link bg-dark link-primary" @onclick="() => GoToPage(1)">1</a>
+                                    </li>
+
+                                    @if (_currentPage > 3)
+                                    {
+                                        <li class="page-item">
+                                            <span class="page-link bg-dark link-secondary">...</span>
+                                        </li>
+                                    }
+
+                                    int start = Math.Max(2, _currentPage - 2);
+                                    int end = Math.Min(_totalPages - 1, _currentPage + 2);
+                                    @for (int i = start; i <= end; i++)
+                                    {
+                                        var page = i;
+                                        <li class="page-item @(page == _currentPage ? "active" : "")">
+                                            <a class="page-link bg-dark link-primary" @onclick="() => GoToPage(page)">
+                                                @i
+                                            </a>
+                                        </li>
+                                    }
+
+                                    @if (_currentPage < _totalPages - 2)
+                                    {
+                                        <li class="page-item">
+                                            <span class="page-link bg-dark link-secondary">...</span>
+                                        </li>
+                                    }
+
+                                    <li class="page-item @(_totalPages == _currentPage ? "active" : "")">
+                                        <a class="page-link bg-dark link-primary" @onclick="() => GoToPage(_totalPages)">@_totalPages</a>
+                                    </li>
+                                }
+
+                                <li class="page-item @(_currentPage == _totalPages ? "disabled" : "")">
+                                    <a class="page-link bg-dark link-primary" @onclick="() => GoToPage(_currentPage + 1)">
+                                        &gt;
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                }
             </div>
         </div>
-        @if ((!_problemsAreLoading && ((_isFiltered && _filteredProblems.Count > 0) || (!_isFiltered && _problems.Count > 0)))) 
-        {
-            <div class="navigation mb-2 w-100">
-            <nav aria-label="Page navigation example" class="d-flex justify-content-around">
-                <ul class="pagination bg-dark d-flex flex-wrap">
-                    <li class="page-item @(_currentPage == 1 ? "disabled" : "")">
-                        <a class="page-link bg-dark link-primary" @onclick="() => GoToPage(_currentPage - 1)">
-                            &lt;
-                        </a>
-                    </li>
-                    
-                    @if (_totalPages <= 5)
-                    {
-                        @for (int i = 1; i <= _totalPages; i++)
-                        {
-                            var page = i;
-                            <li class="page-item @(i == _currentPage ? "active" : "")">
-                                <a class="page-link bg-dark link-primary" @onclick="() => GoToPage(page)">
-                                    @i
-                                </a>
-                            </li>
-                        }
-                    }
-                    else
-                    {
-                        <li class="page-item @(1 == _currentPage ? "active" : "")">
-                            <a class="page-link bg-dark link-primary" @onclick="() => GoToPage(1)">1</a>
-                        </li>
-
-                         @if (_currentPage > 3)
-                        {
-                            <li class="page-item">
-                                <span class="page-link bg-dark link-secondary">...</span>
-                            </li>
-                        }
-
-                        int start = Math.Max(2, _currentPage - 2);
-                        int end = Math.Min(_totalPages - 1, _currentPage + 2);
-                        @for (int i = start; i <= end; i++)
-                        {
-                            var page = i;
-                            <li class="page-item @(page == _currentPage ? "active" : "")">
-                                <a class="page-link bg-dark link-primary" @onclick="() => GoToPage(page)">
-                                    @i
-                                </a>
-                            </li>
-                        }
-                    
-                        @if (_currentPage < _totalPages - 2)
-                        {
-                            <li class="page-item">
-                                <span class="page-link bg-dark link-secondary">...</span>
-                            </li>
-                        }
-
-                        <li class="page-item @(_totalPages == _currentPage ? "active" : "")">
-                            <a class="page-link bg-dark link-primary" @onclick="() => GoToPage(_totalPages)">@_totalPages</a>
-                        </li>
-                    }
-                    
-                    <li class="page-item @(_currentPage == _totalPages ? "disabled" : "")">
-                        <a class="page-link bg-dark link-primary" @onclick="() => GoToPage(_currentPage + 1)">
-                            &gt;
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-        </div>
-        }
-    </div>
-</div>
+    </Authorized>
+    <NotAuthorized>
+        <CodeHub.Components.Components.RedirectToLogin />
+    </NotAuthorized>
+</AuthorizeView>

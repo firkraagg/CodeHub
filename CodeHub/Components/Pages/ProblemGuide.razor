@@ -1,6 +1,6 @@
 ﻿@page "/problem-solving-guide"
 
-<PageTitle>ProblemSolvingGuide</PageTitle>
+<PageTitle>Riešenie úloh</PageTitle>
 
 <AuthorizeView>
     <Authorized>
@@ -46,4 +46,7 @@
             </div>
         </div>
     </Authorized>
+    <NotAuthorized>
+        <CodeHub.Components.Components.RedirectToLogin />
+    </NotAuthorized>
 </AuthorizeView>

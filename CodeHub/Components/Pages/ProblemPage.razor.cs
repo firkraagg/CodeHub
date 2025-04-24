@@ -64,7 +64,6 @@ public partial class ProblemPage
         string defaultCode = string.IsNullOrEmpty(_problem.DefaultCode) ? "" : _problem.DefaultCode;
         await JS.InvokeVoidAsync("monacoInterop.initialize", "editorContainer", "java", defaultCode);
         _isEditorInitialized = true;
-
     }
 
     private void HandleResultReceived(string output, int NumberOfPassedTests, bool allTestsPassed)

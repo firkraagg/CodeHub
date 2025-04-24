@@ -88,10 +88,5 @@ namespace CodeHub.Services
                 return tagNames;
             }
         }
-
-        public async Task DeleteAllTagsForProblemAsync(int problemId)
-        {
-            //to-do
-        }
     }
 }

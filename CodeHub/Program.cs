@@ -14,15 +14,15 @@ namespace CodeHub
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-
-            // Add services to the container.
+             
             builder.Services.AddRazorComponents()
                 .AddInteractiveServerComponents();
-            var dbHost = Environment.GetEnvironmentVariable("DB_HOST") ?? "localhost";
+            var dbHost = Environment.GetEnvironmentVariable("DB_HOST");
             var dbName = Environment.GetEnvironmentVariable("DB_NAME");
             var dbPassword = Environment.GetEnvironmentVariable("DB_SA_PASSWORD");
-            var connectionString = $"Data Source={dbHost}, 1433;Initial Catalog={dbName};User ID=sa;Password={dbPassword};TrustServerCertificate=True;";
-            //var connectionString = "Data Source=localhost,8002;Initial Catalog=CodeHubApp;User ID=sa;Password=CodeHub@2023;TrustServerCertificate=True;";
+            //var connectionString = $"Data Source={dbHost}, 1433;Initial Catalog={dbName}" +
+                //$";User ID=sa;Password={dbPassword};TrustServerCertificate=True;";
+            var connectionString = "Data Source=localhost,8002;Initial Catalog=CodeHubApp;User ID=sa;Password=CodeHub@2023;TrustServerCertificate=True;";
             builder.Services.AddDbContextFactory<DatabaseContext>((DbContextOptionsBuilder options) => options.UseSqlServer(connectionString));
             using (var scope = builder.Services.BuildServiceProvider().CreateScope())
             {
@@ -69,11 +69,9 @@ namespace CodeHub
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
             {
                 app.UseExceptionHandler("/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
 

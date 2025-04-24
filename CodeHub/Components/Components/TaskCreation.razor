@@ -12,7 +12,7 @@
 
 @page "/task-creation/{problemId:int}"
 
-<AuthorizeView Roles="admin,teacher,student" Context="authContext">
+<AuthorizeView Roles="admin,teacher" Context="authContext">
     <Authorized>
         <EditForm Model="@_problem" OnValidSubmit="HandleFormSubmitAsync" FormName="CreateProblem">
             <DataAnnotationsValidator />
@@ -155,8 +155,12 @@
                                 disabled="@(string.IsNullOrEmpty(_selectedTag) && string.IsNullOrEmpty(_customTag))">
                             Pridaj značku
                         </button>
-                        <button class="btn button-custom button-remove-bg" type="button" @onclick="RemoveTag" disabled="@(!_selectedTags.Any())">
-                            Odstráň značku
+                        <button class="btn button-custom button-remove-bg"
+                                type="button"
+                                @onclick="RemoveTag"
+                                disabled="@(!_selectedTags.Any() && string.IsNullOrEmpty(_selectedTag))">
+                            @(_selectedTags.Any() ? "Odstráň poslednú značku" :
+                                "Odstráň vybranú značku")
                         </button>
                     </div>
                 </div>
@@ -477,8 +481,6 @@
         </EditForm>
     </Authorized>
     <NotAuthorized>
-        <div align="center" style="color: ghostwhite">
-            <h3>Pre vytvorenie úlohy sa musíte najskôr prihlásiť. Ak nemáte účet, zaregistrujte sa.</h3>
-        </div>
+        <CodeHub.Components.Components.RedirectToLogin />
     </NotAuthorized>
 </AuthorizeView>

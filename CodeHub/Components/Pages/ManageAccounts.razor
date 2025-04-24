@@ -4,7 +4,7 @@
 @using NetcodeHub.Packages.Components.Modal
 @inject UserService UserService
 
-<PageTitle>Manage Accounts</PageTitle>
+<PageTitle>Správa účtov</PageTitle>
 
 <AuthorizeView Roles="admin">
     <Authorized>
@@ -158,9 +158,6 @@
         }
     </Authorized>
     <NotAuthorized>
-        <div align="center" style="color: ghostwhite">
-            <h1>Prístup zamietnutý</h1>
-            <p>Nemáte oprávnenie na zobrazenie tejto stránky.</p>
-        </div>
+        <CodeHub.Components.Components.RedirectToLogin />
     </NotAuthorized>
 </AuthorizeView>

@@ -15,128 +15,127 @@
 @inject TestCaseService TestCaseService
 @inject ProblemsAttemptService SolvedProblemsService
 
-<PageTitle>Problem Details</PageTitle>
+<PageTitle>Riešenie úlohy</PageTitle>
+<AuthorizeView>
+    <Authorized>
+        <div class="container-fluid h-100 p-4 d-flex flex-column">
+            <div class="row h-100 d-flex align-items-stretch">
+                <div id="problem-box" class="resizable p-4 text-white overflow-y-auto d-flex flex-column">
+                    <h2 class="font-bold">@_problem?.Title</h2>
+                    <div class="mb-4">
+                        <div class="d-flex flex-wrap gap-2">
+                            @if (_problem != null)
+                            {
+                                <span class="badge badge-language">
+                                    @_selectedLanguage.Name
+                                </span>
 
-<div class="container-fluid h-100 p-4 d-flex flex-column">
-    <div class="row h-100 d-flex align-items-stretch">
-        <div id="problem-box" class="resizable p-4 text-white overflow-y-auto d-flex flex-column">
-            <h2 class="font-bold">@_problem?.Title</h2>
-            <div class="mb-4">
-                <div class="d-flex flex-wrap gap-2">
+                                string difficultyText = _problem.Difficulty switch
+                                {
+                                    1 => "Veľmi ľahká",
+                                    2 => "Ľahká",
+                                    3 => "Stredná",
+                                    4 => "Ťažká",
+                                    5 => "Veľmi ťažká"
+                                };
+
+                                string difficultyClass = _problem.Difficulty switch
+                                {
+                                    1 => "badge-veryeasy",
+                                    2 => "badge-easy",
+                                    3 => "badge-medium",
+                                    4 => "badge-hard",
+                                    5 => "badge-veryhard"
+                                };
+
+                                <span class="badge @difficultyClass">
+                                    @difficultyText
+                                </span>
+
+                                <span class="badge badge-points">
+                                    @_problem.Points b.
+                                </span>
+                            }
+                            @if (_tags != null && _tags.Any())
+                            {
+                                @foreach (var tag in _tags)
+                                {
+                                    <span class="badge badge-blue">@tag.Name</span>
+                                }
+                            }
+                        </div>
+                    </div>
                     @if (_problem != null)
                     {
-                        <span class="badge badge-language">
-                            @_selectedLanguage.Name
-                        </span>
-
-                        string difficultyText = _problem.Difficulty switch
-                        {
-                            1 => "Veľmi ľahká",
-                            2 => "Ľahká",
-                            3 => "Stredná",
-                            4 => "Ťažká",
-                            5 => "Veľmi ťažká"
-                        };
-
-                        string difficultyClass = _problem.Difficulty switch
-                        {
-                            1 => "badge-veryeasy",
-                            2 => "badge-easy",
-                            3 => "badge-medium",
-                            4 => "badge-hard",
-                            5 => "badge-veryhard"
-                        };
-
-                        <span class="badge @difficultyClass">
-                            @difficultyText
-                        </span>
-
-                        <span class="badge badge-points">
-                            @_problem.Points b.
-                        </span>
+                        @((MarkupString)Markdown.ToHtml(_problem.Description))
                     }
-                    @if (_tags != null && _tags.Any())
+
+                    @if (_examples.Any())
                     {
-                        @foreach (var tag in _tags)
+                        int i = 1;
+                        @foreach (var example in _examples)
                         {
-                            <span class="badge badge-blue">@tag.Name</span>
+                            <div class="mb-4 pb-4">
+                                <h5 class="text-lg font-semibold"><i>Príklad @i:</i></h5>
+                                <p><strong><i>Vstup: </i></strong><i> @example?.Input</i></p>
+                                <p><strong><i>Výstup: </i></strong><i>@example?.Output</i></p>
+                                @if (!string.IsNullOrEmpty(example?.Explanation))
+                                {
+                                    <p><strong><i>Vysvetlenie: </i></strong><i>@example?.Explanation</i></p>
+                                }
+                            </div>
+                            i++;
                         }
                     }
-                </div>
-            </div>
-            @if (_problem != null)
-            {
-                @((MarkupString)Markdown.ToHtml(_problem.Description))
-            }
 
-            @if (_examples.Any())
-            {
-                int i = 1;
-                @foreach (var example in _examples)
-                {
                     <div class="mb-4 pb-4">
-                        <h5 class="text-lg font-semibold"><i>Príklad @i:</i></h5>
-                        <p><strong><i>Vstup: </i></strong><i> @example?.Input</i></p>
-                        <p><strong><i>Výstup: </i></strong><i>@example?.Output</i></p>
-                        @if (!string.IsNullOrEmpty(example?.Explanation))
+                        @if (_constraints.Any())
                         {
-                            <p><strong><i>Vysvetlenie: </i></strong><i>@example?.Explanation</i></p>
+                            <h5 class="text-lg font-semibold">Obmedzenia:</h5>
+                            @foreach (var constraint in _constraints)
+                            {
+                                var html = Markdown.ToHtml(constraint.Constraint);
+                                html = System.Text.RegularExpressions.Regex.Replace(html, @"<p>(.*?)</p>", "$1");
+                                <p>&#9679; @((MarkupString)html)</p>
+                            }
+                        }
+                        <p>@_problem?.Constraints</p>
+                    </div>
+                    <div class="accordion accordion-flush w-75" id="accordionHint">
+                        @if (_hints.Any())
+                        {
+                            int index = 0;
+                            @foreach (var hint in _hints)
+                            {
+                                var collapseId = $"collapseHint{index}";
+                                var headingId = $"headingHint{index}";
+
+                                <div class="accordion-item bg-dark border border-secondary">
+                                    <h2 class="accordion-header" id="@headingId">
+                                        <button class="accordion-button collapsed bg-dark text-light"
+                                                type="button" data-bs-toggle="collapse"
+                                                data-bs-target="#@collapseId"
+                                                aria-expanded="false" aria-controls="@collapseId">
+                                            Nápoveda @(index + 1)
+                                        </button>
+                                    </h2>
+                                    <div id="@collapseId" class="accordion-collapse collapse"
+                                         aria-labelledby="@headingId" data-bs-parent="#accordionHint">
+                                        <div class="accordion-body text-light">
+                                            @((MarkupString)Markdown.ToHtml(hint.Hint))
+                                        </div>
+                                    </div>
+                                </div>
+                                index++;
+                            }
                         }
                     </div>
-                    i++;
-                }
-            }
-
-            <div class="mb-4 pb-4">
-                @if (_constraints.Any())
-                {
-                    <h5 class="text-lg font-semibold">Obmedzenia:</h5>
-                    @foreach (var constraint in _constraints)
-                    {
-                        var html = Markdown.ToHtml(constraint.Constraint);
-                        html = System.Text.RegularExpressions.Regex.Replace(html, @"<p>(.*?)</p>", "$1");
-                        <p>&#9679; @((MarkupString)html)</p>
-                    }
-                }
-                <p>@_problem?.Constraints</p>
-            </div>
-            <div class="accordion accordion-flush w-75" id="accordionHint">
-                @if (_hints.Any())
-                {
-                    int index = 0;
-                    @foreach (var hint in _hints)
-                    {
-                        var collapseId = $"collapseHint{index}";
-                        var headingId = $"headingHint{index}";
-
-                        <div class="accordion-item bg-dark border border-secondary">
-                            <h2 class="accordion-header" id="@headingId">
-                                <button class="accordion-button collapsed bg-dark text-light"
-                                        type="button" data-bs-toggle="collapse"
-                                        data-bs-target="#@collapseId"
-                                        aria-expanded="false" aria-controls="@collapseId">
-                                    Nápoveda @(index + 1)
-                                </button>
-                            </h2>
-                            <div id="@collapseId" class="accordion-collapse collapse"
-                                 aria-labelledby="@headingId" data-bs-parent="#accordionHint">
-                                <div class="accordion-body text-light">
-                                    @((MarkupString)Markdown.ToHtml(hint.Hint))
-                                </div>
-                            </div>
-                        </div>
-                        index++;
-                    }
-                }
-            </div>
-        </div>
-        <div class="col p-0 text-white ps-2 d-flex flex-column flex-grow-1"
-             style="overflow: hidden; max-width: calc(100vw - 22vw);">
-            <div id="editorContainer" class="resizable pb-1 flex-grow-1"
-                 style="border: 3px solid #0059b3; border-radius: 5px; overflow-y: auto; max-height: 85vh">
-            </div>
-            <AuthorizeView Roles="admin,teacher,student" Context="authContext">
-                <Authorized>
+                </div>
+                <div class="col p-0 text-white ps-2 d-flex flex-column flex-grow-1"
+                     style="overflow: hidden; max-width: calc(100vw - 22vw);">
+                    <div id="editorContainer" class="resizable pb-1 flex-grow-1"
+                         style="border: 3px solid #0059b3; border-radius: 5px; overflow-y: auto; max-height: 85vh">
+                    </div>
                     @{
                         var borderColor = "";
                         if (_hasExecuted)
@@ -174,24 +173,11 @@
                             }
                         </button>
                     </div>
-                </Authorized>
-
-                <NotAuthorized>
-                    <div class="text-white text-center">
-                        <h6>
-                            Musíte sa
-                            <a href="/login" style="text-decoration: none; color: lightblue"
-                               onmouseover="this.style.color='dodgerblue'; this.style.textDecoration='underline';"
-                               onmouseout="this.style.color='lightblue'; this.style.textDecoration='none'">prihlásiť</a>
-                            /
-                            <a href="/register" style="text-decoration: none; color: lightblue"
-                               onmouseover="this.style.color='dodgerblue'; this.style.textDecoration='underline';"
-                               onmouseout="this.style.color='lightblue'; this.style.textDecoration='none'">zaregistrovať</a>
-                            pre riešenie problému
-                        </h6>
-                    </div>
-                </NotAuthorized>
-            </AuthorizeView>
+                </div>
+            </div>
         </div>
-    </div>
-</div>
+    </Authorized>
+    <NotAuthorized>
+        <CodeHub.Components.Components.RedirectToLogin />
+    </NotAuthorized>
+</AuthorizeView>

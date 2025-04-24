@@ -109,5 +109,21 @@ namespace CodeHub.Services
                     .ToListAsync();
             }
         }
+
+        public async Task DeleteAllAttemptsForProblemAsync(int problemId)
+        {
+            using (var context = _dbContextFactory.CreateDbContext())
+            {
+                var problemAttempts = await context.ProblemAttempts
+                    .Where(pa => pa.problemId == problemId)
+                    .ToListAsync();
+
+                if (problemAttempts.Any())
+                {
+                    context.ProblemAttempts.RemoveRange(problemAttempts);
+                    await context.SaveChangesAsync();
+                }
+            }
+        }
     }
 }
