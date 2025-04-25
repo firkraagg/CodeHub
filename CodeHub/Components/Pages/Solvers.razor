@@ -16,7 +16,7 @@
             <div class="table-container" style="width: 75%;">
                 <div class="d-flex justify-content-between mb-2">
                     <div>
-                        <button type="button" class="btn button-custom button-create-bg me-3" @onclick="ExportToExcel">
+                        <button type="button" class="btn button-custom button-create-bg me-2" @onclick="ExportToExcel">
                             <i class="fa-solid fa-file-excel me-1"></i> Exportovať výsledky do Excelu
                         </button>
                         <button type="button" class="btn button-custom button-delete" @onclick="ShowDeleteAllAttemptsModal">
@@ -29,8 +29,8 @@
                                 Zoradiť podľa
                             </button>
                             <ul class="dropdown-menu dropdown-menu-dark">
-                                <li><a class="dropdown-item">Dátumu (najnovšie na vrchu)</a></li>
-                                <li><a class="dropdown-item">Študenta (všetky pokusy jedného študenta spolu)</a></li>
+                                <li><a class="dropdown-item @(_attemptSort == "date" ? "active bg-warning text-dark" : "")" @onclick="@(() => ApplyAttemptSort("date"))">Dátumu (najnovšie na vrchu)</a></li>
+                                <li><a class="dropdown-item @(_attemptSort == "user" ? "active bg-warning text-dark" : "")" @onclick="@(() => ApplyAttemptSort("user"))">Študenta (všetky pokusy jedného študenta spolu)</a></li>
                             </ul>
                         </div>
                         <div class="dropdown">
@@ -38,9 +38,9 @@
                                 Počet
                             </button>
                             <ul class="dropdown-menu dropdown-menu-dark">
-                                <li><a class="dropdown-item">10</a></li>
-                                <li><a class="dropdown-item">15</a></li>
-                                <li><a class="dropdown-item">20</a></li>
+                                <li><a class="dropdown-item @(_maxAttemptsToShow == 10 ? "active bg-warning text-dark" : "")" @onclick="() => SetAttemptsToShowCount(10)">10</a></li>
+                                <li><a class="dropdown-item @(_maxAttemptsToShow == 15 ? "active bg-warning text-dark" : "")" @onclick="() => SetAttemptsToShowCount(15)">15</a></li>
+                                <li><a class="dropdown-item @(_maxAttemptsToShow == 20 ? "active bg-warning text-dark" : "")" @onclick="() => SetAttemptsToShowCount(20)">20</a></li>
                             </ul>
                         </div>
                         <div class="dropdown">
@@ -48,8 +48,9 @@
                                 Filter
                             </button>
                             <ul class="dropdown-menu dropdown-menu-dark">
-                                <li><a class="dropdown-item">Len úspešné pokusy</a></li>
-                                <li><a class="dropdown-item">Len neúspešné pokusy</a></li>
+                                <li><a class="dropdown-item @(_attemptFilter == "success" ? "active bg-warning text-dark" : "")" @onclick="@(() => ApplyAttemptFilter("success"))">Len úspešné pokusy</a></li>
+                                <li><a class="dropdown-item @(_attemptFilter == "fail" ? "active bg-warning text-dark" : "")" @onclick="@(() => ApplyAttemptFilter("fail"))">Len neúspešné pokusy</a></li>
+                                <li><a class="dropdown-item @(_attemptFilter == "all" ? "active bg-warning text-dark" : "")" @onclick="@(() => ApplyAttemptFilter("all"))">Všetky pokusy</a></li>
                             </ul>
                         </div>
                     </div>
@@ -66,10 +67,10 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @if (_userAttempts.Any())
+                        @if (_filteredAttempts.Any())
                         {
                             int index = 1;
-                            foreach (var attempt in _userAttempts)
+                            foreach (var attempt in _filteredAttempts.Skip((_currentPage - 1) * _maxAttemptsToShow).Take(_maxAttemptsToShow))
                             {
                                 var user = _users.FirstOrDefault(u => u.Id == attempt.userId);
                                 var isLdapUser = user?.LdapUser == true ? "Áno" : "Nie";
@@ -123,7 +124,7 @@
                         else
                         {
                             <tr>
-                                <td colspan="7" class="text-center">Úloha ešte nebola riešená</td>
+                                <td colspan="7" class="text-center">Žiadne pokusy</td>
                             </tr>
                         }
                     </tbody>
@@ -170,6 +171,75 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                }
+                @if (!_attemptsAreLoading && _userAttempts.Count > _maxAttemptsToShow)
+                {
+                    <div class="navigation mb-2 w-100">
+                        <nav aria-label="Page navigation example" class="d-flex justify-content-around">
+                            <ul class="pagination bg-dark d-flex flex-wrap">
+                                <li class="page-item @(_currentPage == 1 ? "disabled" : "")">
+                                    <a class="page-link bg-dark link-primary" @onclick="() => GoToPage(_currentPage - 1)">
+                                        &lt;
+                                    </a>
+                                </li>
+
+                                @if (_totalPages <= 5)
+                                {
+                                    @for (int i = 1; i <= _totalPages; i++)
+                                    {
+                                        var page = i;
+                                        <li class="page-item @(i == _currentPage ? "active" : "")">
+                                            <a class="page-link bg-dark link-primary" @onclick="() => GoToPage(page)">
+                                                @i
+                                            </a>
+                                        </li>
+                                    }
+                                }
+                                else
+                                {
+                                    <li class="page-item @(1 == _currentPage ? "active" : "")">
+                                        <a class="page-link bg-dark link-primary" @onclick="() => GoToPage(1)">1</a>
+                                    </li>
+
+                                    @if (_currentPage > 3)
+                                    {
+                                        <li class="page-item">
+                                            <span class="page-link bg-dark link-secondary">...</span>
+                                        </li>
+                                    }
+
+                                    int start = Math.Max(2, _currentPage - 2);
+                                    int end = Math.Min(_totalPages - 1, _currentPage + 2);
+                                    @for (int i = start; i <= end; i++)
+                                    {
+                                        var page = i;
+                                        <li class="page-item @(page == _currentPage ? "active" : "")">
+                                            <a class="page-link bg-dark link-primary" @onclick="() => GoToPage(page)">
+                                                @i
+                                            </a>
+                                        </li>
+                                    }
+
+                                    @if (_currentPage < _totalPages - 2)
+                                    {
+                                        <li class="page-item">
+                                            <span class="page-link bg-dark link-secondary">...</span>
+                                        </li>
+                                    }
+
+                                    <li class="page-item @(_totalPages == _currentPage ? "active" : "")">
+                                        <a class="page-link bg-dark link-primary" @onclick="() => GoToPage(_totalPages)">@_totalPages</a>
+                                    </li>
+                                }
+
+                                <li class="page-item @(_currentPage == _totalPages ? "disabled" : "")">
+                                    <a class="page-link bg-dark link-primary" @onclick="() => GoToPage(_currentPage + 1)">
+                                        &gt;
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
                     </div>
                 }
             </div>

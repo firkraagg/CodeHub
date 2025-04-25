@@ -155,12 +155,17 @@
                                 disabled="@(string.IsNullOrEmpty(_selectedTag) && string.IsNullOrEmpty(_customTag))">
                             Pridaj značku
                         </button>
-                        <button class="btn button-custom button-remove-bg"
+                        <button class="btn button-custom button-delete me-2"
+                                type="button"
+                                @onclick="DeleteTag"
+                                hidden="@string.IsNullOrEmpty(_selectedTag)">
+                            Vymaž značku
+                        </button>
+                        <button class="btn button-custom button-remove-bg me-2"
                                 type="button"
                                 @onclick="RemoveTag"
-                                disabled="@(!_selectedTags.Any() && string.IsNullOrEmpty(_selectedTag))">
-                            @(_selectedTags.Any() ? "Odstráň poslednú značku" :
-                                "Odstráň vybranú značku")
+                                disabled="@(!_selectedTags.Any())">
+                            Odstráň poslednú značku
                         </button>
                     </div>
                 </div>

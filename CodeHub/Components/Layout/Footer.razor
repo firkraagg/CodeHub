@@ -1,9 +1,23 @@
-﻿<footer class="blockquote-footer bg-body-tertiary w-100 mt-auto mb-0" data-bs-theme="dark">
+﻿@inject IJSRuntime JS
+
+
+<footer class="blockquote-footer bg-body-tertiary w-100 mt-auto mb-0" data-bs-theme="@footerTheme">
     <div class="text-center mt-2">
         <p class="m-0 py-1">&copy; 2024-2025 CodeHub | All Rights Reserved.</p>
     </div>
 </footer>
 
 @code {
+    private bool isLightMode = false;
+    private string footerTheme => isLightMode ? "light" : "dark";
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var storedTheme = await JS.InvokeAsync<string>("themeHelper.getTheme");
+            isLightMode = storedTheme == "light";
+            StateHasChanged();
+        }
+    }
 }

@@ -88,5 +88,28 @@ namespace CodeHub.Services
                 return tagNames;
             }
         }
+
+        public async Task<bool> DeleteTagAsync(string tagName)
+        {
+            using var context = _dbContextFactory.CreateDbContext();
+
+            var tagsToDelete = await context.Tag
+                .Where(t => t.Name == tagName)
+                .Include(t => t.Problems)
+                .ToListAsync();
+
+            if (!tagsToDelete.Any())
+                return false;
+
+            foreach (var tag in tagsToDelete)
+            {
+                tag.Problems?.Clear();
+            }
+
+            context.Tag.RemoveRange(tagsToDelete);
+            await context.SaveChangesAsync();
+
+            return true;
+        }
     }
 }

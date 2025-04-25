@@ -13,6 +13,7 @@ namespace CodeHub.Components.Pages
         private List<User> _users = new();
         private Dictionary<int, List<ProblemAttempt>> _allUserAttempts = new();
         private List<ProblemAttempt> _userAttempts = new();
+        private List<ProblemAttempt> _filteredAttempts = new();
         private List<bool> _isSolvedSuccessfully = new();
         private Problem _problem;
         private ProblemAttempt? _actualProblemAttempt;
@@ -22,7 +23,13 @@ namespace CodeHub.Components.Pages
         private bool _showDeleteModal = false;
         private string _deleteModalText = string.Empty;
         private string _actionName = string.Empty;
-        private string _selectedSort = "";
+        private int _currentPage = 1;
+        private int _maxAttemptsToShow = 10;
+        private bool _attemptsAreLoading = false;
+        private int _totalPages => (int)Math.Ceiling((double)_userAttempts.Count / _maxAttemptsToShow);
+        private string _attemptFilter = "all";
+        private string _attemptSort = "date";
+        private bool _isFiltering = false;
 
         protected override async Task OnInitializedAsync()
         {
@@ -31,6 +38,7 @@ namespace CodeHub.Components.Pages
             var testCases = await TestCaseService.GetTestCasesForProblemAsync(_problem.Id);
             _testCasesNumber = testCases.Count;
             await LoadUserAttempts();
+            _filteredAttempts = _userAttempts;
         }
 
         public async Task ShowSourceCode(ProblemAttempt attempt)
@@ -134,5 +142,56 @@ namespace CodeHub.Components.Pages
             StateHasChanged();
         }
 
+        private void GoToPage(int page)
+        {
+            if (page < 1 || page > _totalPages) return;
+            _currentPage = page;
+        }
+
+        public void SetAttemptsToShowCount(int count)
+        {
+            _maxAttemptsToShow = count;
+            _currentPage = 1;
+        }
+
+        private async Task ApplyAttemptFilter(string filter)
+        {
+            _attemptFilter = filter;
+            await FilterAttempts();
+        }
+
+        private async Task ApplyAttemptSort(string sort)
+        {
+            _attemptSort = sort;
+            await FilterAttempts();
+        }
+
+        private async Task FilterAttempts()
+        {
+            _isFiltering = true;
+            StateHasChanged();
+
+            var filtered = _userAttempts;
+
+            filtered = _attemptFilter switch
+            {
+                "success" => filtered.Where(a => a.IsSuccessful).ToList(),
+                "fail" => filtered.Where(a => !a.IsSuccessful).ToList(),
+                _ => filtered
+            };
+
+            filtered = _attemptSort switch
+            {
+                "date" => filtered.OrderByDescending(a => a.AttemptedAt).ToList(),
+                "user" => filtered.OrderBy(a => _users.FirstOrDefault(u => u.Id == a.userId)?.DisplayName).ToList(),
+                _ => filtered
+            };
+
+            _filteredAttempts = filtered;
+            _isFiltering = false;
+            _currentPage = 1;
+
+            StateHasChanged();
+        }
     }
 }

@@ -176,7 +176,9 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @foreach (var problem in _userProblems)
+                                                @foreach (var problem in _userProblems
+                                                   .Skip((_currentPage - 1) * _maxProblemsToShow)
+                                                   .Take(_maxProblemsToShow))
                                                 {
                                                     <tr>
                                                         <td>@problem.Title</td>
@@ -235,6 +237,75 @@
                                             </tbody>
                                         </table>
                                     </div>
+                                        @if (_userProblems.Count > _maxProblemsToShow)
+                                        {
+                                            <div class="navigation mb-2 w-100">
+                                                <nav aria-label="Page navigation example" class="d-flex justify-content-around">
+                                                    <ul class="pagination bg-dark d-flex flex-wrap">
+                                                        <li class="page-item @(_currentPage == 1 ? "disabled" : "")">
+                                                            <a class="page-link bg-dark link-primary" @onclick="() => GoToPage(_currentPage - 1)">
+                                                                &lt;
+                                                            </a>
+                                                        </li>
+
+                                                        @if (_totalPages <= 5)
+                                                        {
+                                                            @for (int i = 1; i <= _totalPages; i++)
+                                                            {
+                                                                var page = i;
+                                                                <li class="page-item @(i == _currentPage ? "active" : "")">
+                                                                    <a class="page-link bg-dark link-primary" @onclick="() => GoToPage(page)">
+                                                                        @i
+                                                                    </a>
+                                                                </li>
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            <li class="page-item @(1 == _currentPage ? "active" : "")">
+                                                                <a class="page-link bg-dark link-primary" @onclick="() => GoToPage(1)">1</a>
+                                                            </li>
+
+                                                            @if (_currentPage > 3)
+                                                            {
+                                                                <li class="page-item">
+                                                                    <span class="page-link bg-dark link-secondary">...</span>
+                                                                </li>
+                                                            }
+
+                                                            int start = Math.Max(2, _currentPage - 2);
+                                                            int end = Math.Min(_totalPages - 1, _currentPage + 2);
+                                                            @for (int i = start; i <= end; i++)
+                                                            {
+                                                                var page = i;
+                                                                <li class="page-item @(page == _currentPage ? "active" : "")">
+                                                                    <a class="page-link bg-dark link-primary" @onclick="() => GoToPage(page)">
+                                                                        @i
+                                                                    </a>
+                                                                </li>
+                                                            }
+
+                                                            @if (_currentPage < _totalPages - 2)
+                                                            {
+                                                                <li class="page-item">
+                                                                    <span class="page-link bg-dark link-secondary">...</span>
+                                                                </li>
+                                                            }
+
+                                                            <li class="page-item @(_totalPages == _currentPage ? "active" : "")">
+                                                                <a class="page-link bg-dark link-primary" @onclick="() => GoToPage(_totalPages)">@_totalPages</a>
+                                                            </li>
+                                                        }
+
+                                                        <li class="page-item @(_currentPage == _totalPages ? "disabled" : "")">
+                                                            <a class="page-link bg-dark link-primary" @onclick="() => GoToPage(_currentPage + 1)">
+                                                                &gt;
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </nav>
+                                            </div>
+                                        }
                                 }
                                 else
                                 {

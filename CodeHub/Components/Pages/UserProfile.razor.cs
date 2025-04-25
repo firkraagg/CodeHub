@@ -29,6 +29,10 @@ public partial class UserProfile
     private string _tempCode;
     private List<Tag> _availableTags = new();
     private List<ProgrammingLanguage> _languages = new();
+    private int _currentPage = 1;
+    private int _maxProblemsToShow = 15;
+    private int _totalPages => (int)Math.Ceiling((double)_userProblems.Count / _maxProblemsToShow);
+
 
     [Inject] private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = null!;
     [Parameter] public string? section { get; set; }
@@ -264,5 +268,11 @@ public partial class UserProfile
     private void NavigateToProfileSection(string section)
     {
         NavigationManager.NavigateTo($"/user-profile/{section}");
+    }
+
+    private void GoToPage(int page)
+    {
+        if (page < 1 || page > _totalPages) return;
+        _currentPage = page;
     }
 }

@@ -3,6 +3,7 @@ using CodeHub.Data.Models;
 using CodeHub.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.JSInterop;
 using System.Reflection.Metadata;
 
 namespace CodeHub.Components.Components;
@@ -107,6 +108,21 @@ public partial class TaskCreation
         if (_selectedTags.Contains(tag))
         {
             _selectedTags.Remove(tag);
+        }
+    }
+
+    private async Task DeleteTag()
+    {
+        if (!string.IsNullOrWhiteSpace(_selectedTag))
+        {
+
+            var success = await TagService.DeleteTagAsync(_selectedTag);
+
+            if (success)
+            {
+                _tags = await TagService.GetTagsAsync();
+                _selectedTag = string.Empty;
+            }
         }
     }
 

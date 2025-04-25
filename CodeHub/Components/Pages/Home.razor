@@ -176,7 +176,7 @@
                         </table>
                     </div>
                 </div>
-                @if ((!_problemsAreLoading && ((_isFiltered && _filteredProblems.Count > 0) || (!_isFiltered && _problems.Count > 0))))
+                @if ((!_problemsAreLoading && ((_isFiltered && _filteredProblems.Count > 10) || (!_isFiltered && _problems.Count > 10))))
                 {
                     <div class="navigation mb-2 w-100">
                         <nav aria-label="Page navigation example" class="d-flex justify-content-around">
