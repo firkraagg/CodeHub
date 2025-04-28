@@ -136,19 +136,22 @@ public partial class ProblemPage
                 _user = await UserService.GetUserByIdAsync(userId);
             }
 
-            var points = (_numberOfPassedTests / numberOfTestCases) * _problem!.Points;
-            var solvedProblem = new ProblemAttempt
+            if (isEvaluation)
             {
-                problemId = _problem.Id,
-                userId = int.Parse(userId),
-                AttemptedAt = DateTime.UtcNow.AddHours(2),
-                SourceCode = codeToSend,
-                PassedTestCases = _numberOfPassedTests,
-                Points = points,
-                IsSuccessful = _allTestsPassed
-            };
+                var points = ((double)_numberOfPassedTests / numberOfTestCases) * _problem!.Points;
+                var solvedProblem = new ProblemAttempt
+                {
+                    problemId = _problem.Id,
+                    userId = int.Parse(userId),
+                    AttemptedAt = DateTime.UtcNow.AddHours(2),
+                    SourceCode = codeToSend,
+                    PassedTestCases = _numberOfPassedTests,
+                    Points = points,
+                    IsSuccessful = _allTestsPassed
+                };
 
-            await SolvedProblemsService.AddSolvedProblemAsync(solvedProblem);
+                await SolvedProblemsService.AddSolvedProblemAsync(solvedProblem);
+            }
         }
     }
 

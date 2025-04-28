@@ -12,6 +12,40 @@
 
 <AuthorizeView>
     <Authorized>
+        <button class="btn btn-dark"
+                style="position: absolute; top: 70px; left: 0; margin-left: 10px;"
+                type="button"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#weekSidebar"
+                aria-controls="weekSidebar">
+            <i class="fa-solid fa-bars fa-xl"></i>
+        </button>
+
+        <div class="offcanvas offcanvas-start text-bg-dark" tabindex="-1" id="weekSidebar" aria-labelledby="weekSidebarLabel" data-bs-scroll="true" data-bs-backdrop="false" style="width: 250px;">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title" id="weekSidebarLabel">Vyber týždeň</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body">
+                <div class="list-group">
+                    @foreach (var week in _availableWeeks)
+                    {
+                        <button class="list-group-item list-group-item-action border-0 rounded-0 bg-warning @((_activeWeek == week) ? "bg-warning text-dark" : "text-white bg-dark")" @onclick="() => ToggleActiveWeek(week)">
+                            Týždeň @week
+                        </button>
+                    }
+                </div>
+                <hr class="text-white">
+                <button class="btn btn-outline-light w-100 mb-2 @((_activeWeek == 14) ? "bg-warning text-dark" : "btn-outline-light")" @onclick="() => ToggleActiveWeek(14)">
+                    Skúška
+                </button>
+                <hr class="text-white">
+                <button class="btn w-100 @((_filteredProblems.Count == _problems.Count) ? "bg-warning text-dark" : "btn-outline-light") " @onclick="SelectAll">
+                    Zobraziť všetky
+                </button>
+            </div>
+        </div>
+
         <div class="container-fluid">
             <div class="d-flex justify-content-center mt-5 gap-2 flex-wrap">
                 <div class="sorting_buttons mt-3 gap-2 w-50 w-md-50">
@@ -99,7 +133,7 @@
                             <thead>
                                 <tr>
                                     <th scope="col">#</th>
-                                    <th scope="col">Týždeň</th>
+                                    <th class="text-center" scope="col">Týždeň</th>
                                     <th scope="col">Názov</th>
                                     <th scope="col">Prijatie</th>
                                     <th scope="col">Náročnosť</th>
@@ -126,10 +160,10 @@
                                     foreach (var (problem, index) in problemsToDisplay.Select((p, i) => (p, i + startIndex)))
                                     {
                                         bool isCompleted = _completedProblemIds.Contains(problem.Id);
-                                        var rowClass = isCompleted ? "completed-row" : "";
+                                        var rowClass = isCompleted ? "completed-row" : "1";
                                         <tr class="@rowClass">
-                                            <th scope="row">@index</th>
-                                            <th class="text-center">@problem.Week</th>
+                                            <th>@index</th>
+                                            <td class="text-center">@problem.Week</td>
                                             <td>
                                                 <a href=@($"/problem/{problem.Id}") style="text-decoration: none; color: white;"
                                                    onmouseover="this.style.color='lightblue'" onmouseout="this.style.color='white'">

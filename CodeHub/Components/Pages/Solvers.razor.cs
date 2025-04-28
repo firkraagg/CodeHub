@@ -113,7 +113,7 @@ namespace CodeHub.Components.Pages
             stream.Position = 0;
 
             await DownloadFileService.DownloadFile(
-                $"vysledky_{_problem.Title}.xlsx",
+                $"výsledky_{_problem.Title}.xlsx",
                 stream.ToArray(),
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             );
@@ -137,8 +137,10 @@ namespace CodeHub.Components.Pages
         {
             await ProblemsAttemptService.DeleteAllAttemptsForProblemAsync(ProblemId);
             _showDeleteModal = false;
-            _users = await ProblemsAttemptService.GetUsersBySolvedProblemIdAsync(ProblemId);
+             _users = await ProblemsAttemptService.GetUsersBySolvedProblemIdAsync(ProblemId);
             await LoadUserAttempts();
+            _userAttempts.Clear();
+            _filteredAttempts = _userAttempts;
             StateHasChanged();
         }
 

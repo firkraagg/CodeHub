@@ -21,7 +21,7 @@ namespace CodeHub
             var dbName = Environment.GetEnvironmentVariable("DB_NAME");
             var dbPassword = Environment.GetEnvironmentVariable("DB_SA_PASSWORD");
             //var connectionString = $"Data Source={dbHost}, 1433;Initial Catalog={dbName}" +
-                //$";User ID=sa;Password={dbPassword};TrustServerCertificate=True;";
+            //    $";User ID=sa;Password={dbPassword};TrustServerCertificate=True;";
             var connectionString = "Data Source=localhost,8002;Initial Catalog=CodeHubApp;User ID=sa;Password=CodeHub@2023;TrustServerCertificate=True;";
             builder.Services.AddDbContextFactory<DatabaseContext>((DbContextOptionsBuilder options) => options.UseSqlServer(connectionString));
             using (var scope = builder.Services.BuildServiceProvider().CreateScope())
@@ -32,7 +32,7 @@ namespace CodeHub
 
             builder.Services.AddDataProtection()
                 .PersistKeysToFileSystem(new DirectoryInfo("/app/keys"))
-                .SetApplicationName("CodeHubApp");
+                .SetApplicationName("CodeHubApp");  
             builder.Services.AddBlazorDownloadFile();
             builder.Services.AddTransient<UserService>();
             builder.Services.AddTransient<ProblemService>();

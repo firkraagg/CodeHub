@@ -110,9 +110,13 @@
                                 <tr id="@collapseId" class="collapse">
                                     <td colspan="7" class="expanded-content">
                                         <div class="p-3 bg-dark text-light">
-                                            <p><strong>📌 E-mail:</strong> @user?.Email</p>
+                                            <p>
+                                                <strong>📌 E-mail:</strong> @user?.Email @if (user != null && user.LdapUser)
+                                                {
+                                                    <span class="text-info"> (LDAP účet)</span>
+                                                }
+                                            </p>
                                             <p><strong>📌 Študijná skupina:</strong> @user?.Group</p>
-                                            <p><strong>📌 LDAP účet:</strong> @isLdapUser</p>
                                             <p><strong>📌 Počet úspešných testov:</strong> @attempt.PassedTestCases / @_testCasesNumber</p>
                                             <p><strong>📌 Body:</strong> @attempt.Points / @_problem.Points</p>
                                         </div>

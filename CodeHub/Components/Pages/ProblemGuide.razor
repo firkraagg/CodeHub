@@ -1,6 +1,6 @@
 ﻿@page "/problem-solving-guide"
 
-<PageTitle>Riešenie úloh</PageTitle>
+<PageTitle>Návod na riešenie úloh</PageTitle>
 
 <AuthorizeView>
     <Authorized>
@@ -28,16 +28,17 @@
                 </div>
             </div>
             <div class="row align-items-center">
-                <div class="col-md-6 text-light text-start mt-2 mb-3">
+                <div class="col-md-6 text-light text-start mt-2 mb-4">
                     <div class="p-4 rounded shadow" style="background: rgba(255, 255, 255, 0.1);">
                         <h3 class="text-center text-warning">Pravá strana – Programátorský editor</h3>
                         <p class="lead">Na pravej strane obrazovky sa nachádza programátorský editor, ktorý slúži na písanie, testovanie a odovzdávanie riešenia úlohy.</p>
                         <ul class="list-unstyled">
-                            <li><i class="fas fa-keyboard text-success"></i> <strong>Monaco Editor</strong> – moderný editor kódu so zvýrazňovaním syntaxe a podporou viacerých funkcií pri programovaní, ktorý slúži na písanie kódu.</li>
-                            <li><i class="fas fa-play text-info"></i> <strong>Spustenie kódu</strong> – spustí napísaný kód na jednom testovacom prípade. Slúži na overenie, či program funguje správne, a napovedá, ako blízko je riešenie k správnemu výsledku. Spustenie kódu prebieha kliknutím na tlačidlo <strong>Skontroluj</strong>.</li>
-                            <li><i class="fas fa-paper-plane text-secondary"></i> <strong>Odovzdanie riešenia</strong> – odošle kód na vyhodnotenie a automaticky spustí všetky testovacie prípady. Na základe výsledkov testov sa vypočíta bodové hodnotenie. Odovzdanie prebieha kliknutím na tlačidlo <strong>Odovzdaj</strong>.</li>
-                            <li><i class="fas fa-comment text-warning"></i> <strong>Výstup</strong> – zobrazí sa výsledok spustenia v konzole. Pre každý testovací prípad sa zobrazí, či bol správny, alebo ak nastala chyba, ukáže sa, kde sa vyskytla. Na konci sa zobrazí celkový výsledok o úspešnosti alebo neúspešnosti.</li>
-                            <li><i class="fas fa-trophy text-success"></i> <strong>Vizualizácia úspechu</strong> – po úspešnom vyriešení úlohy sa na domovskej stránke príklad zvýrazní zelenou farbou ako indikátor správneho a kompletného riešenia.</li>
+                            <li><i class="fas fa-keyboard text-success"></i> <strong>Monaco Editor</strong> – editor kódu so zvýrazňovaním syntaxe a podporou viacerých funkcií.</li>
+                            <li><i class="fas fa-play text-info"></i> <strong>Spustenie kódu</strong> – overí správnosť kódu na testovacom prípade, spustí sa po kliknutí na tlačidlo <strong>Skontroluj</strong>.</li>
+                            <li><i class="fas fa-paper-plane text-secondary"></i> <strong>Odovzdanie riešenia</strong> – odošle kód na vyhodnotenie a automaticky spustí testy po kliknutí na tlačidlo <strong>Odovzdaj</strong>.</li>
+                            <li><i class="fas fa-comment text-warning"></i> <strong>Výstup</strong> – zobrazí výsledky spustenia a informácie o úspešnosti testov.</li>
+                            <li><i class="fas fa-trophy text-success"></i> <strong>Vizualizácia úspechu</strong> – po úspešnom vyriešení úlohy sa príklad na domovskej stránke zvýrazní zelenou farbou.</li>
+                            <li><i class="fas fa-exclamation-triangle text-danger"></i> <strong>Dôležité upozornenie</strong> – Pri vytváraní novej metódy používajte hlavičku metódy vo forme <code>public static</code> pre správne vykonanie kódu.</li>
                         </ul>
                     </div>
                 </div>

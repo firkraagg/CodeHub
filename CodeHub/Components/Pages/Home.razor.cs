@@ -15,6 +15,7 @@ public partial class Home
     private List<int> _completedProblemIds = new();
     private List<int> _availableWeeks = new();
     private HashSet<int> _selectedWeeks = new();
+    private int? _activeWeek = null;
     private int _selectedDifficulty = -1;
     private string _selectedSort = "";
     private int _selectedTagId = 0;
@@ -55,9 +56,11 @@ public partial class Home
         _availableWeeks = _problems
             .Select(p => p.Week)
             .Distinct()
+            .Where(w => w <= 13)
             .OrderBy(w => w)
             .ToList();
     }
+
 
     private async Task ToggleWeekSelection(int week)
     {
@@ -74,6 +77,21 @@ public partial class Home
         {
             await ApplyFilter(0);
         }
+
+        _activeWeek = null;
+        await FilterProblems();
+    }
+
+    private async Task ToggleActiveWeek(int week)
+    {
+        if (!(_selectedDifficulty > 0))
+        {
+            await ApplyFilter(0);
+        }
+
+        _selectedWeeks.Clear();
+        _activeWeek = week;
+        _selectedWeeks.Add(week);
         await FilterProblems();
     }
 
@@ -92,6 +110,7 @@ public partial class Home
     public async Task LoadProblems()
     {
         _problems = await ProblemService.GetProblemsAsync();
+        _filteredProblems = _problems;
     }
 
     public async Task LoadTags()
@@ -105,12 +124,22 @@ public partial class Home
         await FilterProblems();
     }
 
+    public async Task SelectAll()
+    {
+        _activeWeek = null;
+        _selectedDifficulty = 0;
+        _selectedWeeks.Clear();
+        _selectedTags.Clear();
+        await FilterProblems();
+    }
+
     private async Task ApplySorting(string sort)
     {
         if (_selectedDifficulty < 0)
         {
             _selectedDifficulty = 0;
         }
+
         _selectedSort = sort;
         await FilterProblems();
     }
@@ -140,15 +169,16 @@ public partial class Home
         StateHasChanged();
         List<Problem> filtered = _problems;
 
-        if (_selectedWeeks.Any())
-        {
-            filtered = filtered.Where(p => _selectedWeeks.Contains(p.Week)).ToList();
-        }
 
         if (_selectedTags.Any())
         {
             var selectedTagNames = _selectedTags.Select(tag => tag.Name).ToList();
             filtered = await TagService.GetProblemsByTagsAsync(selectedTagNames);
+        }
+
+        if (_selectedWeeks.Any())
+        {
+            filtered = filtered.Where(p => _selectedWeeks.Contains(p.Week)).ToList();
         }
 
         if (_selectedDifficulty > 0)

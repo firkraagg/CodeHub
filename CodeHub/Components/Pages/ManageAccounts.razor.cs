@@ -10,8 +10,8 @@ public partial class ManageAccounts
     private int _skipUsersCount = 0;
     private User _editingUser = new User();
     private bool _showModal = false;
-    private bool _showSuccessAlert = false;
     private bool _showDeleteModal = false;
+    private string _displaynameError;
     private string _usernameError;
     private string _emailError;
 
@@ -84,6 +84,7 @@ public partial class ManageAccounts
         var user = _users.FirstOrDefault(u => u.Id == _editingUser.Id);
         if (user != null)
         {
+            user.DisplayName = _editingUser.DisplayName;
             user.Username = _editingUser.Username;
             user.Role = _editingUser.Role;
             user.Email = _editingUser.Email;
@@ -91,10 +92,6 @@ public partial class ManageAccounts
         }
 
         CloseModal();
-        _showSuccessAlert = true;
-        await Task.Delay(5000);
-        _showSuccessAlert = false;
-
         StateHasChanged();
     }
 
@@ -130,6 +127,7 @@ public partial class ManageAccounts
         _editingUser = new User()
         {
             Id = user.Id,
+            DisplayName = user.DisplayName,
             Username = user.Username,
             PasswordHash = user.PasswordHash,
             Email = user.Email,
