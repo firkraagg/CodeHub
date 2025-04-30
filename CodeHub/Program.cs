@@ -44,6 +44,7 @@ namespace CodeHub
             builder.Services.AddSingleton<RabbitMqProducerService>();
             builder.Services.AddTransient<TestCaseService>();
             builder.Services.AddTransient<ProblemsAttemptService>();
+            builder.Services.AddTransient<VisibleWeekService>();
             builder.Services.AddScoped<ProblemCacheService>();
             builder.Services.AddSingleton<LdapService>(new LdapService("fri.uniza.sk", 389));
             builder.Services.AddDistributedMemoryCache();

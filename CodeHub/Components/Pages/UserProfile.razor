@@ -6,6 +6,7 @@
 @inject NavigationManager NavigationManager
 @inject ProblemService ProblemService
 @inject ProgrammingLanguageService ProgrammingLanguageService
+@inject VisibleWeekService VisibleWeekService
 @inject TagService TagService
 @inject IJSRuntime JSRuntime
 
@@ -34,8 +35,7 @@
                                 <button class="btn profile-button button-update p-2" @onclick="LoadUserProblems">Spravovať úlohy</button>
                             </Authorized>
                         </AuthorizeView>
-@*                         <button class="btn profile-button button-delete-account p-2" @onclick="ShowDeleteUserModal">Vymazať účet</button>
- *@                    </div>
+                    </div>
                 </div>
 
                 <div class="col-lg-9 col-md-8 col-sm-12 custom-bg-profile-right p-4 d-flex justify-content-center align-items-center">
@@ -146,14 +146,20 @@
                     {
                         <AuthorizeView Roles="admin, teacher">
                             <Authorized>
-                            <div class="w-100 d-flex flex-column position-relative" style="min-height: 100vh;">
-                                <div class="position-relative mb-2">
-                                    <button type="button" class="btn add-task-button" onclick="window.location.href='new-problem'">
-                                        ➕ Pridať úlohu
-                                    </button>
-                                </div>
+                                <div class="w-100 d-flex flex-column position-relative" style="min-height: 100vh;">
+                                    <div class="d-flex align-items-center mb-2 w-100 position-relative">
+                                        <button type="button" class="btn visible-weeks-button" @onclick="OpenVisibleWeeksModal">
+                                            Viditeľné týždne
+                                        </button>
 
-                                <h3 class="text-center text-white">Moje Úlohy</h3>
+                                        <h3 class="text-white mb-0 position-absolute start-50 translate-middle-x">
+                                            Moje Úlohy
+                                        </h3>
+                                        <button type="button" class="btn add-task-button ms-auto" onclick="window.location.href='new-problem'">
+                                            ➕ Pridať úlohu
+                                        </button>
+                                    </div>
+
                                 @if (_isLoading)
                                 {
                                     <div class="text-center text-white">
@@ -343,6 +349,39 @@
                             {
                                 <button type="button" class="btn button-custom button-delete" @onclick="DeleteUser">Zrušiť účet</button>
                             }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        @if (_showVisibleWeeksModal)
+        {
+            <div class="modal d-block" tabindex="-1" style="background-color: rgba(0,0,0.1,0.7);">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content background-custom">
+                        <div class="modal-header">
+                            <h5 class="modal-title text-white">Vybrať viditeľné týždne</h5>
+                            <button type="button" class="btn-close btn-close-white" @onclick="CloseVisibleWeeksModal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="list-group">
+                                @for (int i = 1; i <= 13; i++)
+                                {
+                                    int week = i;
+                                    <label class="list-group-item bg-dark text-white">
+                                        <input class="form-check-input me-1" type="checkbox" value="@week" @onchange="(e) => HandleWeekChange(e, week)" checked="@(_selectedVisibleWeeks.Contains(week))">
+                                        Týždeň @week
+                                    </label>
+                                }
+                                <label class="list-group-item bg-dark text-white">
+                                    <input class="form-check-input me-1" type="checkbox" @onchange="(e) => HandleWeekChange(e, 14)" checked="@_selectedVisibleWeeks.Contains(14)">
+                                    Skúška
+                                </label>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-success" @onclick="SaveVisibleWeeks">Uložiť</button>
+                            <button class="btn btn-secondary" @onclick="CloseVisibleWeeksModal">Zavrieť</button>
                         </div>
                     </div>
                 </div>

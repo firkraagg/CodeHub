@@ -36,11 +36,11 @@ public partial class Home
             _completedProblemIds = await SolvedProblemsService.GetProblemIdsByUserIdAsync(int.Parse(userId));
         }
 
+        await UpdateAvailableWeeks();
         await LoadProblems();
         ProblemCacheService.SetProblems(_problems);
 
         await LoadTags();
-        UpdateAvailableWeeks();
         _selectedTags = new List<Tag>();
 
         foreach (var problem in _problems)
@@ -51,16 +51,10 @@ public partial class Home
         _problemsAreLoading = false;
     }
 
-    private void UpdateAvailableWeeks()
+    private async Task UpdateAvailableWeeks()
     {
-        _availableWeeks = _problems
-            .Select(p => p.Week)
-            .Distinct()
-            .Where(w => w <= 13)
-            .OrderBy(w => w)
-            .ToList();
+        _availableWeeks = await VisibleWeekService.GetVisibleWeeksAsync();
     }
-
 
     private async Task ToggleWeekSelection(int week)
     {
@@ -110,6 +104,7 @@ public partial class Home
     public async Task LoadProblems()
     {
         _problems = await ProblemService.GetProblemsAsync();
+        _problems = _problems.Where(problem => _availableWeeks.Contains(problem.Week)).ToList();
         _filteredProblems = _problems;
     }
 
@@ -167,13 +162,15 @@ public partial class Home
     {
         _isFiltering = true;
         StateHasChanged();
-        List<Problem> filtered = _problems;
-
+        List<Problem> filtered = _problems
+            .Where(problem => _availableWeeks.Contains(problem.Week))
+            .ToList();
 
         if (_selectedTags.Any())
         {
             var selectedTagNames = _selectedTags.Select(tag => tag.Name).ToList();
             filtered = await TagService.GetProblemsByTagsAsync(selectedTagNames);
+            filtered = filtered.Where(problem => _availableWeeks.Contains(problem.Week)).ToList();
         }
 
         if (_selectedWeeks.Any())

@@ -15,9 +15,11 @@ public partial class UserProfile
     private bool _showEditProfile = false;
     private bool _showChangePassword = false;
     private bool _showDeleteModal = false;
+    private bool _showVisibleWeeksModal = false;
     private bool _showAlert;
     private bool _showUserProblems = false;
     private List<Problem> _userProblems = new();
+    private List<int> _selectedVisibleWeeks = new();
     private Problem? _editingProblem = null;
     private string _deleteModalText = string.Empty;
     private string _actionName = string.Empty;
@@ -44,6 +46,7 @@ public partial class UserProfile
         var userId = ((CustomAuthStateProvider)AuthenticationStateProvider).GetLoggedInUserId();
         _languages = await ProgrammingLanguageService.GetProgrammingLanguagesAsync();
         _availableTags = await TagService.GetTagsAsync();
+        _selectedVisibleWeeks = await VisibleWeekService.GetVisibleWeeksAsync();
         if (!string.IsNullOrEmpty(userId))
         {
             _user = await UserService.GetUserByIdAsync(userId);
@@ -143,24 +146,37 @@ public partial class UserProfile
             StateHasChanged();
         }
     }
+    private void OpenVisibleWeeksModal()
+    {
+        _showVisibleWeeksModal = true;
+    }
 
-    //public void ShowEditProfile()
-    //{
-    //    _showAlert = false;
-    //    _showChangePassword = false;
-    //    _showUserProblems = false;
-    //    _showEditProfile = true;
-    //    StateHasChanged();
-    //}
+    private void CloseVisibleWeeksModal()
+    {
+        _showVisibleWeeksModal = false;
+    }
 
-    //public void ShowChangePassword()
-    //{
-    //    _showAlert = false;
-    //    _showEditProfile = false;
-    //    _showUserProblems = false;
-    //    _showChangePassword = true;
-    //    StateHasChanged();
-    //}
+    private async Task SaveVisibleWeeks()
+    {
+        if (_selectedVisibleWeeks.Any())
+        {
+            await VisibleWeekService.UpdateVisibleWeeksAsync(_selectedVisibleWeeks);
+        }
+
+        CloseVisibleWeeksModal();
+    }
+
+    private void HandleWeekChange(ChangeEventArgs e, int weekNumber)
+    {
+        if ((bool)e.Value)
+        {
+            _selectedVisibleWeeks.Add(weekNumber);
+        }
+        else
+        {
+            _selectedVisibleWeeks.Remove(weekNumber);
+        }
+    }
 
     public void CloseDeleteModal()
     {

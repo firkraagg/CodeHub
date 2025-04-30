@@ -7,6 +7,7 @@
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject ProblemsAttemptService SolvedProblemsService
 @inject ProblemCacheService ProblemCacheService
+@inject VisibleWeekService VisibleWeekService
 
 <PageTitle>Domov</PageTitle>
 
@@ -28,20 +29,23 @@
             </div>
             <div class="offcanvas-body">
                 <div class="list-group">
-                    @foreach (var week in _availableWeeks)
+                    @foreach (var week in _availableWeeks.Where(w => w <= 13))
                     {
-                        <button class="list-group-item list-group-item-action border-0 rounded-0 bg-warning @((_activeWeek == week) ? "bg-warning text-dark" : "text-white bg-dark")" @onclick="() => ToggleActiveWeek(week)">
+                        <button class="list-group-item list-group-item-action border-0 rounded-0 bg-warning @(((_activeWeek == week) || ((_selectedWeeks.Count == 1) && (week == _selectedWeeks.FirstOrDefault()))) ? "bg-warning text-dark" : "text-white bg-dark")" @onclick="() => ToggleActiveWeek(week)">
                             Týždeň @week
                         </button>
                     }
                 </div>
-                <hr class="text-white">
-                <button class="btn btn-outline-light w-100 mb-2 @((_activeWeek == 14) ? "bg-warning text-dark" : "btn-outline-light")" @onclick="() => ToggleActiveWeek(14)">
-                    Skúška
-                </button>
+                @if (_availableWeeks.Contains(14))
+                {
+                    <hr class="text-white">
+                    <button class="btn btn-outline-light w-100 mb-2 @((_activeWeek == 14) ? "bg-warning text-dark" : "btn-outline-light")" @onclick="() => ToggleActiveWeek(14)">
+                        Skúška
+                    </button>
+                }
                 <hr class="text-white">
                 <button class="btn w-100 @((_filteredProblems.Count == _problems.Count) ? "bg-warning text-dark" : "btn-outline-light") " @onclick="SelectAll">
-                    Zobraziť všetky
+                    Zobraziť všetky úlohy
                 </button>
             </div>
         </div>
@@ -66,7 +70,7 @@
                         <ul class="dropdown-menu dropdown-menu-dark overflow-auto" style="max-height:20vh">
                             @if (_availableWeeks.Any())
                             {
-                                @foreach (var week in _availableWeeks)
+                                @foreach (var week in _availableWeeks.Where(w => w <= 13))
                                 {
                                     <li>
                                         <input type="checkbox" class="form-check-input me-2 ms-2"

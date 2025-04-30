@@ -20,6 +20,7 @@ namespace CodeHub.Data
         public DbSet<ProblemExample> ProblemExample { get; set; }
         public DbSet<TestCase> TestCase { get; set; }
         public DbSet<ProblemAttempt> ProblemAttempts { get; set; }
+        public DbSet<VisibleWeek> VisibleWeeks { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
