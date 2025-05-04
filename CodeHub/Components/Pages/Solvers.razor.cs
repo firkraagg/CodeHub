@@ -14,9 +14,7 @@ namespace CodeHub.Components.Pages
         private Dictionary<int, List<ProblemAttempt>> _allUserAttempts = new();
         private List<ProblemAttempt> _userAttempts = new();
         private List<ProblemAttempt> _filteredAttempts = new();
-        private List<bool> _isSolvedSuccessfully = new();
         private Problem _problem;
-        private ProblemAttempt? _actualProblemAttempt;
         private string? _sourceCode;
         private bool _showSourceCode;
         private int _testCasesNumber;
@@ -58,6 +56,7 @@ namespace CodeHub.Components.Pages
                     .ToList();
                 _userAttempts.AddRange(problems);
             }
+
             _userAttempts = _userAttempts.OrderByDescending(p => p.AttemptedAt).ToList();
         }
 

@@ -54,6 +54,5 @@ namespace CodeHub.Data.Models
         public ICollection<Tag> Tags { get; set; }
         public ICollection<ProblemAttempt> SolvedByUsers { get; set; }
         public bool IsVisible => ReleaseDate == null || ReleaseDate <= DateTime.Now;
-
     }
 }

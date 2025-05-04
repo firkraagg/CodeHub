@@ -2,7 +2,6 @@ networks:
   codehubapp:
     driver: bridge
     
-
 services:
   codehubdb:
     container_name: codehub-db
@@ -43,4 +42,3 @@ volumes:
     driver: local
   dataprotection_keys:
     driver: local
-  

@@ -1,8 +1,9 @@
-﻿@page "/problem/{ProblemId:int}"
-@using CodeHub.Data.Models
+﻿@using CodeHub.Data.Models
 @using CodeHub.Services
 @using Microsoft.IdentityModel.Tokens
 @using Markdig
+
+@page "/problem/{ProblemId:int}"
 @inject IJSRuntime JS
 @inject ProblemService ProblemService
 @inject TagService TagService
@@ -16,6 +17,7 @@
 @inject ProblemsAttemptService SolvedProblemsService
 
 <PageTitle>Riešenie úlohy</PageTitle>
+
 <AuthorizeView>
     <Authorized>
         <div class="container-fluid h-100 p-4 d-flex flex-column">
@@ -56,6 +58,7 @@
                                     @_problem.Points b.
                                 </span>
                             }
+
                             @if (_tags != null && _tags.Any())
                             {
                                 @foreach (var tag in _tags)
@@ -65,6 +68,7 @@
                             }
                         </div>
                     </div>
+
                     @if (_problem != null)
                     {
                         @((MarkupString)Markdown.ToHtml(_problem.Description))
@@ -101,6 +105,7 @@
                         }
                         <p>@_problem?.Constraints</p>
                     </div>
+
                     <div class="accordion accordion-flush w-75" id="accordionHint">
                         @if (_hints.Any())
                         {

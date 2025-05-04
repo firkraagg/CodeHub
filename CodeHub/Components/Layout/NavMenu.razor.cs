@@ -1,7 +1,5 @@
-﻿using BlazorStrap.Utilities;
-using CodeHub.Services;
+﻿using CodeHub.Services;
 using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
 
 namespace CodeHub.Components.Layout;
 
@@ -15,6 +13,7 @@ public partial class NavMenu
     {
         collapseNavMenu = !collapseNavMenu;
     }
+
     private async Task Logout()
     {
         await UserService.LogoutUserAsync();

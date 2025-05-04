@@ -1,10 +1,8 @@
-﻿using CodeHub.Data.Entities;
-using CodeHub.Data.Models;
+﻿using CodeHub.Data.Models;
 using CodeHub.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Forms;
-using System.Text;
 
 namespace CodeHub.Components.Pages;
 
@@ -23,7 +21,6 @@ public partial class Login
     {
         var uri = new Uri(NavigationManager.Uri);
         var query = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
-
         if (query.TryGetValue("message", out var message) && message == "registered")
         {
             _alertMessage = "Registrácia prebehla úspešne! Teraz sa prihláste.";
@@ -35,7 +32,6 @@ public partial class Login
     public async Task HandleFormSubmitAsync(EditContext editContext)
     {
         var storedUser = await userService.FindByUsernameAsync(lm.Nickname);
-
         if (storedUser != null)
         {
             bool isPasswordValid = BCrypt.Net.BCrypt.EnhancedVerify(lm.Password, storedUser.PasswordHash);

@@ -1,6 +1,5 @@
 ﻿using CodeHub.Data;
 using CodeHub.Data.Entities;
-using CodeHub.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -137,7 +136,7 @@ namespace CodeHub.Services
 
         private byte[] GetDefaultProfileImage()
         {
-            string defaultImagePath = "wwwroot/images/profileImage.png";
+            string defaultImagePath = "wwwroot/images/userProfileImage.png";
             if (File.Exists(defaultImagePath))
             {
                 return File.ReadAllBytes(defaultImagePath);

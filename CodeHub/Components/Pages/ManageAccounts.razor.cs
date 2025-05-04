@@ -11,7 +11,6 @@ public partial class ManageAccounts
     private User _editingUser = new User();
     private bool _showModal = false;
     private bool _showDeleteModal = false;
-    private string _displaynameError;
     private string _usernameError;
     private string _emailError;
 

@@ -1,6 +1,7 @@
-﻿@page "/"
-@using CodeHub.Data.Models
+﻿@using CodeHub.Data.Models
 @using CodeHub.Services
+
+@page "/"
 @inject NavigationManager NavigationManager
 @inject ProblemService ProblemService
 @inject TagService TagService
@@ -21,7 +22,6 @@
                 aria-controls="weekSidebar">
             <i class="fa-solid fa-bars fa-xl"></i>
         </button>
-
         <div class="offcanvas offcanvas-start text-bg-dark" tabindex="-1" id="weekSidebar" aria-labelledby="weekSidebarLabel" data-bs-scroll="true" data-bs-backdrop="false" style="width: 250px;">
             <div class="offcanvas-header">
                 <h5 class="offcanvas-title" id="weekSidebarLabel">Vyber týždeň</h5>
@@ -49,7 +49,6 @@
                 </button>
             </div>
         </div>
-
         <div class="container-fluid">
             <div class="d-flex justify-content-center mt-5 gap-2 flex-wrap">
                 <div class="sorting_buttons mt-3 gap-2 w-50 w-md-50">
@@ -93,7 +92,6 @@
                             <li><a class="dropdown-item @( _selectedSort == "hardest" ? "active bg-warning text-dark" : "")" @onclick="@(() => ApplySorting("hardest"))">Najťažšie</a></li>
                         </ul>
                     </div>
-
                     <div class="dropdown">
                         <button class="btn btn-secondary dropdown-toggle bg-dark" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Obťažnosť
@@ -164,7 +162,7 @@
                                     foreach (var (problem, index) in problemsToDisplay.Select((p, i) => (p, i + startIndex)))
                                     {
                                         bool isCompleted = _completedProblemIds.Contains(problem.Id);
-                                        var rowClass = isCompleted ? "completed-row" : "1";
+                                        var rowClass = isCompleted ? "completed-row" : "";
                                         <tr class="@rowClass">
                                             <th>@index</th>
                                             <td class="text-center">@problem.Week</td>

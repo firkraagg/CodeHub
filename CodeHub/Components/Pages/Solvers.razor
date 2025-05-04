@@ -1,8 +1,9 @@
-﻿@page "/student-attempts/{problemId:int}"
-@using CodeHub.Data.Entities
+﻿@using CodeHub.Data.Entities
 @using CodeHub.Data.Models
 @using CodeHub.Services
 @using BlazorDownloadFile
+
+@page "/student-attempts/{problemId:int}"
 @inject ProblemsAttemptService ProblemsAttemptService
 @inject ProblemService ProblemService
 @inject TestCaseService TestCaseService
@@ -133,6 +134,7 @@
                         }
                     </tbody>
                 </table>
+
                 @if (_showSourceCode)
                 {
                     <div class="modal d-block" style="background-color: rgba(0,0,0.1,0.7);" tabindex="-1">
@@ -154,6 +156,7 @@
                         </div>
                     </div>
                 }
+
                 @if (_showDeleteModal)
                 {
                     <div class="modal d-block" style="background-color: rgba(0,0,0.1,0.7);" tabindex="-1">
@@ -177,6 +180,7 @@
                         </div>
                     </div>
                 }
+
                 @if (!_attemptsAreLoading && _userAttempts.Count > _maxAttemptsToShow)
                 {
                     <div class="navigation mb-2 w-100">

@@ -17,7 +17,7 @@ namespace CodeHub.Services
         {
             using (var context = _dbContextFactory.CreateDbContext())
             {
-                return await context.ProblemConstraint.FirstOrDefaultAsync(c => c.Id.ToString() == id);
+                return await context.ProblemConstraints.FirstOrDefaultAsync(c => c.Id.ToString() == id);
             }
         }
 
@@ -25,7 +25,7 @@ namespace CodeHub.Services
         {
             using (var context = _dbContextFactory.CreateDbContext())
             {
-                context.ProblemConstraint.Update(constraint);
+                context.ProblemConstraints.Update(constraint);
                 await context.SaveChangesAsync();
             }
         }
@@ -34,7 +34,7 @@ namespace CodeHub.Services
         {
             using (var context = _dbContextFactory.CreateDbContext())
             {
-                return await context.ProblemConstraint
+                return await context.ProblemConstraints
                     .Where(c => c.ProblemId == problemId)
                     .ToListAsync();
             }

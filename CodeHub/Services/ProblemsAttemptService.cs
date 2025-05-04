@@ -48,8 +48,9 @@ namespace CodeHub.Services
             using (var context = _dbContextFactory.CreateDbContext())
             {
                 return await context.ProblemAttempts
-                    .Where(sp => sp.userId == userId)
+                    .Where(sp => sp.userId == userId && sp.IsSuccessful)
                     .Select(sp => sp.problemId)
+                    .Distinct()
                     .ToListAsync();
             }
         }

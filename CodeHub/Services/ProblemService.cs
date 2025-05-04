@@ -64,7 +64,7 @@ namespace CodeHub.Services
                                 ProblemId = newProblem.Id,
                                 Hint = hint.Hint
                             };
-                            context.ProblemHint.Add(newHint);
+                            context.ProblemHints.Add(newHint);
                         }
                         await context.SaveChangesAsync();
                     }
@@ -78,7 +78,7 @@ namespace CodeHub.Services
                                 ProblemId = newProblem.Id,
                                 Constraint = constraint.Constraint
                             };
-                            context.ProblemConstraint.Add(newConstraint);
+                            context.ProblemConstraints.Add(newConstraint);
                         }
                         await context.SaveChangesAsync();
                     }
@@ -94,7 +94,7 @@ namespace CodeHub.Services
                                 Output = example.Output,
                                 Explanation = example.Explanation ?? ""
                             };
-                            context.ProblemExample.Add(newExample);
+                            context.ProblemExamples.Add(newExample);
                         }
                         await context.SaveChangesAsync();
                     }
@@ -110,7 +110,7 @@ namespace CodeHub.Services
                                 ExpectedOutput = testCase.ExpectedOutput,
                                 OutputType = testCase.OutputType
                             };
-                            context.TestCase.Add(newTestCase);
+                            context.TestCases.Add(newTestCase);
                         }
                         await context.SaveChangesAsync();
                     }
@@ -168,7 +168,7 @@ namespace CodeHub.Services
                     {
                         if (!problem.Constraints.Any(c => c.Constraint == constraint.Constraint))
                         {
-                            context.ProblemConstraint.Remove(constraint);
+                            context.ProblemConstraints.Remove(constraint);
                         }
                     }
 
@@ -176,7 +176,7 @@ namespace CodeHub.Services
                     {
                         if (!existingConstraints.Any(c => c.Constraint == constraint.Constraint))
                         {
-                            context.ProblemConstraint.Add(new ProblemConstraint
+                            context.ProblemConstraints.Add(new ProblemConstraint
                             {
                                 Constraint = constraint.Constraint,
                                 ProblemId = existingProblem.Id
@@ -192,7 +192,7 @@ namespace CodeHub.Services
                     {
                         if (!problem.Hints.Any(h => h.Hint == hint.Hint))
                         {
-                            context.ProblemHint.Remove(hint);
+                            context.ProblemHints.Remove(hint);
                         }
                     }
 
@@ -200,7 +200,7 @@ namespace CodeHub.Services
                     {
                         if (!existingHints.Any(h => h.Hint == hint.Hint))
                         {
-                            context.ProblemHint.Add(new ProblemHint
+                            context.ProblemHints.Add(new ProblemHint
                             {
                                 Hint = hint.Hint,
                                 ProblemId = existingProblem.Id
@@ -216,7 +216,7 @@ namespace CodeHub.Services
                     {
                         if (!problem.Examples.Any(e => e.Input == example.Input && e.Output == example.Output && e.Explanation == example.Explanation))
                         {
-                            context.ProblemExample.Remove(example);
+                            context.ProblemExamples.Remove(example);
                         }
                     }
 
@@ -224,7 +224,7 @@ namespace CodeHub.Services
                     {
                         if (!existingExamples.Any(e => e.Input == example.Input && e.Output == example.Output && e.Explanation == example.Explanation))
                         {
-                            context.ProblemExample.Add(new ProblemExample
+                            context.ProblemExamples.Add(new ProblemExample
                             {
                                 Input = example.Input,
                                 Output = example.Output,
@@ -249,11 +249,11 @@ namespace CodeHub.Services
 
                     foreach (var tagName in selectedTagNames.Except(existingTagNames))
                     {
-                        var tag = await context.Tag.FirstOrDefaultAsync(t => t.Name == tagName);
+                        var tag = await context.Tags.FirstOrDefaultAsync(t => t.Name == tagName);
                         if (tag == null)
                         {
                             tag = new Tag { Name = tagName };
-                            context.Tag.Add(tag);
+                            context.Tags.Add(tag);
                             await context.SaveChangesAsync();
                         }
                         existingProblem.Tags.Add(tag);

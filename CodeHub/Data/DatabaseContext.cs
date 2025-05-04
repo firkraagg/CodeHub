@@ -13,12 +13,12 @@ namespace CodeHub.Data
         }
         public DbSet<User> Users { get; set; }
         public DbSet<Problem> Problems { get; set; }
-        public DbSet<ProgrammingLanguage> ProgrammingLanguage { get; set; }
-        public DbSet<Tag> Tag { get; set; }
-        public DbSet<ProblemHint> ProblemHint { get; set; }
-        public DbSet<ProblemConstraint> ProblemConstraint { get; set; }
-        public DbSet<ProblemExample> ProblemExample { get; set; }
-        public DbSet<TestCase> TestCase { get; set; }
+        public DbSet<ProgrammingLanguage> ProgrammingLanguages { get; set; }
+        public DbSet<Tag> Tags { get; set; }
+        public DbSet<ProblemHint> ProblemHints { get; set; }
+        public DbSet<ProblemConstraint> ProblemConstraints { get; set; }
+        public DbSet<ProblemExample> ProblemExamples { get; set; }
+        public DbSet<TestCase> TestCases { get; set; }
         public DbSet<ProblemAttempt> ProblemAttempts { get; set; }
         public DbSet<VisibleWeek> VisibleWeeks { get; set; }
 

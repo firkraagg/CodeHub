@@ -1,0 +1,18 @@
+﻿@using CodeHub.Components.Components
+@using CodeHub.Data.Models
+@using CodeHub.Services
+
+@page "/edit-problem/{problemId:int}"
+
+<PageTitle>Úprava úlohy</PageTitle>
+
+@if (isLoading)
+{
+    <div class="d-flex justify-content-center align-items-start vh-100">
+        <p class="text-white fs-4 fw-bold mt-5">Načítavanie...</p>
+    </div>
+}
+else if (_problem != null)
+{
+    <TaskCreation ProblemToEdit="@_problem" />
+}

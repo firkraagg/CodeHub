@@ -18,7 +18,7 @@ namespace CodeHub.Services
         {
             using (var context = _dbContextFactory.CreateDbContext())
             {
-                return await context.Tag.ToListAsync();
+                return await context.Tags.ToListAsync();
             }
         }
 
@@ -26,7 +26,7 @@ namespace CodeHub.Services
         {
             using (var context = _dbContextFactory.CreateDbContext())
             {
-                var tag = await context.Tag
+                var tag = await context.Tags
                     .FirstOrDefaultAsync(t => t.Name.Equals(tagName, StringComparison.OrdinalIgnoreCase));
 
                 if (tag == null)
@@ -46,7 +46,7 @@ namespace CodeHub.Services
         {
             using (var context = _dbContextFactory.CreateDbContext())
             {
-                var tags = await context.Tag
+                var tags = await context.Tags
                     .Where(t => tagNames.Contains(t.Name))
                     .ToListAsync();
 
@@ -93,7 +93,7 @@ namespace CodeHub.Services
         {
             using var context = _dbContextFactory.CreateDbContext();
 
-            var tagsToDelete = await context.Tag
+            var tagsToDelete = await context.Tags
                 .Where(t => t.Name == tagName)
                 .Include(t => t.Problems)
                 .ToListAsync();
@@ -106,7 +106,7 @@ namespace CodeHub.Services
                 tag.Problems?.Clear();
             }
 
-            context.Tag.RemoveRange(tagsToDelete);
+            context.Tags.RemoveRange(tagsToDelete);
             await context.SaveChangesAsync();
 
             return true;

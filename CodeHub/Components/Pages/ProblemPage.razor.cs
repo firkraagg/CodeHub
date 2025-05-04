@@ -154,27 +154,4 @@ public partial class ProblemPage
             }
         }
     }
-
-    private async Task ChangeTheme(string theme)
-    {
-        if (_selectedTheme != theme)
-        {
-            _selectedTheme = theme;
-            await JS.InvokeVoidAsync("monacoInterop.setTheme", _selectedTheme);
-            StateHasChanged();
-        }
-    }
-    private async Task ChangeLanguage(string name)
-    {
-        var language = _languages.FirstOrDefault(l => l.Name == name);
-        _selectedLanguage = language ?? _languages.First();
-        await JS.InvokeVoidAsync("monacoInterop.setLanguage", _selectedLanguage.MonacoName);
-    }
-
-    private async Task SetCode(string code)
-    {
-        _userCode = code;
-        await JS.InvokeVoidAsync("monacoInterop.setValue", _userCode);
-    }
-
 }

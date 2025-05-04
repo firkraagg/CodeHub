@@ -1,6 +1,7 @@
 ﻿using LdapForNet;
-using Microsoft.Extensions.Options;
+using LdapForNet.Native;
 using static LdapForNet.Native.Native;
+
 namespace CodeHub.Services
 {
     public class LdapService

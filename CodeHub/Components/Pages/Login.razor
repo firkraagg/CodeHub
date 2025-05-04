@@ -1,20 +1,18 @@
-﻿@page "/login"
-@using CodeHub.Components.Components
+﻿@using CodeHub.Components.Components
+@using CodeHub.Services
 
+@page "/login"
 @inject LdapService LdapService
 @inject UserService UserService
 
 <PageTitle>Prihlásenie</PageTitle>
 
-@using CodeHub.Services
-
 <div class="user-auth mb-5">
     <div class="card p-lg-5 p-md-4 p-3 col-lg-4 col-md-6 col-12" data-bs-theme="dark">
         <div class="text-center mb-5">
-            <img src="images/logo.png" alt="Logo" style="width: 80px;">
+            <img src="images/universityLogo.png" alt="Logo" style="width: 80px;">
             <h3 class="mb-3">Prihlásenie</h3>
         </div>
-
         @if (_showAlert)
         {
             <div class="alert @_alertColor" role="alert">
@@ -34,10 +32,6 @@
                 <label for="PasswordInput">Heslo</label>
                 <ValidationMessage For="@(() => lm.Password)" />
             </div>
-            @* <div class="mb-3 form-check pt-1">
-                <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                <label class="form-check-label" for="exampleCheck1">Zostať prihlásený</label>
-            </div> *@
             <button type="submit" class="btn button-custom button-add-bg mt-3">Prihlásiť sa</button>
         </EditForm>
     </div>

@@ -3,12 +3,11 @@ using CodeHub.Data.Models;
 using CodeHub.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.JSInterop;
 using System.Reflection.Metadata;
 
-namespace CodeHub.Components.Components;
+namespace CodeHub.Components.Pages;
 
-public partial class TaskCreation
+public partial class TaskCreation : ComponentBase
 {
     private Problem _problem = new Problem
     {
