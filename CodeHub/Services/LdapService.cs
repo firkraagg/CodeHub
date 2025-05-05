@@ -1,4 +1,5 @@
-﻿using LdapForNet;
+﻿using CodeHub.Configuration;
+using LdapForNet;
 using LdapForNet.Native;
 using static LdapForNet.Native.Native;
 
@@ -8,12 +9,14 @@ namespace CodeHub.Services
     {
         private readonly string _ldapHost;
         private readonly int _ldapPort;
+        private readonly LdapSettings _settings;
         private readonly string _ldapBaseDn;
 
-        public LdapService(string ldapHost, int ldapPort)
+        public LdapService(string ldapHost, int ldapPort, LdapSettings settings)
         {
             _ldapHost = ldapHost;
             _ldapPort = ldapPort;
+            _settings = settings;
         }
 
         public async Task<LdapEntry?> AuthenticateUserAsync(string username, string password)
@@ -32,7 +35,7 @@ namespace CodeHub.Services
             {
                 using var connection = password != null
                     ? await CreateLdapConnectionAsync(username, password)
-                    : await CreateLdapConnectionAsync("zuzcak4", "Skunizavyskask8");
+                    : await CreateLdapConnectionAsync(_settings.Username, _settings.Password);
 
                 if (connection == null) return null;
                 
@@ -61,8 +64,9 @@ namespace CodeHub.Services
 
                 return ldapConnection;
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine(ex);
                 return null;
             }
         }
