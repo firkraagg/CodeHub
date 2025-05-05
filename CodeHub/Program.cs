@@ -27,11 +27,11 @@ namespace CodeHub
             /// Lok·lne pripojenie cez tento reùazec funguje bez problÈmov, avöak pri spustenÌ aplik·cie cez Docker sa vyskytuje problÈm s ch˝baj˙cou
             /// kniûnicou 'ldap.so.2', ktor· je potrebn· pre LDAP autentifik·ciu. Tento problem pravdepodobne vznik·, pretoûe ch˝ba podpora pre LDAP v prostredÌ Dockeru (Linux).
             /// </summary>
-            //var connectionString = $"Data Source={dbHost},1433;Initial Catalog={dbName}" +
-            //    $";User ID=sa;Password={dbPassword};TrustServerCertificate=True;";
+            var connectionString = $"Data Source={dbHost},1433;Initial Catalog={dbName}" +
+                $";User ID=sa;Password={dbPassword};TrustServerCertificate=True;";
 
             // AlternatÌvny pripojovacÌ reùazec pre lok·lne pripojenie (funguje bez problÈmov)
-            var connectionString = "Data Source=localhost,8002;Initial Catalog=CodeHubApp;User ID=sa;Password=CodeHub@2023;TrustServerCertificate=True;";
+            //var connectionString = "Data Source=localhost,8002;Initial Catalog=CodeHubApp;User ID=sa;Password=CodeHub@2023;TrustServerCertificate=True;";
 
             builder.Services.AddDbContextFactory<DatabaseContext>((DbContextOptionsBuilder options) => options.UseSqlServer(connectionString));
             using (var scope = builder.Services.BuildServiceProvider().CreateScope())
